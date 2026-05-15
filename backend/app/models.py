@@ -32,7 +32,7 @@ class PatientRegistration(Base):
     status = Column(String, default="CHO_XAC_NHAN") 
     consent = Column(Boolean, default=False)
     registration_number = Column(Integer, unique=True, index=True, nullable=True)
-    is_extra_slot = Column(Boolean, default=False
+    is_extra_slot = Column(Boolean, default=False)
     phone_verified = Column(Boolean, default=False)
     otp_code = Column(String, nullable=True)
     otp_expiry = Column(DateTime, nullable=True)
