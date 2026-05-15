@@ -1,60 +1,59 @@
 #!/bin/bash
 
 # --- CONFIGURATION ---
-# Thay đổi các thông tin này nếu cần
 APP_DIR="ScreeningProstate"
 BACKEND_PORT=8000
 FRONTEND_PORT=3000
+ADMINER_PORT=8080
 
-echo "🚀 Bắt đầu quá trình chuẩn bị deploy cho $APP_DIR..."
+echo "🚀 Bắt đầu quá trình Deploy Tự động (One-Click)..."
 
-# 1. Cài đặt Docker & Docker Compose (cho Ubuntu)
+# 1. Cài đặt Docker & Docker Compose
 if ! command -v docker &> /dev/null; then
-    echo "📦 Đang cài đặt Docker..."
+    echo "📦 Đang cài đặt Docker và các thành phần hệ thống..."
     sudo apt update
-    sudo apt install -y docker.io docker-compose
+    sudo apt install -y docker.io docker-compose git
     sudo systemctl start docker
     sudo systemctl enable docker
-    echo "✅ Đã cài đặt Docker."
-else
-    echo "✅ Docker đã được cài đặt."
 fi
 
-# 2. Cấu hình Firewall (UFW)
-echo "🛡️ Đang cấu hình Firewall..."
+# 2. Cấu hình Firewall
+echo "🛡️ Đang mở cổng Firewall..."
 sudo ufw allow 22/tcp
 sudo ufw allow $BACKEND_PORT/tcp
 sudo ufw allow $FRONTEND_PORT/tcp
+sudo ufw allow $ADMINER_PORT/tcp
 sudo ufw --force enable
-echo "✅ Đã mở các cổng: 22, $BACKEND_PORT, $FRONTEND_PORT."
 
-# 3. Kiểm tra file .env
-echo "📝 Kiểm tra các file cấu hình (.env)..."
-
+# 3. Thiết lập file .env (Nếu chưa có)
 if [ ! -f "backend/.env" ]; then
-    echo "⚠️ Không tìm thấy backend/.env. Đang tạo từ .env.example..."
+    echo "📝 Tạo cấu hình Backend .env..."
     cp backend/.env.example backend/.env
-    echo "👉 Hãy nhớ chỉnh sửa backend/.env sau khi chạy script này!"
+    # Sửa DATABASE_URL để dùng trong Docker
+    sed -i 's/localhost/db/g' backend/.env
 fi
 
 if [ ! -f "frontend/.env.local" ]; then
-    echo "⚠️ Không tìm thấy frontend/.env.local. Đang tạo từ .env.local.example..."
-    cp frontend/.env.local.example frontend/.env.local
-    echo "👉 Hãy nhớ chỉnh sửa frontend/.env.local sau khi chạy script này!"
+    echo "📝 Tạo cấu hình Frontend .env.local..."
+    IP_VPS=$(curl -s ifconfig.me)
+    echo "NEXT_PUBLIC_API_URL=http://$IP_VPS:8000" > frontend/.env.local
+    echo "NEXT_PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA" >> frontend/.env.local
 fi
 
-# 4. Build và chạy Docker
-echo "🏗️ Đang build và khởi chạy các container (quá trình này có thể mất vài phút)..."
+# 4. Khởi chạy Docker
+echo "🏗️ Đang Build và chạy các Container (Vui lòng đợi)..."
+docker-compose down # Tắt các bản cũ nếu có
 docker-compose up -d --build
 
-# 5. Khởi tạo Database
-echo "🗄️ Đang khởi tạo Database..."
+# 5. Khởi tạo Database và Tạo tài khoản Super Admin
+echo "👤 Đang khởi tạo Database và tài khoản Super Admin..."
+sleep 5 # Đợi Database khởi động xong
 docker-compose exec -T backend python init_db.py
 docker-compose exec -T backend python seed_admin.py
 
 echo "----------------------------------------------------"
-echo "✅ DEPLOY HOÀN TẤT!"
-echo "🌐 Frontend: http://[IP_VPS]:$FRONTEND_PORT"
-echo "⚙️ Backend API: http://[IP_VPS]:$BACKEND_PORT"
+echo "✅ DEPLOY HOÀN TẤT THÀNH CÔNG!"
+echo "🌐 Ứng dụng: http://$IP_VPS:$FRONTEND_PORT"
+echo "📊 Quản lý Database: http://$IP_VPS:$ADMINER_PORT"
+echo "👤 Tài khoản Admin mặc định: admin@gmail.com / admin123 (Vui lòng đổi sau khi đăng nhập)"
 echo "----------------------------------------------------"
-echo "Lưu ý: Nếu bạn có Domain, hãy cài thêm Nginx làm Reverse Proxy."

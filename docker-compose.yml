@@ -22,5 +22,13 @@ services:
     depends_on:
       - backend
 
+  db-admin:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
 volumes:
   postgres_data:
