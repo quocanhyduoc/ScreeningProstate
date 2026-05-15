@@ -1,0 +1,21 @@
+# Role: Senior DevSecOps Engineer
+# Task: Secure a FastAPI + Next.js + PostgreSQL stack on Ubuntu VPS
+
+## Step 1: OS Hardening
+- Disable password authentication for SSH.
+- Setup UFW: allow 22, 80, 443. Deny all others.
+- Install Fail2Ban to prevent brute-force attacks.
+
+## Step 2: Docker Security
+- Create a dedicated Docker network for 'backend' and 'db' (no public ports for DB).
+- Use non-root users inside Docker containers.
+
+## Step 3: Backend Security (FastAPI)
+- Implement CORS middleware: allow only the frontend domain.
+- Use 'passlib' with 'bcrypt' for password hashing.
+- Implement a logic to mask sensitive patient data in logs.
+
+## Step 4: SSL & Proxy
+- Setup Nginx as a reverse proxy.
+- Automate Let's Encrypt SSL renewal via Certbot.
+- Force redirect all HTTP traffic to HTTPS.
