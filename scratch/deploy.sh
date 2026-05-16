@@ -50,8 +50,9 @@ if ! command -v docker-compose &> /dev/null; then
 fi
 
 echo "🏗️ Đang Build các Container..."
-$DOCKER_CMD down
-$DOCKER_CMD up -d --build
+IP_VPS=$(curl -s ifconfig.me)
+NEXT_PUBLIC_API_URL=http://$IP_VPS:8000 $DOCKER_CMD down
+NEXT_PUBLIC_API_URL=http://$IP_VPS:8000 $DOCKER_CMD up -d --build
 
 # 5. Khởi tạo Database
 echo "👤 Đang khởi tạo Database và Super Admin..."
