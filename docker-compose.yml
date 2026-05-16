@@ -3,7 +3,7 @@ services:
     image: postgres:15
     environment:
       POSTGRES_USER: ${DB_USER:-ProstateHue26}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-Hue@2026;}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-ProstateHue2026}
       POSTGRES_DB: ProstateHue
     volumes:
       - postgres_data:/var/lib/postgresql/data
