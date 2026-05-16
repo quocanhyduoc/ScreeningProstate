@@ -9,8 +9,7 @@ from .database import engine, get_db, Base
 from .routes import registration, admin, auth as auth_routes, clinical
 from .services.sms import sms_service
 
-# Create tables
-Base.metadata.create_all(bind=engine)
+# Tables are created via init_db.py during deployment
 
 app = FastAPI(title="Prostate Screening API")
 
