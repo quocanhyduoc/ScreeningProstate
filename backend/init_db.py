@@ -22,7 +22,7 @@ def init():
         admin_user = db.query(User).filter(User.username == "admin_clinical").first()
         if not admin_user:
             admin_user = User(
-                username="admin_clinical",
+                username="admin",
                 hashed_password=get_password_hash("admin@2026"),
                 role="SUPERADMIN",
                 permissions=["users", "settings", "reports", "calendar", "clinical_reception", "clinical_screening", "clinical_lab", "clinical_consult"]

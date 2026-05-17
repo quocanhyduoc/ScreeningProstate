@@ -75,7 +75,7 @@ export default function QueueDisplay() {
         {/* Top bar */}
         <header className="flex justify-between items-center px-16 py-8 border-b border-white/5">
           <div className="flex items-center gap-6">
-            <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center shadow-[0_0_40px_rgba(37,99,235,0.4)]">
+            <div className="w-16 h-16 bg-blue-600 rounded-lg flex items-center justify-center shadow-[0_0_40px_rgba(37,99,235,0.4)]">
               <ShieldCheck size={32} className="text-white" />
             </div>
             <div>
@@ -96,7 +96,7 @@ export default function QueueDisplay() {
               <button
                 onClick={() => selectStation(null)}
                 title="Tất cả bàn"
-                className="p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 transition-all"
+                className="p-3 bg-white/5 hover:bg-white/10 rounded-lg border border-white/10 transition-all"
               >
                 <LayoutGrid size={20} className="text-slate-400" />
               </button>
@@ -105,7 +105,7 @@ export default function QueueDisplay() {
                   key={s.key}
                   onClick={() => selectStation(s.key)}
                   title={s.label}
-                  className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest border transition-all ${
+                  className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest border transition-all ${
                     s.key === activeStation.key
                       ? 'bg-blue-600 text-white border-blue-500 shadow-lg shadow-blue-500/20'
                       : 'bg-white/5 text-slate-400 border-white/10 hover:bg-white/10'
@@ -148,11 +148,11 @@ export default function QueueDisplay() {
           </AnimatePresence>
 
           <div className="flex items-center gap-10 mt-8">
-            <div className="flex items-center gap-3 px-8 py-5 bg-white/5 rounded-2xl border border-white/5">
-              <div className="w-4 h-4 bg-green-500 rounded-full animate-pulse shadow-[0_0_15px_rgba(34,197,94,0.6)]" />
+            <div className="flex items-center gap-3 px-8 py-5 bg-white/5 rounded-lg border border-white/5">
+              <div className="w-4 h-4 bg-green-500 rounded-md animate-pulse shadow-[0_0_15px_rgba(34,197,94,0.6)]" />
               <span className="text-slate-400 font-black text-lg uppercase tracking-widest">Đang phục vụ</span>
             </div>
-            <div className="flex items-center gap-3 px-8 py-5 bg-white/5 rounded-2xl border border-white/5">
+            <div className="flex items-center gap-3 px-8 py-5 bg-white/5 rounded-lg border border-white/5">
               <Users size={24} className="text-blue-500" />
               <span className="text-slate-400 font-black text-lg uppercase tracking-widest">Đang chờ:</span>
               <span className="text-white font-black text-3xl tabular-nums">{waiting}</span>
@@ -173,9 +173,9 @@ export default function QueueDisplay() {
       {/* Header */}
       <header className="flex justify-between items-center mb-10 border-b border-white/5 pb-5">
         <div className="flex items-center gap-8">
-          <div className="w-24 h-24 bg-blue-600 rounded-[32px] flex items-center justify-center shadow-[0_0_60px_rgba(37,99,235,0.4)] relative">
+          <div className="w-24 h-24 bg-blue-600 rounded-xl flex items-center justify-center shadow-[0_0_60px_rgba(37,99,235,0.4)] relative">
             <ShieldCheck size={48} className="text-white" />
-            <div className="absolute inset-0 rounded-[32px] border border-white/20" />
+            <div className="absolute inset-0 rounded-xl border border-white/20" />
           </div>
           <div>
             <h1 className="text-5xl font-black tracking-tight flex items-center gap-4">
@@ -200,7 +200,7 @@ export default function QueueDisplay() {
           <button
             key={s.key}
             onClick={() => selectStation(s.key)}
-            className="px-6 py-3 bg-white/5 hover:bg-blue-600/20 border border-white/10 hover:border-blue-500/50 rounded-2xl text-sm font-black uppercase tracking-widest text-slate-400 hover:text-white transition-all flex items-center gap-2"
+            className="px-6 py-3 bg-white/5 hover:bg-blue-600/20 border border-white/10 hover:border-blue-500/50 rounded-lg text-sm font-black uppercase tracking-widest text-slate-400 hover:text-white transition-all flex items-center gap-2"
           >
             {getIcon(s.key, 16)}
             {s.label}
@@ -237,14 +237,14 @@ function QueueCard({ label, icon, number, waitingCount, onExpand }: any) {
   return (
     <motion.div
       layout
-      className="bg-white/5 border border-white/10 rounded-[60px] p-12 flex flex-col items-center gap-10 relative backdrop-blur-3xl overflow-hidden group shadow-2xl cursor-pointer hover:bg-white/8 transition-colors"
+      className="bg-white/5 border border-white/10 rounded-lg p-12 flex flex-col items-center gap-10 relative backdrop-blur-3xl overflow-hidden group shadow-2xl cursor-pointer hover:bg-white/8 transition-colors"
       onClick={onExpand}
       title="Nhấn để xem toàn màn hình"
     >
       <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-80" />
 
       <div className="flex flex-col items-center gap-6">
-        <div className="p-8 bg-white/5 rounded-[40px] group-hover:bg-blue-600/10 transition-colors duration-500">
+        <div className="p-8 bg-white/5 rounded-lg group-hover:bg-blue-600/10 transition-colors duration-500">
           {icon}
         </div>
         <h3 className="text-3xl font-black text-slate-300 tracking-[0.2em]">{label}</h3>
@@ -266,9 +266,9 @@ function QueueCard({ label, icon, number, waitingCount, onExpand }: any) {
         </AnimatePresence>
       </div>
 
-      <div className="w-full flex justify-between items-center px-12 py-8 bg-white/5 rounded-[32px] mt-2 border border-white/5">
+      <div className="w-full flex justify-between items-center px-12 py-8 bg-white/5 rounded-xl mt-2 border border-white/5">
         <div className="flex items-center gap-4">
-          <div className="w-4 h-4 bg-green-500 rounded-full animate-pulse shadow-[0_0_15px_rgba(34,197,94,0.6)]" />
+          <div className="w-4 h-4 bg-green-500 rounded-md animate-pulse shadow-[0_0_15px_rgba(34,197,94,0.6)]" />
           <span className="text-sm font-black text-slate-400 uppercase tracking-widest">Đang phục vụ</span>
         </div>
         <div className="flex items-center gap-3 text-slate-400 font-black text-sm">

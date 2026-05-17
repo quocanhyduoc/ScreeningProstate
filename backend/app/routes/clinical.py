@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from ..database import get_db
 from .. import models, schemas, auth
+from ..websockets import manager
 import datetime
 
 router = APIRouter(prefix="/clinical", tags=["clinical"])
@@ -19,7 +20,8 @@ def get_clinical_registrations(
         
     query = db.query(models.PatientRegistration)
     if status:
-        query = query.filter(models.PatientRegistration.status == status)
+        status_list = status.split(',')
+        query = query.filter(models.PatientRegistration.status.in_(status_list))
     
     return query.order_by(models.PatientRegistration.registration_number.asc()).all()
 
@@ -35,9 +37,10 @@ def get_patient_by_cccd(
     return patient
 
 @router.patch("/status/{registration_id}")
-def update_patient_status(
+async def update_patient_status(
     registration_id: int,
-    new_status: str,
+    update: schemas.StatusUpdate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: dict = Depends(auth.get_current_user)
 ):
@@ -45,13 +48,17 @@ def update_patient_status(
     if not patient:
         raise HTTPException(status_code=404, detail="Patient not found")
     
+    new_status = update.status
     patient.status = new_status
     db.commit()
+    db.refresh(patient)
+    background_tasks.add_task(manager.broadcast, {"type": "UPDATE_PATIENT", "patient_id": registration_id, "status": new_status})
     return {"message": "Status updated", "status": new_status}
 
 @router.post("/survey", response_model=schemas.SurveyResponse)
-def create_survey(
+async def create_survey(
     survey: schemas.SurveyCreate,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: Optional[dict] = Depends(auth.get_current_user_optional)
 ):
@@ -82,18 +89,17 @@ def create_survey(
     patient.status = "CHO_XET_NGHIEM"
     
     db.commit()
+    background_tasks.add_task(manager.broadcast, {"type": "UPDATE_PATIENT", "patient_id": patient.id, "status": "CHO_XET_NGHIEM"})
     db.refresh(db_survey)
     return db_survey
 
-@router.get("/survey/{registration_id}", response_model=schemas.SurveyResponse)
+@router.get("/survey/{registration_id}", response_model=Optional[schemas.SurveyResponse])
 def get_survey(
     registration_id: int,
     db: Session = Depends(get_db),
     current_user: dict = Depends(auth.get_current_user)
 ):
     survey = db.query(models.ScreeningSurvey).filter(models.ScreeningSurvey.registration_id == registration_id).first()
-    if not survey:
-        raise HTTPException(status_code=404, detail="Survey not found")
     return survey
 
 @router.get("/queue", response_model=List[schemas.QueueResponse])
@@ -126,7 +132,7 @@ def get_clinical_stats(
     total_completed = db.query(models.PatientRegistration).filter(models.PatientRegistration.status == "HOAN_THANH").count()
     total_in_progress = db.query(models.PatientRegistration).filter(
         models.PatientRegistration.status.in_([
-            "DA_TIEP_NHAN", "CHO_XET_NGHIEM", "DA_LAY_MAU", "CHO_KET_QUA", "DANG_TU_VAN"
+            "DA_TIEP_NHAN", "CHO_XET_NGHIEM", "DA_XET_NGHIEM", "CHO_TU_VAN"
         ])
     ).count()
     total_waiting = db.query(models.PatientRegistration).filter(models.PatientRegistration.status == "DA_XAC_NHAN").count()
@@ -134,9 +140,9 @@ def get_clinical_stats(
     # Per station counts
     station_counts = {
         "TIEP_NHAN": db.query(models.PatientRegistration).filter(models.PatientRegistration.status == "DA_XAC_NHAN").count(),
-        "TU_VAN_SL": db.query(models.PatientRegistration).filter(models.PatientRegistration.status == "DA_TIEP_NHAN").count(),
-        "LAY_MAU": db.query(models.PatientRegistration).filter(models.PatientRegistration.status == "CHO_XET_NGHIEM").count(),
-        "TRA_KQ": db.query(models.PatientRegistration).filter(models.PatientRegistration.status == "CHO_KET_QUA").count()
+        "KHAM_SL": db.query(models.PatientRegistration).filter(models.PatientRegistration.status == "DA_TIEP_NHAN").count(),
+        "XET_NGHIEM": db.query(models.PatientRegistration).filter(models.PatientRegistration.status == "CHO_XET_NGHIEM").count(),
+        "TU_VAN": db.query(models.PatientRegistration).filter(models.PatientRegistration.status == "CHO_TU_VAN").count()
     }
     
     return {

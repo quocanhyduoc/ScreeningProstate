@@ -56,7 +56,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
       
       <div 
         onClick={() => !disabled && setIsOpen(!isOpen)}
-        className={`w-full px-5 py-4 bg-gray-50 border-2 rounded-2xl cursor-pointer flex items-center justify-between transition-all ${
+        className={`w-full px-5 py-4 bg-gray-50 border-2 rounded-lg cursor-pointer flex items-center justify-between transition-all ${
           isOpen ? 'bg-white border-blue-500' : 'border-transparent'
         } ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white hover:border-gray-200'}`}
       >
@@ -72,7 +72,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="absolute z-[100] w-full mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden"
+            className="absolute z-[100] w-full mt-2 bg-white rounded-lg shadow-2xl border border-gray-100 overflow-hidden"
           >
             <div className="p-3 border-b border-gray-50">
               <div className="relative">
@@ -81,7 +81,7 @@ const SearchableSelect: React.FC<SearchableSelectProps> = ({
                   autoFocus
                   type="text"
                   placeholder="Tìm kiếm..."
-                  className="w-full pl-10 pr-4 py-2 bg-gray-50 rounded-xl outline-none focus:ring-2 focus:ring-blue-100 transition-all text-sm font-medium"
+                  className="w-full pl-10 pr-4 py-2 bg-gray-50 rounded-lg outline-none focus:ring-2 focus:ring-blue-100 transition-all text-sm font-medium"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onClick={(e) => e.stopPropagation()}

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect, File, UploadFile, Form
+from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect, File, UploadFile, Form, BackgroundTasks
 from sqlalchemy.orm import Session
 from sqlalchemy import func, text
 from typing import List, Optional
@@ -70,7 +70,7 @@ def get_survey_data(registration_id: int, db: Session = Depends(get_db), current
     return survey
 
 @router.patch("/registration/{patient_id}")
-def update_registration_status(patient_id: int, status_update: dict, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+async def update_registration_status(patient_id: int, status_update: RegistrationUpdate, background_tasks: BackgroundTasks, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     if current_user["role"] not in ["SUPERADMIN", "CLINICAL"]:
         raise HTTPException(status_code=403, detail="Chỉ bộ phận Lâm sàng hoặc Admin mới có quyền cập nhật.")
     
@@ -78,14 +78,21 @@ def update_registration_status(patient_id: int, status_update: dict, db: Session
     if not patient:
         raise HTTPException(status_code=404, detail="Không tìm thấy bản ghi")
     
-    if "status" in status_update:
-        patient.status = status_update["status"]
-    if "phone_verified" in status_update:
-        patient.phone_verified = status_update["phone_verified"]
+    if status_update.status is not None:
+        patient.status = status_update.status
+    if status_update.phone_verified is not None:
+        patient.phone_verified = status_update.phone_verified
         
-    db.commit()
-    asyncio.create_task(manager.broadcast({"type": "UPDATE_PATIENT", "patient_id": patient_id, "status": patient.status}))
-    return {"message": "Updated successfully"}
+    try:
+        db.commit()
+        db.refresh(patient)
+        background_tasks.add_task(manager.broadcast, {"type": "UPDATE_PATIENT", "patient_id": patient_id, "status": patient.status})
+        return {"message": "Updated successfully"}
+    except Exception as e:
+        print(f"DEBUG: ERROR in update_registration_status: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/export")
 def export_to_excel(db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
@@ -156,7 +163,7 @@ def export_to_excel(db: Session = Depends(get_db), current_user: dict = Depends(
 
 # --- PATIENT FULL MANAGEMENT (Admin Only) ---
 @router.put("/registration/{patient_id}")
-def edit_patient_registration(patient_id: int, update_data: RegistrationUpdate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+async def edit_patient_registration(patient_id: int, update_data: RegistrationUpdate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     if current_user["role"] != "SUPERADMIN":
         raise HTTPException(status_code=403, detail="Chỉ Admin mới có quyền sửa đổi thông tin bệnh nhân.")
     
@@ -168,7 +175,7 @@ def edit_patient_registration(patient_id: int, update_data: RegistrationUpdate, 
         setattr(patient, key, value)
     
     db.commit()
-    asyncio.create_task(manager.broadcast({"type": "UPDATE_PATIENT", "patient_id": patient_id, "action": "EDIT"}))
+    await manager.broadcast({"type": "UPDATE_PATIENT", "patient_id": patient_id, "action": "EDIT"})
     return {"message": "Cập nhật thông tin thành công"}
 
 @router.post("/patient/{patient_id}/ultrasound")
@@ -204,10 +211,10 @@ async def add_ultrasound_result(
     if image_paths:
         survey.ultrasound_images = image_paths
     survey.is_ultrasound_done = True
-    patient.status = "DA_SIEU_AM"
+    patient.status = "DA_XET_NGHIEM"
     db.commit()
     
-    asyncio.create_task(manager.broadcast({"type": "UPDATE_PATIENT", "patient_id": patient_id, "status": "DA_SIEU_AM"}))
+    await manager.broadcast({"type": "UPDATE_PATIENT", "patient_id": patient_id, "status": "DA_XET_NGHIEM"})
     return {"message": "Success"}
 
 @router.post("/patient/{patient_id}/psa")
@@ -229,10 +236,10 @@ async def add_psa_result(
         
     survey.psa_value = psa_value
     survey.is_psa_done = True
-    patient.status = "DA_CO_KET_QUA_MAU"
+    patient.status = "CHO_TU_VAN"
     db.commit()
     
-    asyncio.create_task(manager.broadcast({"type": "UPDATE_PATIENT", "patient_id": patient_id, "status": "DA_CO_KET_QUA_MAU", "psa_value": psa_value}))
+    await manager.broadcast({"type": "UPDATE_PATIENT", "patient_id": patient_id, "status": "CHO_TU_VAN", "psa_value": psa_value})
     return {"message": "Success"}
 
 @router.get("/scan/{qr_code}")
@@ -248,7 +255,7 @@ def scan_patient(qr_code: str, db: Session = Depends(get_db), current_user: dict
     return patient
 
 @router.delete("/registration/{patient_id}")
-def delete_patient_registration(patient_id: int, payload: dict, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+async def delete_patient_registration(patient_id: int, payload: dict, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     if current_user["role"] != "SUPERADMIN":
         raise HTTPException(status_code=403, detail="Chỉ Admin mới có quyền xóa dữ liệu.")
     
@@ -281,7 +288,7 @@ def list_users(db: Session = Depends(get_db), current_user: dict = Depends(get_c
     return db.query(User).all()
 
 @router.post("/users", response_model=UserSchema)
-def create_user(user: UserCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+async def create_user(user: UserCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     if current_user["role"] != "SUPERADMIN":
         raise HTTPException(status_code=403, detail="Not authorized")
     
@@ -301,7 +308,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db), current_user: d
     return new_user
 
 @router.patch("/users/{user_id}", response_model=UserSchema)
-def update_user(user_id: int, update: UserUpdate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+async def update_user(user_id: int, update: UserUpdate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     if current_user["role"] != "SUPERADMIN":
         raise HTTPException(status_code=403, detail="Not authorized")
     
@@ -319,7 +326,7 @@ def update_user(user_id: int, update: UserUpdate, db: Session = Depends(get_db),
     return user
 
 @router.delete("/users/{user_id}")
-def delete_user(user_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+async def delete_user(user_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     if current_user["role"] != "SUPERADMIN":
         raise HTTPException(status_code=403, detail="Not authorized")
     
@@ -335,7 +342,7 @@ def delete_user(user_id: int, db: Session = Depends(get_db), current_user: dict 
     return {"message": "User deleted"}
 
 @router.patch("/settings")
-def update_settings(update: SystemSettingsUpdate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+async def update_settings(update: SystemSettingsUpdate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     if current_user["role"] != "SUPERADMIN":
         raise HTTPException(status_code=403, detail="Only SuperAdmin can change system settings")
     
@@ -353,7 +360,7 @@ def update_settings(update: SystemSettingsUpdate, db: Session = Depends(get_db),
     return {"message": "Settings updated"}
 
 @router.post("/reset-all")
-def reset_all_data(payload: dict, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+async def reset_all_data(payload: dict, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     if current_user["role"] != "SUPERADMIN":
         raise HTTPException(status_code=403, detail="Chỉ SuperAdmin mới có quyền xóa toàn bộ dữ liệu.")
     

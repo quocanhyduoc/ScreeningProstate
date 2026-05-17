@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { 
   ShieldCheck, AlertTriangle, Save, 
   ChevronRight, Heart, Activity, User,
-  Dna, Thermometer, Info, CheckCircle, RefreshCw
+  Dna, Thermometer, Info, CheckCircle, RefreshCw, X, ArrowLeft
 } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -41,38 +41,74 @@ export default function SurveyForm({ patientId, onComplete }: any) {
   });
 
   const [loading, setLoading] = useState(false);
+  const [initialData, setInitialData] = useState<any>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [actionType, setActionType] = useState<'save' | 'complete' | null>(null);
 
   React.useEffect(() => {
     const fetchExistingSurvey = async () => {
       try {
         const token = localStorage.getItem('token');
-        if (!token) return; // Public patients do not fetch existing surveys
+        if (!token) return;
 
         const res = await axios.get(`${API_URL}/clinical/survey/${patientId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (res.data) {
           setFormData(res.data);
+          setInitialData(JSON.parse(JSON.stringify(res.data))); // Deep clone for comparison
+        } else {
+          setInitialData(JSON.parse(JSON.stringify(formData)));
         }
       } catch (e) {
         console.log("No existing survey found or error fetching");
+        setInitialData(JSON.parse(JSON.stringify(formData)));
       }
     };
     if (patientId) fetchExistingSurvey();
   }, [patientId]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const hasChanges = () => {
+    if (!initialData) return false;
+    return JSON.stringify(formData) !== JSON.stringify(initialData);
+  };
+
+  const handleAction = async (type: 'save' | 'complete') => {
+    if (type === 'save' && !hasChanges()) {
+      alert("Dữ liệu chưa có thay đổi nào để lưu.");
+      return;
+    }
+    
+    setActionType(type);
+    if (type === 'save') {
+      setShowConfirmModal(true);
+    } else {
+      await executeSubmit(type);
+    }
+  };
+
+  const executeSubmit = async (type: 'save' | 'complete') => {
     setLoading(true);
+    setShowConfirmModal(false);
     try {
       const token = localStorage.getItem('token');
+      // 1. Save Survey Data
       await axios.post(`${API_URL}/clinical/survey`, formData, {
         headers: { Authorization: `Bearer ${token}` }
       });
+
+      // 2. If complete, update registration status
+      if (type === 'complete') {
+        await axios.patch(`${API_URL}/clinical/status/${patientId}`, { status: 'CHO_XET_NGHIEM' }, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      }
+
+      alert(type === 'complete' ? "Đã hoàn tất và chuyển bệnh nhân lấy máu!" : "Đã lưu các thay đổi!");
       onComplete();
     } catch (e) {
       console.error(e);
-      alert("Lỗi khi lưu bảng hỏi. Vui lòng kiểm tra lại kết nối.");
+      alert("Lỗi khi xử lý dữ liệu. Vui lòng thử lại.");
     } finally {
       setLoading(false);
     }
@@ -83,7 +119,7 @@ export default function SurveyForm({ patientId, onComplete }: any) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-12 pb-32">
+    <form onSubmit={(e) => e.preventDefault()} className="space-y-12 pb-32">
       
       {/* I. Genetic Section */}
       <section className="space-y-6">
@@ -97,18 +133,18 @@ export default function SurveyForm({ patientId, onComplete }: any) {
              active={formData.brca_mutation} 
              onClick={() => toggleField('brca_mutation')} 
            />
-           <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-6">
+           <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm flex items-center gap-6">
               <div className="flex-1 space-y-1">
                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Cha chẩn đoán K lúc</label>
                  <div className="relative">
-                    <input type="number" value={formData.father_age_diag || ""} onChange={(e) => setFormData({...formData, father_age_diag: e.target.value ? parseInt(e.target.value) : null})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-blue-500 transition-all" placeholder="Tuổi" />
+                    <input type="number" value={formData.father_age_diag || ""} onChange={(e) => setFormData({...formData, father_age_diag: e.target.value ? parseInt(e.target.value) : null})} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm font-bold outline-none focus:border-blue-500 transition-all" placeholder="Tuổi" />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">TUỔI</span>
                  </div>
               </div>
               <div className="flex-1 space-y-1">
                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Anh/Em chẩn đoán K lúc</label>
                  <div className="relative">
-                    <input type="number" value={formData.brother_age_diag || ""} onChange={(e) => setFormData({...formData, brother_age_diag: e.target.value ? parseInt(e.target.value) : null})} className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-bold outline-none focus:border-blue-500 transition-all" placeholder="Tuổi" />
+                    <input type="number" value={formData.brother_age_diag || ""} onChange={(e) => setFormData({...formData, brother_age_diag: e.target.value ? parseInt(e.target.value) : null})} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm font-bold outline-none focus:border-blue-500 transition-all" placeholder="Tuổi" />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">TUỔI</span>
                  </div>
               </div>
@@ -182,17 +218,69 @@ export default function SurveyForm({ patientId, onComplete }: any) {
         </div>
       </section>
 
-      {/* Fixed Footer Bar - Premium Look */}
-      <div className="fixed bottom-0 left-64 right-0 bg-white/80 backdrop-blur-xl border-t border-slate-200 p-6 z-[50] flex justify-end px-12">
+      {/* Fixed Footer Bar - Modern split buttons */}
+      <div className="fixed bottom-0 left-64 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-200 p-6 z-[50] flex justify-between items-center px-12 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
         <button 
-          type="submit" 
-          disabled={loading}
-          className="bg-[#0067b8] hover:bg-blue-700 text-white px-12 py-4 rounded-2xl font-black text-sm shadow-xl shadow-blue-100 flex items-center gap-3 transition-all active:scale-95 disabled:opacity-50"
+          type="button"
+          onClick={() => onComplete()}
+          className="bg-white border-2 border-slate-200 text-slate-500 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center gap-2"
         >
-           {loading ? <RefreshCw className="animate-spin" size={20} /> : <ShieldCheck size={20} />}
-           HOÀN TẤT & CHUYỂN BÀN LẤY MÁU
+          <X size={18} />
+          HỦY CHỈNH SỬA
         </button>
+
+        <div className="flex items-center gap-4">
+           <button 
+             type="button"
+             disabled={loading}
+             onClick={() => handleAction('save')}
+             className="bg-white border-2 border-[#0067b8] text-[#0067b8] px-10 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-blue-50 transition-all flex items-center gap-2 shadow-sm"
+           >
+              {loading && actionType === 'save' ? <RefreshCw className="animate-spin" size={18} /> : <Save size={18} />}
+              LƯU LẠI CHỈNH SỬA
+           </button>
+
+           <button 
+             type="button"
+             disabled={loading}
+             onClick={() => handleAction('complete')}
+             className="bg-[#0067b8] hover:bg-blue-700 text-white px-12 py-4 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-100 flex items-center gap-3 transition-all active:scale-95 disabled:opacity-50"
+           >
+              {loading && actionType === 'complete' ? <RefreshCw className="animate-spin" size={20} /> : <CheckCircle size={20} />}
+              HOÀN TẤT & CHUYỂN BÀN LẤY MÁU
+           </button>
+        </div>
       </div>
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowConfirmModal(false)} />
+           <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="relative bg-white rounded-3xl p-10 max-w-md w-full shadow-2xl">
+              <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center mb-6">
+                 <AlertTriangle size={32} />
+              </div>
+              <h3 className="text-2xl font-black text-slate-900 mb-2">Xác nhận thay đổi?</h3>
+              <p className="text-slate-500 font-medium leading-relaxed mb-8 text-lg">
+                 Ông vừa thay đổi các thông tin trong bảng khảo sát này. Ông có chắc chắn muốn lưu lại các chỉnh sửa này không?
+              </p>
+              <div className="flex gap-4">
+                 <button 
+                   onClick={() => setShowConfirmModal(false)}
+                   className="flex-1 py-4 bg-slate-100 text-slate-500 rounded-xl font-black text-sm uppercase tracking-widest hover:bg-slate-200 transition-all"
+                 >
+                    QUAY LẠI
+                 </button>
+                 <button 
+                   onClick={() => executeSubmit('save')}
+                   className="flex-1 py-4 bg-blue-600 text-white rounded-xl font-black text-sm uppercase tracking-widest shadow-lg shadow-blue-100 hover:bg-blue-700 transition-all"
+                 >
+                    XÁC NHẬN LƯU
+                 </button>
+              </div>
+           </motion.div>
+        </div>
+      )}
     </form>
   );
 }
@@ -208,7 +296,7 @@ function ToggleCard({ label, active, onClick, warning }: any) {
       }`}
     >
        <span className="text-[13px] font-bold leading-tight uppercase tracking-tight">{label}</span>
-       <div className={`w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all ${
+       <div className={`w-8 h-8 rounded-lg border-2 flex items-center justify-center transition-all ${
          active 
            ? (warning ? 'bg-red-500 border-red-500' : 'bg-blue-500 border-blue-500') 
            : 'border-slate-100 group-hover:border-slate-200 bg-slate-50'

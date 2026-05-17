@@ -34,7 +34,7 @@ const Scanner: React.FC<ScannerProps> = ({ onScanSuccess, onScanFailure }) => {
   }, [onScanSuccess, onScanFailure]);
 
   return (
-    <div className="w-full h-full bg-black relative flex items-center justify-center overflow-hidden rounded-3xl">
+    <div className="w-full h-full bg-black relative flex items-center justify-center overflow-hidden rounded-lg">
       <div id="reader" className="w-full h-full absolute inset-0" />
       <style jsx global>{`
         #reader { border: none !important; width: 100% !important; height: 100% !important; }

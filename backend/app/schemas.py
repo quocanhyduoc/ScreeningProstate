@@ -36,6 +36,7 @@ class RegistrationUpdate(BaseModel):
     appointment_slot: Optional[str] = None
     status: Optional[str] = None
     is_extra_slot: Optional[bool] = None
+    phone_verified: Optional[bool] = None
 
 class RegistrationSchema(RegistrationBase):
     id: int
@@ -133,6 +134,9 @@ class SurveyResponse(SurveyBase):
 
     class Config:
         from_attributes = True
+
+class StatusUpdate(BaseModel):
+    status: str
 
 class QueueUpdate(BaseModel):
     station: str

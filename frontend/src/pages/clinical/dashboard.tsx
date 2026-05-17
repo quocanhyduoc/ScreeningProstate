@@ -184,7 +184,7 @@ export default function ClinicalDashboard() {
     <div className="min-h-screen bg-[#F8FAFC] flex text-[#1E293B]">
       <AnimatePresence>
         {toast && (
-          <motion.div initial={{ y: -100, opacity: 0 }} animate={{ y: 20, opacity: 1 }} exit={{ y: -100, opacity: 0 }} className="fixed top-4 right-4 z-[100] bg-[#0067b8] text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 border border-blue-500">
+          <motion.div initial={{ y: -100, opacity: 0 }} animate={{ y: 20, opacity: 1 }} exit={{ y: -100, opacity: 0 }} className="fixed top-4 right-4 z-[100] bg-[#0067b8] text-white px-6 py-4 rounded-lg shadow-2xl flex items-center gap-4 border border-blue-500">
              <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center"><Bell size={18} /></div>
              <p className="font-bold text-[14px]">{toast}</p>
              <button onClick={() => setToast(null)} className="p-1 hover:bg-white/10 rounded-md"><X size={16} /></button>
@@ -219,11 +219,11 @@ export default function ClinicalDashboard() {
           </nav>
         </div>
         <div className="p-6 border-t border-slate-100 space-y-4">
-          <div className="px-4 py-3 bg-slate-50 rounded-xl">
+          <div className="px-4 py-3 bg-slate-50 rounded-lg">
              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nhân viên Clinical</p>
              <p className="text-[13px] font-bold text-slate-700 truncate">{username}</p>
           </div>
-          <button onClick={() => router.push('/login')} className="w-full flex items-center justify-center gap-2 py-3 text-[12px] font-bold text-red-500 bg-red-50 rounded-xl hover:bg-red-100 transition-all">
+          <button onClick={() => router.push('/login')} className="w-full flex items-center justify-center gap-2 py-3 text-[12px] font-bold text-red-500 bg-red-50 rounded-lg hover:bg-red-100 transition-all">
             <LogOut size={16} /> Thoát
           </button>
         </div>
@@ -238,7 +238,7 @@ export default function ClinicalDashboard() {
              <p className="text-[12px] text-slate-400 font-medium italic">Hệ thống quản lý hàng đợi và tiến trình Lâm sàng</p>
           </div>
           <div className="flex items-center gap-3">
-             <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-2xl px-4 py-1 shadow-sm">
+             <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-4 py-1 shadow-sm">
                <input
                  type="number"
                  min={1}
@@ -249,16 +249,16 @@ export default function ClinicalDashboard() {
                  placeholder="Số"
                />
              </div>
-             <button onClick={() => handleCallNext(parseInt(manualNumber) || 1)} className="flex items-center gap-2 px-6 py-3 bg-[#0067b8] text-white rounded-2xl font-black text-[13px] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 active:scale-95">
+             <button onClick={() => handleCallNext(parseInt(manualNumber) || 1)} className="flex items-center gap-2 px-6 py-3 bg-[#0067b8] text-white rounded-lg font-black text-[13px] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 active:scale-95">
                <Bell size={18} className="animate-pulse" /> MỜI
              </button>
              <button onClick={() => {
                const currentQ = queueStatus.find(q => q.station === STATION_TO_QUEUE_KEY[activeStation]);
                handleCallNext((currentQ?.current_number || 0) + 1);
-             }} className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-200 text-slate-600 rounded-2xl font-black text-[12px] hover:bg-slate-50 transition-all shadow-sm">
+             }} className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-200 text-slate-600 rounded-lg font-black text-[12px] hover:bg-slate-50 transition-all shadow-sm">
                KẾ TIẾP <ChevronRight size={16} />
              </button>
-             <button onClick={fetchData} className="p-3 bg-white border border-slate-200 rounded-xl text-slate-400 hover:bg-slate-50 transition-all shadow-sm">
+             <button onClick={fetchData} className="p-3 bg-white border border-slate-200 rounded-lg text-slate-400 hover:bg-slate-50 transition-all shadow-sm">
                <RefreshCw size={18} />
              </button>
           </div>
@@ -273,31 +273,31 @@ export default function ClinicalDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
            <div className="lg:col-span-2 space-y-8">
-              <section className="bg-white p-8 rounded-[32px] border border-slate-200 shadow-sm relative overflow-hidden">
+              <section className="bg-white p-8 rounded-xl border border-slate-200 shadow-sm relative overflow-hidden">
                  <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-[100px] -mr-10 -mt-10 opacity-50"></div>
                  <div className="flex items-center justify-between mb-8">
                    <h3 className="font-bold text-lg flex items-center gap-3"><QrCode className="text-blue-600" /> Nhận diện Bệnh nhân</h3>
                  </div>
-                 <div className="max-w-md mx-auto aspect-square bg-[#0F172A] rounded-[40px] relative overflow-hidden flex flex-col items-center justify-center gap-6 border-4 border-slate-100 shadow-inner">
+                 <div className="max-w-md mx-auto aspect-square bg-[#0F172A] rounded-xl relative overflow-hidden flex flex-col items-center justify-center gap-6 border-4 border-slate-100 shadow-inner">
                    {isScannerActive ? (
                      <div className="w-full h-full relative">
                        <Scanner onScanSuccess={(text) => { handleScanMock(text); setIsScannerActive(false); }} />
-                       <button onClick={() => setIsScannerActive(false)} className="absolute top-6 right-6 z-20 p-3 bg-black/60 text-white rounded-full hover:bg-black/80 transition-all backdrop-blur-md border border-white/10">
+                       <button onClick={() => setIsScannerActive(false)} className="absolute top-6 right-6 z-20 p-3 bg-black/60 text-white rounded-md hover:bg-black/80 transition-all backdrop-blur-md border border-white/10">
                          <XCircle size={28} />
                        </button>
                      </div>
                    ) : (
                      <>
-                       <div className="w-56 h-56 border-2 border-blue-500/30 rounded-[40px] relative flex items-center justify-center">
+                       <div className="w-56 h-56 border-2 border-blue-500/30 rounded-xl relative flex items-center justify-center">
                           <div className="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-blue-500 -mt-1 -ml-1 rounded-tl-2xl"></div>
                           <div className="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-blue-500 -mt-1 -mr-1 rounded-tr-2xl"></div>
                           <div className="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-blue-500 -mb-1 -ml-1 rounded-bl-2xl"></div>
                           <div className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-blue-500 -mb-1 -mr-1 rounded-br-2xl"></div>
                           <QrCode size={80} className="text-slate-800 opacity-20" />
-                          <motion.div animate={{ top: ['10%', '90%', '10%'] }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }} className="absolute left-4 right-4 h-1 bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,1)] rounded-full" />
+                          <motion.div animate={{ top: ['10%', '90%', '10%'] }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }} className="absolute left-4 right-4 h-1 bg-blue-500 shadow-[0_0_20px_rgba(59,130,246,1)] rounded-md" />
                        </div>
                        <div className="text-center space-y-4 px-10">
-                          <button onClick={() => setIsScannerActive(true)} className="px-10 py-5 bg-[#0067b8] text-white rounded-[20px] font-black text-[13px] uppercase tracking-[0.2em] shadow-2xl shadow-blue-200 hover:bg-blue-700 hover:-translate-y-1 transition-all active:translate-y-0">
+                          <button onClick={() => setIsScannerActive(true)} className="px-10 py-5 bg-[#0067b8] text-white rounded-lg font-black text-[13px] uppercase tracking-[0.2em] shadow-2xl shadow-blue-200 hover:bg-blue-700 hover:-translate-y-1 transition-all active:translate-y-0">
                              KÍCH HOẠT CAMERA
                           </button>
                           <p className="text-slate-400 text-[10px] font-black uppercase tracking-[0.3em] leading-loose">Quét mã trên Digital Badge<br/>hoặc thẻ CCCD vật lý</p>
@@ -306,19 +306,19 @@ export default function ClinicalDashboard() {
                    )}
                    <div className={`absolute bottom-10 w-full max-w-[280px] px-4 z-20 transition-all duration-500 ${isScannerActive ? 'opacity-0 hover:opacity-100' : 'opacity-100'}`}>
                      <div className="relative">
-                         <input onKeyDown={(e) => e.key === 'Enter' && handleScanMock(e.currentTarget.value)} placeholder="Hoặc nhập CCCD..." className={`w-full border rounded-2xl px-6 py-4 text-sm font-bold outline-none shadow-sm transition-all ${isScannerActive ? 'bg-white/10 border-white/20 text-white placeholder:text-white/30 backdrop-blur-md' : 'bg-white border-slate-200 text-slate-900 placeholder:text-slate-300'}`} />
+                         <input onKeyDown={(e) => e.key === 'Enter' && handleScanMock(e.currentTarget.value)} placeholder="Hoặc nhập CCCD..." className={`w-full border rounded-lg px-6 py-4 text-sm font-bold outline-none shadow-sm transition-all ${isScannerActive ? 'bg-white/10 border-white/20 text-white placeholder:text-white/30 backdrop-blur-md' : 'bg-white border-slate-200 text-slate-900 placeholder:text-slate-300'}`} />
                          <Search className={`absolute right-6 top-1/2 -translate-y-1/2 ${isScannerActive ? 'text-white/30' : 'text-slate-300'}`} size={18} />
                      </div>
                    </div>
                  </div>
               </section>
 
-              <section className="bg-white rounded-[32px] border border-slate-200 shadow-sm overflow-hidden">
+              <section className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                  <div className="p-8 border-b border-slate-100 flex justify-between items-center">
                    <h3 className="font-bold text-lg flex items-center gap-3"><Users className="text-blue-600" /> Bệnh nhân chờ tại bàn</h3>
                    <div className="relative">
                       <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                      <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Tìm tên, STT..." className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold outline-none focus:border-blue-500 w-48" />
+                      <input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Tìm tên, STT..." className="pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold outline-none focus:border-blue-500 w-48" />
                    </div>
                  </div>
                  <div className="overflow-x-auto">
@@ -335,7 +335,7 @@ export default function ClinicalDashboard() {
                          {registrations.filter(r => r.full_name.toLowerCase().includes(searchTerm.toLowerCase()) || String(r.registration_number).includes(searchTerm)).map((reg) => (
                            <tr key={reg.id} className="hover:bg-blue-50/20 transition-all cursor-pointer" onClick={() => setSelectedPatient(reg)}>
                              <td className="px-8 py-4">
-                               <div className="w-9 h-9 bg-slate-100 rounded-xl flex items-center justify-center font-black text-xs text-slate-600 border border-slate-200">
+                               <div className="w-9 h-9 bg-slate-100 rounded-lg flex items-center justify-center font-black text-xs text-slate-600 border border-slate-200">
                                   {reg.registration_number?.toString().padStart(3, '0')}
                                </div>
                              </td>
@@ -372,13 +372,13 @@ export default function ClinicalDashboard() {
            <div className="space-y-8">
               <AnimatePresence mode="wait">
                  {selectedPatient ? (
-                   <motion.section initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="bg-white rounded-[32px] border border-slate-200 shadow-xl overflow-hidden sticky top-8">
+                   <motion.section initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="bg-white rounded-xl border border-slate-200 shadow-xl overflow-hidden sticky top-8">
                       <div className="p-8 bg-[#0067b8] text-white">
                          <div className="flex justify-between items-start mb-6">
-                           <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center font-black text-2xl">
+                           <div className="w-14 h-14 bg-white/20 rounded-lg flex items-center justify-center font-black text-2xl">
                               #{selectedPatient.registration_number?.toString().padStart(3, '0')}
                            </div>
-                           <button onClick={() => setSelectedPatient(null)} className="p-2 hover:bg-white/10 rounded-full transition-colors"><XCircle size={24}/></button>
+                           <button onClick={() => setSelectedPatient(null)} className="p-2 hover:bg-white/10 rounded-md transition-colors"><XCircle size={24}/></button>
                          </div>
                          <h4 className="text-xl font-bold mb-1">{selectedPatient.full_name}</h4>
                          <p className="text-blue-100 text-[11px] font-bold flex items-center gap-2 uppercase tracking-widest"><Fingerprint size={14}/> CCCD: {selectedPatient.cccd}</p>
@@ -410,7 +410,7 @@ export default function ClinicalDashboard() {
                              <ActionButton icon={<MessageSquare/>} label="HOÀN TẤT TƯ VẤN" color="bg-purple-600 hover:bg-purple-700" onClick={() => handleUpdateStatus(selectedPatient.id, 'HOAN_THANH')} />
                            )}
 
-                           <div className="bg-slate-50 p-4 rounded-2xl flex gap-3">
+                           <div className="bg-slate-50 p-4 rounded-lg flex gap-3">
                               <AlertCircle size={16} className="text-slate-400 flex-shrink-0" />
                               <p className="text-[11px] text-slate-500 font-medium leading-relaxed">
                                  Kiểm tra kỹ thông tin bệnh nhân trước khi xác nhận tiến trình.
@@ -420,8 +420,8 @@ export default function ClinicalDashboard() {
                       </div>
                    </motion.section>
                  ) : (
-                   <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-[32px] p-12 text-center flex flex-col items-center gap-4">
-                      <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm text-slate-300"><UserCheck size={32} /></div>
+                   <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl p-12 text-center flex flex-col items-center gap-4">
+                      <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center shadow-sm text-slate-300"><UserCheck size={32} /></div>
                       <p className="font-bold text-slate-400 text-sm uppercase tracking-widest">Chưa chọn hồ sơ</p>
                    </div>
                  )}
@@ -440,7 +440,7 @@ export default function ClinicalDashboard() {
 
 function NavIcon({ icon, label, active, onClick }: any) {
   return (
-    <button onClick={onClick} className={`w-full flex items-center gap-3 p-3.5 rounded-xl text-[13px] font-bold transition-all ${active ? 'bg-blue-50 text-[#0067b8]' : 'text-slate-500 hover:bg-slate-50'}`}>
+    <button onClick={onClick} className={`w-full flex items-center gap-3 p-3.5 rounded-lg text-[13px] font-bold transition-all ${active ? 'bg-blue-50 text-[#0067b8]' : 'text-slate-500 hover:bg-slate-50'}`}>
       {icon} <span>{label}</span>
     </button>
   );
@@ -448,7 +448,7 @@ function NavIcon({ icon, label, active, onClick }: any) {
 
 function StatCard({ label, value, color }: any) {
   return (
-    <div className={`p-6 bg-white rounded-3xl border shadow-sm ${color}`}>
+    <div className={`p-6 bg-white rounded-lg border shadow-sm ${color}`}>
        <p className="text-[10px] font-black uppercase tracking-widest opacity-60 mb-2">{label}</p>
        <p className="text-3xl font-black tracking-tight tabular-nums">{value || 0}</p>
     </div>
@@ -457,7 +457,7 @@ function StatCard({ label, value, color }: any) {
 
 function ActionButton({ icon, label, color, onClick }: any) {
   return (
-    <button onClick={onClick} className={`w-full ${color} text-white py-4 rounded-2xl font-black text-sm flex items-center justify-center gap-3 shadow-lg shadow-blue-50 transition-all active:scale-95`}>
+    <button onClick={onClick} className={`w-full ${color} text-white py-4 rounded-lg font-black text-sm flex items-center justify-center gap-3 shadow-lg shadow-blue-50 transition-all active:scale-95`}>
        {React.cloneElement(icon, { size: 18 })} {label}
     </button>
   );
@@ -476,7 +476,7 @@ function LoadingScreen() {
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
        <div className="flex flex-col items-center gap-4">
-          <div className="w-10 h-10 border-4 border-blue-50 border-t-[#0067b8] rounded-full animate-spin" />
+          <div className="w-10 h-10 border-4 border-blue-50 border-t-[#0067b8] rounded-md animate-spin" />
           <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-slate-400">Syncing Clinical Data...</p>
        </div>
     </div>

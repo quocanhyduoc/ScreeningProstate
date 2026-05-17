@@ -148,7 +148,7 @@ export default function QuyTrinhPage() {
             rotate: [0, 5, 0],
           }}
           transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-          className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-400 rounded-full blur-[120px]" 
+          className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-400 rounded-md blur-[120px]" 
         />
         <motion.div 
           animate={{ 
@@ -156,7 +156,7 @@ export default function QuyTrinhPage() {
             rotate: [0, -5, 0],
           }}
           transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-400 rounded-full blur-[120px]" 
+          className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-indigo-400 rounded-md blur-[120px]" 
         />
       </div>
 
@@ -167,7 +167,7 @@ export default function QuyTrinhPage() {
             <span>Quay lại trang chủ</span>
           </Link>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-200">
+            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-200">
               <ClipboardList className="text-white" size={20} />
             </div>
             <h1 className="text-lg font-black text-blue-900 hidden sm:block">QUY TRÌNH SÀNG LỌC</h1>
@@ -179,9 +179,9 @@ export default function QuyTrinhPage() {
         {/* Progress Bar */}
         <div className="w-full mb-12 hidden md:block">
           <div className="flex justify-between items-center relative max-w-4xl mx-auto">
-            <div className="absolute left-0 right-0 h-1 bg-gray-200 top-1/2 -translate-y-1/2 z-0 rounded-full" />
+            <div className="absolute left-0 right-0 h-1 bg-gray-200 top-1/2 -translate-y-1/2 z-0 rounded-md" />
             <motion.div 
-              className="absolute left-0 h-1 bg-blue-600 top-1/2 -translate-y-1/2 z-0 rounded-full shadow-[0_0_10px_rgba(37,99,235,0.4)]"
+              className="absolute left-0 h-1 bg-blue-600 top-1/2 -translate-y-1/2 z-0 rounded-md shadow-[0_0_10px_rgba(37,99,235,0.4)]"
               initial={{ width: 0 }}
               animate={{ width: `${(currentStep / (STEPS.length - 1)) * 100}%` }}
               transition={{ type: "spring", stiffness: 100, damping: 20 }}
@@ -199,7 +199,7 @@ export default function QuyTrinhPage() {
                   animate={{
                     scale: idx === currentStep ? 1.2 : 1,
                   }}
-                  className={`w-10 h-10 rounded-full flex items-center justify-center cursor-pointer transition-colors duration-300 ${
+                  className={`w-10 h-10 rounded-md flex items-center justify-center cursor-pointer transition-colors duration-300 ${
                     idx <= currentStep ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-white text-gray-400 border-2 border-gray-100 hover:border-blue-200'
                   }`}
                 >
@@ -208,7 +208,7 @@ export default function QuyTrinhPage() {
                 {idx === currentStep && (
                   <motion.div 
                     layoutId="active-dot"
-                    className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full"
+                    className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-md"
                   />
                 )}
               </div>
@@ -238,8 +238,8 @@ export default function QuyTrinhPage() {
                 transition={{ delay: 0.2 }}
                 className="relative group"
               >
-                <div className={`absolute inset-0 ${STEPS[currentStep].color} rounded-[40px] blur-3xl opacity-20 group-hover:opacity-30 transition-opacity duration-500`} />
-                <div className="relative rounded-[40px] overflow-hidden shadow-2xl border-[6px] border-white aspect-[4/3] bg-white">
+                <div className={`absolute inset-0 ${STEPS[currentStep].color} rounded-xl blur-3xl opacity-20 group-hover:opacity-30 transition-opacity duration-500`} />
+                <div className="relative rounded-xl overflow-hidden shadow-2xl border-[6px] border-white aspect-[4/3] bg-white">
                   <motion.img 
                     key={STEPS[currentStep].image}
                     initial={{ scale: 1.1, opacity: 0 }}
@@ -264,7 +264,7 @@ export default function QuyTrinhPage() {
                 >
                   <motion.div 
                     whileHover={{ rotate: 10, scale: 1.1 }}
-                    className={`w-20 h-20 ${STEPS[currentStep].color} rounded-[30px] flex items-center justify-center text-white shadow-xl rotate-3`}
+                    className={`w-20 h-20 ${STEPS[currentStep].color} rounded-lg flex items-center justify-center text-white shadow-xl rotate-3`}
                   >
                     {STEPS[currentStep].icon}
                   </motion.div>
@@ -292,7 +292,7 @@ export default function QuyTrinhPage() {
                   <button 
                     onClick={prev} 
                     disabled={currentStep === 0}
-                    className={`p-4 px-6 rounded-2xl border-2 transition-all flex items-center gap-2 font-bold ${
+                    className={`p-4 px-6 rounded-lg border-2 transition-all flex items-center gap-2 font-bold ${
                       currentStep === 0 ? 'border-gray-100 text-gray-300 opacity-50' : 'border-gray-200 text-gray-600 hover:bg-gray-50 active:scale-95 hover:border-blue-200 hover:text-blue-600'
                     }`}
                   >
@@ -302,7 +302,7 @@ export default function QuyTrinhPage() {
                   <button 
                     onClick={next} 
                     disabled={currentStep === STEPS.length - 1}
-                    className={`flex-1 p-4 rounded-2xl transition-all flex items-center justify-center gap-2 font-black shadow-lg ${
+                    className={`flex-1 p-4 rounded-lg transition-all flex items-center justify-center gap-2 font-black shadow-lg ${
                       currentStep === STEPS.length - 1 ? 'bg-gray-100 text-gray-300' : 'bg-blue-600 text-white hover:bg-blue-700 active:scale-[0.98] shadow-blue-200 hover:shadow-blue-300'
                     }`}
                   >

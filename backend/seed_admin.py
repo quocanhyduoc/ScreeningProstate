@@ -1,7 +1,8 @@
 import os
 import sys
+from sqlalchemy.orm import Session
 
-# Add the parent directory to sys.path to allow importing from 'app'
+# Add the project root to sys.path to import app modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from app.database import SessionLocal
@@ -11,28 +12,34 @@ from app.auth import get_password_hash
 def seed_admin():
     db = SessionLocal()
     try:
-        # Check if admin user exists
-        admin_user = db.query(User).filter(User.username == "admin_clinical").first()
+        # 1. Ensure "admin" user exists with correct password and role
+        admin_user = db.query(User).filter(User.username == "admin").first()
         if not admin_user:
-            print("Creating default SUPERADMIN user...")
+            print("Creating default SUPERADMIN 'admin' user...")
             new_admin = User(
-                username="admin_clinical",
+                username="admin",
                 hashed_password=get_password_hash("admin@2026"),
                 role="SUPERADMIN",
-                permissions=["users", "settings", "reports", "calendar", "clinical_reception", "clinical_screening", "clinical_lab", "clinical_consult"]
+                permissions=["users", "settings", "reports", "calendar", "clinical_reception", "clinical_screening", "clinical_lab", "clinical_consult", "overview"]
             )
             db.add(new_admin)
-            db.commit()
-            print("SUPERADMIN user created successfully.")
+            print("SUPERADMIN 'admin' created.")
         else:
-            print("SUPERADMIN user already exists. Updating password...")
+            print("Updating SUPERADMIN 'admin' password and role...")
             admin_user.hashed_password = get_password_hash("admin@2026")
             admin_user.role = "SUPERADMIN"
-            db.commit()
-            print("SUPERADMIN user updated successfully.")
+            # Ensure all permissions are granted
+            admin_user.permissions = ["users", "settings", "reports", "calendar", "clinical_reception", "clinical_screening", "clinical_lab", "clinical_consult", "overview"]
+            print("SUPERADMIN 'admin' updated.")
+        
+        # 2. Remove redundant 'admin_clinical' or any other users
+        other_admins = db.query(User).filter(User.username != "admin").all()
+        for u in other_admins:
+            print(f"Removing redundant user: {u.username}")
+            db.delete(u)
             
-        # Optional: Remove other users if requested (the user said "Only one account is created with superadmin role")
-        # But maybe they just mean "Initially only one". I'll keep others for now unless specified.
+        db.commit()
+        print("Done! Only 'admin' remains as SUPERADMIN.")
         
     except Exception as e:
         print(f"Error seeding admin: {e}")

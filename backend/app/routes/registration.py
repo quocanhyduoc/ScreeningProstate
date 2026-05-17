@@ -54,10 +54,15 @@ async def register_patient(patient: RegistrationCreate, db: Session = Depends(ge
         if 45 <= age <= 50 and not has_risk_history:
             raise HTTPException(status_code=403, detail="Thông tin chưa phù hợp (45-50 tuổi cần có yếu tố nguy cơ tiền sử gia đình).")
 
-        # 4. Generate Registration Number
+        # 4. Generate Registration Number (YYMMNNNN)
+        now = datetime.now()
+        prefix_int = int(now.strftime("%y%m0000"))
         from sqlalchemy import func
-        max_num = db.query(func.max(PatientRegistration.registration_number)).scalar()
-        next_num = (max_num or 0) + 1
+        max_num = db.query(func.max(PatientRegistration.registration_number)).filter(
+            PatientRegistration.registration_number >= prefix_int,
+            PatientRegistration.registration_number < prefix_int + 10000
+        ).scalar()
+        next_num = (max_num + 1) if max_num else (prefix_int + 1)
 
         # 5. Save to database
         patient_data = patient.dict()
@@ -80,6 +85,16 @@ async def register_patient(patient: RegistrationCreate, db: Session = Depends(ge
             "type": "NEW_REGISTRATION",
             "patient_id": db_patient.id
         }))
+
+        # 6. Send Registration Email (Background)
+        if db_patient.email:
+            send_registration_email(
+                patient_email=db_patient.email,
+                patient_name=db_patient.full_name,
+                registration_number=db_patient.registration_number,
+                slot=db_patient.appointment_slot
+            )
+
         return db_patient
 
     except HTTPException as e:
