@@ -22,6 +22,7 @@ export default function ClinicalHubTab({ activeTab, API_URL, fetchData, setToast
    const [searchTerm, setSearchTerm] = useState('');
    const [psaInput, setPsaInput] = useState('');
    const [ultraResult, setUltraResult] = useState('');
+   const [savingLab, setSavingLab] = useState(false);
    const [registrations, setRegistrations] = useState<any[]>([]);
    const [selectedSurvey, setSelectedSurvey] = useState<any>(null);
    const printRef = React.useRef<HTMLDivElement>(null);
@@ -74,17 +75,74 @@ export default function ClinicalHubTab({ activeTab, API_URL, fetchData, setToast
       }
    };
 
-    useEffect(() => {
-       const hasSurvey = scannedPatient && (
-          (activeTab === 'clinical_screening' && stationSubTab === 'completed') ||
-          (activeTab === 'clinical_lab') ||
-          (activeTab === 'clinical_consult')
-       );
-       
-       if (hasSurvey) {
-          fetchSurveyData(scannedPatient.id);
-       }
-    }, [scannedPatient, activeTab, stationSubTab]);
+     useEffect(() => {
+        const hasSurvey = scannedPatient && (
+           (activeTab === 'clinical_screening' && stationSubTab === 'completed') ||
+           (activeTab === 'clinical_lab') ||
+           (activeTab === 'clinical_consult')
+        );
+        
+        if (hasSurvey) {
+           fetchSurveyData(scannedPatient.id);
+        } else {
+           setSelectedSurvey(null);
+        }
+     }, [scannedPatient, activeTab, stationSubTab]);
+
+     useEffect(() => {
+        if (scannedPatient && selectedSurvey && scannedPatient.id === selectedSurvey.registration_id) {
+           setPsaInput(selectedSurvey.psa_value || '');
+           setUltraResult(selectedSurvey.ultrasound_result || '');
+        } else {
+           setPsaInput('');
+           setUltraResult('');
+        }
+     }, [scannedPatient, selectedSurvey]);
+
+     const handleSaveLabResults = async () => {
+        if (!scannedPatient) return;
+        setSavingLab(true);
+        try {
+           const token = localStorage.getItem('token');
+           
+           // 1. Save Ultrasound
+           const ultraFormData = new FormData();
+           ultraFormData.append('result', ultraResult);
+           await axios.post(`${API_URL}/admin/patient/${scannedPatient.id}/ultrasound`, ultraFormData, {
+              headers: { 
+                 Authorization: `Bearer ${token}`,
+                 'Content-Type': 'multipart/form-data'
+              }
+           });
+
+           // 2. Save PSA
+           const psaFormData = new FormData();
+           psaFormData.append('psa_value', psaInput);
+           await axios.post(`${API_URL}/admin/patient/${scannedPatient.id}/psa`, psaFormData, {
+              headers: { 
+                 Authorization: `Bearer ${token}`,
+                 'Content-Type': 'multipart/form-data'
+              }
+           });
+
+           setToast(stationSubTab === 'completed' ? "Đã cập nhật kết quả xét nghiệm" : "Đã lưu và chuyển tư vấn thành công");
+           
+           if (stationSubTab === 'completed') {
+              fetchSurveyData(scannedPatient.id);
+              fetchStationData();
+              fetchData();
+           } else {
+              setScannedPatient(null);
+              fetchStationData();
+              fetchData();
+           }
+        } catch (err) {
+           console.error("Lỗi khi lưu kết quả xét nghiệm:", err);
+           setToast("Lỗi khi lưu kết quả!");
+        } finally {
+           setSavingLab(false);
+        }
+     };
 
    const stationMap: any = {
       'clinical_reception': { label: 'Bàn Tiếp nhận', status: 'DA_XAC_NHAN', nextStatus: 'DA_TIEP_NHAN', icon: <UserCheck /> },
@@ -408,14 +466,27 @@ export default function ClinicalHubTab({ activeTab, API_URL, fetchData, setToast
                                           <input value={psaInput} onChange={e => setPsaInput(e.target.value)} placeholder="Giá trị PSA..." className="w-full p-4 bg-white border border-slate-200 rounded-xl outline-none focus:border-blue-500 font-bold text-sm shadow-sm" />
                                           <textarea value={ultraResult} onChange={e => setUltraResult(e.target.value)} placeholder="Ghi chú siêu âm..." className="w-full p-4 bg-white border border-slate-200 rounded-xl outline-none focus:border-blue-500 font-bold text-xs min-h-[80px] shadow-sm" />
                                           <button
-                                             onClick={async () => {
-                                                await handleUpdateStatus(scannedPatient.id, 'DA_XET_NGHIEM');
-                                                setTimeout(() => handleUpdateStatus(scannedPatient.id, 'CHO_TU_VAN'), 500);
-                                             }}
-                                             className="w-full py-4 bg-red-600 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg shadow-red-100 hover:bg-red-700 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+                                             onClick={handleSaveLabResults}
+                                             disabled={savingLab}
+                                             className={`w-full py-4 text-white rounded-xl font-black text-xs uppercase tracking-widest shadow-lg transition-all flex items-center justify-center gap-2 ${
+                                                savingLab 
+                                                   ? 'bg-slate-400 cursor-not-allowed shadow-none' 
+                                                   : stationSubTab === 'completed'
+                                                      ? 'bg-emerald-600 hover:bg-emerald-700 hover:-translate-y-0.5 shadow-emerald-100'
+                                                      : 'bg-red-600 hover:bg-red-700 hover:-translate-y-0.5 shadow-red-100'
+                                             }`}
                                           >
-                                             <FlaskConical size={18} />
-                                             LƯU & CHUYỂN TƯ VẤN
+                                             {savingLab ? (
+                                                <RefreshCw className="animate-spin" size={18} />
+                                             ) : (
+                                                <FlaskConical size={18} />
+                                             )}
+                                             {savingLab 
+                                                ? 'ĐANG LƯU...' 
+                                                : stationSubTab === 'completed' 
+                                                   ? 'LƯU CHỈNH SỬA' 
+                                                   : 'LƯU & CHUYỂN TƯ VẤN'
+                                             }
                                           </button>
                                           <button
                                              onClick={handlePrint}
