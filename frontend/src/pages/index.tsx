@@ -22,7 +22,7 @@ import QuickHighlights from '../components/Landing/QuickHighlights';
 import EventSidebar from '../components/Landing/EventSidebar';
 import Footer from '../components/Landing/Footer';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = 'https://sangloctuyentienliet.com/api';
 
 const TIME_SLOTS = [
   { id: '1', date: 'Thứ 7, 30/05', label: '07:00 - 12:30', value: '2026-05-30 07:00-12:30', limit: 100 },

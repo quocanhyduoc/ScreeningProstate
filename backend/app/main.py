@@ -49,18 +49,9 @@ async def mask_sensitive_data(body: bytes) -> str:
 
 @app.middleware("http")
 async def security_logging_middleware(request: Request, call_next):
-    # Đọc body để log (chú ý: phải khôi phục lại body để endpoint sử dụng)
-    body = await request.body()
-    
-    # Mask dữ liệu nhạy cảm
-    masked_body = await mask_sensitive_data(body) if body else ""
+    # Tránh đọc request.body() trực tiếp ở Middleware vì sẽ làm treo (consume) luồng dữ liệu của Pydantic
     if request.method in ["POST", "PUT", "PATCH"]:
-        logger.info(f"[{request.method}] {request.url.path} - Payload: {masked_body}")
-    
-    # Tạo một iterator generator để stream lại body cho FastAPI
-    async def receive():
-        return {"type": "http.request", "body": body}
-    request._receive = receive
+        logger.info(f"[{request.method}] {request.url.path} - Processing secure request")
     
     response = await call_next(request)
     return response
