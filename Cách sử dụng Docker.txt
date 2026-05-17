@@ -1,0 +1,25 @@
+## Cách sử dụng Docker 
+Các lệnh kiểm tra và quản lý Docker hữu ích trên VPS:
+Xem danh sách các Container đang chạy và cổng tương ứng:
+
+bash
+docker-compose ps
+
+(Sẽ thấy cả 4 container: db, backend, frontend, và db-admin đều đang ở trạng thái Up)
+
+Xem Log (lịch sử hoạt động/lỗi) của Backend và Frontend:
+
+bash
+# Xem log của Backend (FastAPI)
+docker-compose logs -f backend
+# Xem log của Frontend (Next.js)
+docker-compose logs -f frontend
+Dừng toàn bộ hệ thống Docker:
+
+bash
+docker-compose down
+Khởi động lại toàn bộ hệ thống Docker:
+
+bash
+docker-compose restart
+Tôi đã cập nhật cấu hình tối ưu này lên GitHub tại nhánh main

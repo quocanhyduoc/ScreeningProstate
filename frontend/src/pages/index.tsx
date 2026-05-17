@@ -230,9 +230,15 @@ export default function AppointmentRegistrationPage() {
   const handleDownloadBadge = async () => {
     if (badgeRef.current === null) return;
     try {
-      // Tăng mật độ điểm ảnh (pixelRatio: 4) và đặt chất lượng nén tối đa (quality: 1.0) để ảnh thẻ sắc nét vượt trội
+      // 1. Gọi nháp lần đầu để buộc iOS/Safari tải và giải mã ảnh Base64 vào GPU cache
+      await toPng(badgeRef.current, { cacheBust: false });
+      
+      // 2. Chờ 150ms để GPU điện thoại xử lý vẽ ảnh nháp
+      await new Promise((resolve) => setTimeout(resolve, 150));
+      
+      // 3. Gọi lần 2 để xuất ảnh chất lượng Ultra-HD 4x sắc nét hoàn hảo
       const dataUrl = await toPng(badgeRef.current, { 
-        cacheBust: true, 
+        cacheBust: false, 
         pixelRatio: 4, 
         quality: 1.0,
         style: {

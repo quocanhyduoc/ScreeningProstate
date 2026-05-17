@@ -32,3 +32,4 @@ Hệ thống tự động khởi tạo các thiết lập ban đầu. Để đă
 - 45 - 50 tuổi & Không có yếu tố nguy cơ: Từ chối.
 - > 50 tuổi hoặc (45-50 tuổi & Có yếu tố nguy cơ): Chấp nhận.
 - Giới hạn: 300 lượt (Admin có thể điều chỉnh trong DB/Settings).
+
