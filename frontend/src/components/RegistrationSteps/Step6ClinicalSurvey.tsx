@@ -105,14 +105,16 @@ const Step6ClinicalSurvey: React.FC<Step6Props> = ({
           </div>
         )}
 
-        <div className="flex gap-4">
-          <button onClick={() => setIsReviewing(false)} className="px-10 py-5 bg-white border-2 border-gray-200 text-gray-500 rounded-xl font-black text-xl hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center">Chỉnh sửa</button>
+        <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-4">
+          <button onClick={() => setIsReviewing(false)} className="px-6 py-4 md:px-10 md:py-5 bg-white border-2 border-gray-200 text-gray-500 rounded-xl md:rounded-2xl font-black text-[15px] md:text-xl hover:bg-gray-50 hover:border-gray-300 transition-all flex items-center justify-center order-2 sm:order-1">
+            Quay lại chỉnh sửa
+          </button>
           <button
             onClick={handleSubmit(onFinalSubmit, (errs) => console.error("DEBUG: Validation Errors:", errs))}
             disabled={isSubmitting}
-            className="flex-1 py-6 bg-green-600 text-white rounded-2xl font-black text-2xl shadow-2xl shadow-green-200 hover:bg-green-700 transition-all active:scale-[0.98]"
+            className="flex-1 py-4 md:py-6 bg-green-600 text-white rounded-xl md:rounded-2xl font-black text-[15px] md:text-2xl shadow-xl md:shadow-2xl shadow-green-100 hover:bg-green-700 transition-all active:scale-[0.98] flex items-center justify-center gap-2 md:gap-3 order-1 sm:order-2"
           >
-            {isSubmitting ? 'ĐANG XỬ LÝ...' : 'GỬI HỒ SƠ LÂM SÀNG'}
+            {isSubmitting ? 'ĐANG XỬ LÝ...' : 'GỬI HỒ SƠ LÂM SÀNG'} <Check size={20} className="md:w-8 md:h-8" />
           </button>
         </div>
       </motion.div>
