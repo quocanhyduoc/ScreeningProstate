@@ -3,7 +3,7 @@ import Head from 'next/head';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, CheckCircle } from 'lucide-react';
 import { toPng } from 'html-to-image';
 
 // Step Components
@@ -257,15 +257,42 @@ export default function AppointmentRegistrationPage() {
            <EventSidebar step={step} STEPS={STEPS} />
 
            <div className="lg:col-span-8" ref={formSectionRef}>
-              <div className="bg-white rounded-xl shadow-2xl shadow-blue-100/50 border border-white overflow-hidden">
-                <div className="h-2 bg-slate-50 overflow-hidden">
-                  <motion.div 
-                    initial={{ width: 0 }} 
-                    animate={{ width: `${(step / STEPS.length) * 100}%` }} 
-                    className="h-full bg-blue-600"
-                  />
+              {/* Horizontal Steps Navigation */}
+              {step <= 4 && (
+                <div className="mb-10 w-full px-2 sm:px-8">
+                  <div className="flex justify-between items-start relative mx-auto max-w-2xl">
+                    {/* Lines Container */}
+                    <div className="absolute top-5 md:top-6 left-[12.5%] right-[12.5%] h-1 -z-10">
+                      <div className="w-full h-full bg-slate-200 rounded-full" />
+                      <motion.div 
+                        className="absolute top-0 left-0 h-full bg-blue-600 rounded-full"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${Math.min(100, Math.max(0, ((step - 1) / (STEPS.length - 1)) * 100))}%` }}
+                        transition={{ duration: 0.3 }}
+                      />
+                    </div>
+                    
+                    {STEPS.map((s) => (
+                      <div key={s.id} className="flex flex-col items-center w-1/4 relative z-10">
+                        <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-black text-sm md:text-lg transition-all duration-300 ${
+                          step === s.id ? 'bg-blue-600 text-white shadow-xl shadow-blue-200 ring-4 ring-white scale-110' : 
+                          step > s.id ? 'bg-blue-600 text-white ring-4 ring-white' : 'bg-slate-100 text-slate-400 ring-4 ring-white'
+                        }`}>
+                          {step > s.id ? <CheckCircle size={20} /> : s.id}
+                        </div>
+                        <p className={`mt-3 text-[10px] sm:text-[11px] md:text-[13px] font-black uppercase tracking-tight text-center px-1 leading-tight ${
+                          step === s.id ? 'text-blue-900' : 
+                          step > s.id ? 'text-blue-900' : 'text-slate-400'
+                        }`}>
+                          {s.title}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                
+              )}
+
+              <div className="bg-white rounded-xl shadow-2xl shadow-blue-100/50 border border-white overflow-hidden">
                 <div className="p-8 md:p-16">
                   <AnimatePresence mode="wait">
                     {step === 1 && (

@@ -64,21 +64,6 @@ export default function EventSidebar({ step, STEPS }: EventSidebarProps) {
             </p>
          </div>
 
-         {/* Steps Navigation */}
-         <nav className="hidden lg:block space-y-3">
-            <p className="text-[13px] font-black text-slate-500 uppercase tracking-widest mb-6 px-4">TIẾN TRÌNH ĐĂNG KÝ</p>
-            {STEPS.map((s) => (
-               <div key={s.id} className={`flex items-center gap-5 p-5 rounded-2xl transition-all duration-300 ${step === s.id ? 'bg-white shadow-2xl shadow-blue-100 scale-[1.05] border-2 border-blue-200' : 'opacity-40'}`}>
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-xl ${step === s.id ? 'bg-blue-600 text-white shadow-lg' : 'bg-gray-200 text-gray-400'}`}>
-                     {step > s.id ? <CheckCircle size={24} /> : s.id}
-                  </div>
-                  <div>
-                     <p className={`text-[16px] font-black leading-none mb-1 uppercase tracking-tight ${step === s.id ? 'text-blue-900' : 'text-slate-400'}`}>{s.title}</p>
-                     <p className={`text-[13px] font-bold ${step === s.id ? 'text-blue-500' : 'text-slate-400'}`}>{s.desc}</p>
-                  </div>
-               </div>
-            ))}
-         </nav>
       </div>
    );
 }
