@@ -7,7 +7,7 @@ import {
   RefreshCw, Activity, 
   Filter, Download, Fingerprint, Heart,
   Phone, Calendar, Zap, Bell, X, Info, Trash2, Edit,
-  QrCode, AlertCircle, Search, UserPlus
+  QrCode, AlertCircle, Search, UserPlus, Menu
 } from 'lucide-react';
 import { useReactToPrint } from 'react-to-print';
 
@@ -46,6 +46,7 @@ export default function ProfessionalAdminDashboard() {
   const [registrations, setRegistrations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('patients');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (router.isReady && router.query.tab) {
@@ -460,13 +461,22 @@ export default function ProfessionalAdminDashboard() {
         setActiveTab={setActiveTab}
         userPermissions={userPermissions}
         router={router}
+        isMobileMenuOpen={isMobileMenuOpen}
+        setIsMobileMenuOpen={setIsMobileMenuOpen}
       />
 
       {/* Main Content */}
-      <main className="ml-64 flex-1 p-8">
-        <header className="flex justify-between items-center mb-10 relative">
-          <div className="flex items-center gap-6">
-             <div className="relative">
+      <main className="md:ml-64 flex-1 p-4 md:p-8 w-full">
+        <header className="flex justify-between items-center mb-6 md:mb-10 relative">
+          <div className="flex items-center gap-3 md:gap-6">
+             <button 
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="md:hidden p-2.5 bg-white border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50 shadow-sm"
+             >
+                <Menu size={20} />
+             </button>
+             
+             <div className="relative hidden md:block">
                 <button 
                   onClick={() => {
                     setShowNotifications(!showNotifications);
@@ -522,18 +532,18 @@ export default function ProfessionalAdminDashboard() {
                    )}
                 </AnimatePresence>
              </div>
-             <div className="space-y-1">
-             <h2 className="text-2xl font-bold tracking-tight text-[#121C2D]">
-               {role === 'SUPERADMIN' ? 'Hệ thống Quản trị Cấp cao' : 'Hệ thống Quản lý Lâm sàng'}
-             </h2>
-             <p className="text-[12px] text-slate-400 font-medium italic">Quản lý Bệnh nhân & Quy trình Lâm sàng Sàng lọc</p>
+             <div className="space-y-0.5 md:space-y-1">
+              <h2 className="text-lg md:text-2xl font-bold tracking-tight text-[#121C2D]">
+                {role === 'SUPERADMIN' ? 'Hệ thống Quản trị' : 'Quản lý Lâm sàng'}
+              </h2>
+              <p className="text-[10px] md:text-[12px] text-slate-400 font-medium italic hidden sm:block">Quản lý Bệnh nhân & Quy trình Lâm sàng Sàng lọc</p>
+           </div>
           </div>
-          </div>
-          <div className="flex items-center gap-3">
-             <button onClick={handleExport} className="flex items-center gap-2 px-6 py-2.5 bg-white border border-slate-200 text-[#121C2D] rounded-lg font-bold text-[13px] hover:bg-slate-50 transition-all shadow-sm">
+          <div className="flex items-center gap-2 md:gap-3">
+             <button onClick={handleExport} className="hidden sm:flex items-center gap-2 px-6 py-2.5 bg-white border border-slate-200 text-[#121C2D] rounded-lg font-bold text-[13px] hover:bg-slate-50 transition-all shadow-sm">
                 <Download size={18} /> Xuất Excel
              </button>
-             <button onClick={() => fetchData()} className="p-3 bg-white border border-slate-200 rounded-lg text-slate-400 hover:bg-slate-50 transition-all shadow-sm">
+             <button onClick={() => fetchData()} className="p-2.5 md:p-3 bg-white border border-slate-200 rounded-lg text-slate-400 hover:bg-slate-50 transition-all shadow-sm">
                <RefreshCw size={18} />
              </button>
           </div>
@@ -568,8 +578,8 @@ export default function ProfessionalAdminDashboard() {
                  </button>
               </div>
 
-              <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
-                 <table className="w-full text-left border-collapse">
+              <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-x-auto">
+                 <table className="w-full text-left border-collapse whitespace-nowrap md:whitespace-normal min-w-[500px]">
                     <thead>
                        <tr className="bg-slate-50 border-b border-slate-200">
                           <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">Người dùng</th>
@@ -602,8 +612,8 @@ export default function ProfessionalAdminDashboard() {
 
         {activeTab === 'patients' && (
           <div className="space-y-6">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-               <div className="flex gap-1 p-1 bg-slate-100 rounded-lg border border-slate-200">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+               <div className="flex gap-1 p-1 bg-slate-100 rounded-lg border border-slate-200 overflow-x-auto whitespace-nowrap w-full sm:w-auto scrollbar-hide">
                   <Tab label="Tất cả" active={statusFilter === 'ALL'} onClick={() => setStatusFilter('ALL')} count={registrations.length} />
                   <Tab label="Chờ duyệt" active={statusFilter === 'CHO_XAC_NHAN'} onClick={() => setStatusFilter('CHO_XAC_NHAN')} count={registrations.filter(r=>r.status==='CHO_XAC_NHAN').length} />
                   <Tab label="Đã chốt" active={statusFilter === 'DA_XAC_NHAN'} onClick={() => setStatusFilter('DA_XAC_NHAN')} count={registrations.filter(r=>r.status==='DA_XAC_NHAN').length} />
@@ -613,18 +623,18 @@ export default function ProfessionalAdminDashboard() {
                   <Tab label="Hoàn thành" active={statusFilter === 'HOAN_THANH'} onClick={() => setStatusFilter('HOAN_THANH')} count={registrations.filter(r=>r.status==='HOAN_THANH').length} />
                </div>
                
-               <div className="flex items-center gap-3">
-                  <div className="relative">
+               <div className="flex items-center gap-3 w-full sm:w-auto">
+                  <div className="relative flex-1 sm:flex-none">
                     <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input autoComplete="off" name="screening-search" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Tìm tên, SĐT, CCCD, Mã số..." className="bg-white border border-slate-200 rounded-lg pl-10 pr-4 py-2.5 text-[13px] outline-none focus:border-blue-500 w-64 font-medium" />
+                    <input autoComplete="off" name="screening-search" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Tìm tên, SĐT, CCCD..." className="bg-white border border-slate-200 rounded-lg pl-10 pr-4 py-2.5 text-[13px] outline-none focus:border-blue-500 w-full sm:w-64 font-medium" />
                   </div>
-                  <button onClick={() => setShowFilters(!showFilters)} className={`flex items-center gap-2 px-4 py-2.5 rounded-lg font-bold text-[13px] border ${showFilters ? 'bg-[#0067b8] text-white border-blue-600' : 'bg-white text-slate-500 border-slate-200'}`}><Filter size={16} /> Lọc</button>
+                  <button onClick={() => setShowFilters(!showFilters)} className={`flex shrink-0 items-center gap-2 px-4 py-2.5 rounded-lg font-bold text-[13px] border ${showFilters ? 'bg-[#0067b8] text-white border-blue-600' : 'bg-white text-slate-500 border-slate-200'}`}><Filter size={16} /> Lọc</button>
                </div>
             </div>
 
             <AnimatePresence>
                {showFilters && (
-                 <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="bg-white border border-slate-200 rounded-lg p-6 grid grid-cols-4 gap-6 shadow-sm mt-4">
+                 <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="bg-white border border-slate-200 rounded-lg p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 shadow-sm mt-4">
                     <div className="space-y-2">
                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2"><Calendar size={14}/> Khung giờ</label>
                        <select value={slotFilter} onChange={(e) => setSlotFilter(e.target.value)} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-[13px] font-bold outline-none">
@@ -655,8 +665,8 @@ export default function ProfessionalAdminDashboard() {
                )}
             </AnimatePresence>
 
-            <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
-               <table className="w-full text-left border-collapse">
+            <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-x-auto">
+               <table className="w-full text-left border-collapse whitespace-nowrap md:whitespace-normal min-w-[800px]">
                   <thead>
                      <tr className="bg-slate-50 border-b border-slate-200">
                          <th className="px-6 py-4 w-10">

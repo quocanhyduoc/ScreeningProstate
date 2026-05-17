@@ -12,17 +12,35 @@ export default function Sidebar({
   activeTab,
   setActiveTab,
   userPermissions,
-  router
+  router,
+  isMobileMenuOpen,
+  setIsMobileMenuOpen
 }: any) {
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+    if (setIsMobileMenuOpen) {
+      setIsMobileMenuOpen(false);
+    }
+  };
+
   return (
-    <aside className="w-64 bg-white border-r border-slate-200 fixed h-full z-40 flex flex-col">
-      <div className="p-6 space-y-10 flex-1">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
-            <QrCode size={20} className="text-white" />
-          </div>
-          <div>
-            <span className="text-[15px] font-bold tracking-tight block leading-none">BV Trung ương Huế</span>
+    <>
+      {/* Mobile Backdrop */}
+      {isMobileMenuOpen && (
+        <div 
+           className="fixed inset-0 bg-slate-900/50 z-40 md:hidden backdrop-blur-sm"
+           onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+      
+      <aside className={`w-64 bg-white border-r border-slate-200 fixed h-full z-50 flex flex-col transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+        <div className="p-6 space-y-10 flex-1 overflow-y-auto">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shadow-md shrink-0">
+              <QrCode size={20} className="text-white" />
+            </div>
+            <div>
+              <span className="text-[15px] font-bold tracking-tight block leading-none">BV Trung ương Huế</span>
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">
               Quản trị Lâm sàng
             </span>
@@ -30,32 +48,32 @@ export default function Sidebar({
         </div>
         <nav className="space-y-1">
           {(role === 'SUPERADMIN' || userPermissions.includes('overview')) && (
-            <NavIcon icon={<LayoutDashboard size={18} />} label="Tổng quan" active={activeTab === 'overview'} onClick={() => setActiveTab('overview')} />
+            <NavIcon icon={<LayoutDashboard size={18} />} label="Tổng quan" active={activeTab === 'overview'} onClick={() => handleTabChange('overview')} />
           )}
-          <NavIcon icon={<Users size={18} />} label="DS Bệnh nhân" active={activeTab === 'patients'} onClick={() => setActiveTab('patients')} />
+          <NavIcon icon={<Users size={18} />} label="DS Bệnh nhân" active={activeTab === 'patients'} onClick={() => handleTabChange('patients')} />
           {(role === 'SUPERADMIN' || userPermissions.includes('clinical_reception')) && (
-            <NavIcon icon={<UserCheck size={18} />} label="B1:Đón tiếp" active={activeTab === 'clinical_reception'} onClick={() => setActiveTab('clinical_reception')} />
+            <NavIcon icon={<UserCheck size={18} />} label="B1: Đón tiếp" active={activeTab === 'clinical_reception'} onClick={() => handleTabChange('clinical_reception')} />
           )}
           {(role === 'SUPERADMIN' || userPermissions.includes('clinical_screening')) && (
-            <NavIcon icon={<ClipboardList size={18} />} label="B2: Khám sàng lọc" active={activeTab === 'clinical_screening'} onClick={() => setActiveTab('clinical_screening')} />
+            <NavIcon icon={<ClipboardList size={18} />} label="B2: Khám sàng lọc" active={activeTab === 'clinical_screening'} onClick={() => handleTabChange('clinical_screening')} />
           )}
           {(role === 'SUPERADMIN' || userPermissions.includes('clinical_lab')) && (
-            <NavIcon icon={<Droplets size={18} />} label="B3: PSA & Siêu âm" active={activeTab === 'clinical_lab'} onClick={() => setActiveTab('clinical_lab')} />
+            <NavIcon icon={<Droplets size={18} />} label="B3: PSA & Siêu âm" active={activeTab === 'clinical_lab'} onClick={() => handleTabChange('clinical_lab')} />
           )}
           {(role === 'SUPERADMIN' || userPermissions.includes('clinical_consult')) && (
-            <NavIcon icon={<MessageSquare size={18} />} label="B4: Tư vấn & Trả KQ" active={activeTab === 'clinical_consult'} onClick={() => setActiveTab('clinical_consult')} />
+            <NavIcon icon={<MessageSquare size={18} />} label="B4: Tư vấn & Trả KQ" active={activeTab === 'clinical_consult'} onClick={() => handleTabChange('clinical_consult')} />
           )}
           {role === 'SUPERADMIN' && (
-            <NavIcon icon={<Shield size={18} />} label="Quản lý Vai trò" active={activeTab === 'users'} onClick={() => setActiveTab('users')} />
+            <NavIcon icon={<Shield size={18} />} label="Quản lý Vai trò" active={activeTab === 'users'} onClick={() => handleTabChange('users')} />
           )}
           {(role === 'SUPERADMIN' || userPermissions.includes('calendar')) && (
-            <NavIcon icon={<Calendar size={18} />} label="Lịch khám" active={activeTab === 'calendar'} onClick={() => setActiveTab('calendar')} />
+            <NavIcon icon={<Calendar size={18} />} label="Lịch khám" active={activeTab === 'calendar'} onClick={() => handleTabChange('calendar')} />
           )}
           {(role === 'SUPERADMIN' || userPermissions.includes('reports')) && (
-            <NavIcon icon={<BarChart3 size={18} />} label="Báo cáo" active={activeTab === 'reports'} onClick={() => setActiveTab('reports')} />
+            <NavIcon icon={<BarChart3 size={18} />} label="Báo cáo" active={activeTab === 'reports'} onClick={() => handleTabChange('reports')} />
           )}
           {role === 'SUPERADMIN' && (
-            <NavIcon icon={<ShieldCheck size={18} />} label="Cài đặt hệ thống" active={activeTab === 'settings'} onClick={() => setActiveTab('settings')} />
+            <NavIcon icon={<ShieldCheck size={18} />} label="Cài đặt hệ thống" active={activeTab === 'settings'} onClick={() => handleTabChange('settings')} />
           )}
         </nav>
       </div>
@@ -69,5 +87,6 @@ export default function Sidebar({
         </button>
       </div>
     </aside>
+    </>
   );
 }
