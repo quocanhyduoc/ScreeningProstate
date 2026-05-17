@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, Activity, ArrowDown, ChevronRight, ClipboardList, Clock } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
+import { formatDate } from '../../utils/date';
+import { HOSPITAL_LOGO_BASE64 } from '../../utils/logo';
 
 interface Step5Props {
   registrationResult: any;
@@ -44,7 +46,7 @@ const Step5SuccessBadge: React.FC<Step5Props> = ({
           <div className="bg-[#005ba1] p-2 sm:p-3 text-white flex justify-between items-center h-[18%] sm:h-[65px]">
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="w-7 h-7 sm:w-9 sm:h-9 bg-white rounded-lg flex items-center justify-center p-1 shadow-sm">
-                <img src="/logo-benh-vien-trung-uong-hue-compressed.webp" alt="Logo" className="w-full h-full object-contain" />
+                <img src={HOSPITAL_LOGO_BASE64} alt="Logo" className="w-full h-full object-contain" />
               </div>
               <div>
                 <p className="text-[8px] sm:text-[10px] font-black leading-tight uppercase tracking-tight">Bệnh viện Trung ương Huế</p>
@@ -74,7 +76,7 @@ const Step5SuccessBadge: React.FC<Step5Props> = ({
               <div className="grid grid-cols-2 gap-2 sm:gap-4">
                 <div className="space-y-0">
                   <p className="text-[7px] sm:text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Ngày sinh</p>
-                  <p className="text-[11px] sm:text-[13px] font-black text-slate-800">{registrationResult?.dob && new Date(registrationResult?.dob).toLocaleDateString("vi-VN")}</p>
+                  <p className="text-[11px] sm:text-[13px] font-black text-slate-800">{formatDate(registrationResult?.dob)}</p>
                 </div>
                 <div className="space-y-0">
                   <p className="text-[7px] sm:text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Số CCCD</p>
@@ -89,7 +91,7 @@ const Step5SuccessBadge: React.FC<Step5Props> = ({
                 </div>
                 <div className="space-y-0">
                   <p className="text-[7px] sm:text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Ngày đăng ký</p>
-                  <p className="text-[10px] sm:text-[12px] font-black text-slate-600">{registrationResult?.created_at && new Date(registrationResult?.created_at).toLocaleDateString("vi-VN")}</p>
+                  <p className="text-[10px] sm:text-[12px] font-black text-slate-600">{formatDate(registrationResult?.created_at)}</p>
                 </div>
               </div>
             </div>

@@ -10,6 +10,7 @@ import {
   QrCode, AlertCircle, Search, UserPlus, Menu
 } from 'lucide-react';
 import { useReactToPrint } from 'react-to-print';
+import { formatDate } from '../../utils/date';
 
 // Components
 import Sidebar from '../../components/Admin/Sidebar';
@@ -695,7 +696,7 @@ export default function ProfessionalAdminDashboard() {
                                     <p className="font-bold text-[14px] text-[#121C2D]">{reg.full_name}</p>
                                     <div className="flex items-center gap-1.5 mt-0.5">
                                        {reg.family_history && <span className="p-0.5 bg-red-50 text-red-500 rounded" title="Có tiền sử gia đình"><Heart size={10} fill="currentColor"/></span>}
-                                       <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{new Date(reg.dob).toLocaleDateString('vi-VN')}</p>
+                                       <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{formatDate(reg.dob)}</p>
                                     </div>
                                  </div>
                               </div>

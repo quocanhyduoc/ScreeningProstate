@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 const Scanner = dynamic(() => import('../../components/clinical/Scanner'), { ssr: false });
 import { motion, AnimatePresence } from 'framer-motion';
+import { formatDate } from '../../utils/date';
 import { 
   Users, CheckCircle, XCircle, Clock, 
   Search, RefreshCw, QrCode, ClipboardList,
@@ -381,12 +382,12 @@ export default function ClinicalDashboard() {
                            <button onClick={() => setSelectedPatient(null)} className="p-2 hover:bg-white/10 rounded-md transition-colors"><XCircle size={24}/></button>
                          </div>
                          <h4 className="text-xl font-bold mb-1">{selectedPatient.full_name}</h4>
-                         <p className="text-blue-100 text-[11px] font-bold flex items-center gap-2 uppercase tracking-widest"><Fingerprint size={14}/> CCCD: {selectedPatient.cccd}</p>
+             <p className="text-blue-100 text-[11px] font-bold flex items-center gap-2 uppercase tracking-widest"><Fingerprint size={14}/> CCCD: {selectedPatient.cccd}</p>
                       </div>
 
                       <div className="p-8 space-y-6">
                          <div className="space-y-4">
-                           <InfoRow label="Ngày sinh" value={new Date(selectedPatient.dob).toLocaleDateString('vi-VN')} />
+                           <InfoRow label="Ngày sinh" value={formatDate(selectedPatient.dob)} />
                            <InfoRow label="SĐT" value={selectedPatient.phone} />
                            <InfoRow label="Địa chỉ" value={`${selectedPatient.ward}, ${selectedPatient.district}`} />
                          </div>

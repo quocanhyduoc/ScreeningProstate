@@ -45,7 +45,7 @@ const Step4Confirmation: React.FC<Step4Props> = ({
         <div className="grid grid-cols-2 gap-y-4 md:gap-y-6 text-[15px] md:text-[18px]">
           <div className="text-gray-400 font-black uppercase tracking-tight text-[11px] md:text-[13px] self-center">Họ và tên</div>
           <div className="text-right font-black text-blue-900 uppercase">{formData.full_name}</div>
-          
+
           <div className="text-gray-400 font-black uppercase tracking-tight text-[11px] md:text-[13px] self-center">Số điện thoại</div>
           <div className="text-right font-black text-gray-700">{formData.phone}</div>
 
@@ -89,7 +89,7 @@ const Step4Confirmation: React.FC<Step4Props> = ({
           (!) Ông cần đánh dấu vào ô đồng ý ở trên để tiếp tục.
         </motion.p>
       )}
-      
+
       {error && <p className="text-red-600 text-[15px] md:text-lg font-black text-center bg-red-50 p-3 md:p-4 rounded-xl border-2 border-red-100">{error}</p>}
 
       <div className="flex gap-2 md:gap-4 pt-2 md:pt-4">
@@ -106,7 +106,7 @@ const Step4Confirmation: React.FC<Step4Props> = ({
           disabled={isSubmitting}
           className="flex-1 py-3 md:py-6 bg-green-600 text-white rounded-xl md:rounded-2xl font-black text-[15px] md:text-2xl hover:bg-green-700 transition-all flex items-center justify-center gap-2 md:gap-4 shadow-xl md:shadow-2xl shadow-green-100 disabled:bg-gray-400 active:scale-[0.98]"
         >
-          {isSubmitting ? 'ĐANG GỬI...' : 'XÁC NHẬN & GỬI NGAY'} <Check size={20} className="md:w-7 md:h-7" />
+          {isSubmitting ? 'ĐANG GỬI...' : ' XÁC NHẬN & GỬI NGAY'}<Check size={20} className="md:w-7 md:h-7" />
         </button>
       </div>
     </motion.div>

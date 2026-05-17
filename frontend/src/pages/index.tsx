@@ -230,7 +230,16 @@ export default function AppointmentRegistrationPage() {
   const handleDownloadBadge = async () => {
     if (badgeRef.current === null) return;
     try {
-      const dataUrl = await toPng(badgeRef.current, { cacheBust: true, pixelRatio: 3 });
+      // Tăng mật độ điểm ảnh (pixelRatio: 4) và đặt chất lượng nén tối đa (quality: 1.0) để ảnh thẻ sắc nét vượt trội
+      const dataUrl = await toPng(badgeRef.current, { 
+        cacheBust: true, 
+        pixelRatio: 4, 
+        quality: 1.0,
+        style: {
+          transform: 'scale(1)',
+          transformOrigin: 'top left',
+        }
+      });
       const link = document.createElement('a');
       link.download = `Badge_Screening_${registrationResult?.cccd}.png`;
       link.href = dataUrl;

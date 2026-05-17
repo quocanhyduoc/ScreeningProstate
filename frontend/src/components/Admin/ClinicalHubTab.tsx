@@ -11,6 +11,8 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useReactToPrint } from 'react-to-print';
 import { Badge, StatusProgress } from './UIComponents';
 import SurveyPrintTemplate from './SurveyPrintTemplate';
+import { formatDate } from '../../utils/date';
+import { HOSPITAL_LOGO_BASE64 } from '../../utils/logo';
 
 export default function ClinicalHubTab({ activeTab, API_URL, fetchData, setToast, role }: any) {
    const [qrInput, setQrInput] = useState('');
@@ -348,7 +350,7 @@ export default function ClinicalHubTab({ activeTab, API_URL, fetchData, setToast
                                  <div className="bg-[#005ba1] p-3 text-white flex justify-between items-center h-[65px]">
                                     <div className="flex items-center gap-3">
                                        <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center p-1 shadow-sm">
-                                          <img src="/logo-benh-vien-trung-uong-hue-compressed.webp" alt="Logo" className="w-full h-full object-contain" />
+                                          <img src={HOSPITAL_LOGO_BASE64} alt="Logo" className="w-full h-full object-contain" />
                                        </div>
                                        <div>
                                           <p className="text-[9px] font-black leading-tight uppercase tracking-tight">Bệnh viện Trung ương Huế</p>
@@ -377,7 +379,7 @@ export default function ClinicalHubTab({ activeTab, API_URL, fetchData, setToast
                                        <div className="grid grid-cols-2 gap-2">
                                           <div className="space-y-0">
                                              <p className="text-[7px] font-bold text-slate-400 uppercase tracking-tighter">Ngày sinh</p>
-                                             <p className="text-[11px] font-black text-slate-800">{new Date(scannedPatient.dob).toLocaleDateString("vi-VN")}</p>
+                                             <p className="text-[11px] font-black text-slate-800">{formatDate(scannedPatient.dob)}</p>
                                           </div>
                                           <div className="space-y-0">
                                              <p className="text-[7px] font-bold text-slate-400 uppercase tracking-tighter">Số CCCD</p>
