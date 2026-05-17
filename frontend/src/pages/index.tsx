@@ -163,7 +163,7 @@ export default function AppointmentRegistrationPage() {
     } else if (step === 2) {
       // Step 2: Personal Info
       const fieldsToValidate = ['full_name', 'dob', 'cccd', 'phone', 'province', 'district', 'ward', 'address_detail'];
-      const isValid = await trigger(fieldsToValidate);
+      const isValid = await trigger(fieldsToValidate as any);
       if (isValid) {
         if (!isEligible()) {
           setError('Bạn không thuộc đối tượng tầm soát của chương trình (Yêu cầu ≥ 45 tuổi).');
