@@ -7,12 +7,16 @@ services:
       POSTGRES_DB: ProstateHue
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - private_net
 
   backend:
     build: ./backend
     env_file: ./backend/.env
     ports:
       - "8000:8000"
+    networks:
+      - private_net
     depends_on:
       - db
 
@@ -25,6 +29,8 @@ services:
       - "3000:3000"
     environment:
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://103.149.87.0:8000}
+    networks:
+      - private_net
     depends_on:
       - backend
 
@@ -32,9 +38,16 @@ services:
     image: adminer
     restart: always
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
+    networks:
+      - private_net
     depends_on:
       - db
 
+networks:
+  private_net:
+    driver: bridge
+
 volumes:
   postgres_data:
+
