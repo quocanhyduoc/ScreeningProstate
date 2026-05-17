@@ -49,6 +49,13 @@ async def update_patient_status(
         raise HTTPException(status_code=404, detail="Patient not found")
     
     new_status = update.status
+    
+    # Logic: Nếu Reception tiếp nhận (DA_TIEP_NHAN) mà bệnh nhân ĐÃ CÓ khảo sát, thì bỏ qua Khám Sàng Lọc (chuyển thẳng sang CHO_XET_NGHIEM)
+    if new_status == "DA_TIEP_NHAN":
+        existing_survey = db.query(models.ScreeningSurvey).filter(models.ScreeningSurvey.registration_id == registration_id).first()
+        if existing_survey:
+            new_status = "CHO_XET_NGHIEM"
+            
     patient.status = new_status
     db.commit()
     db.refresh(patient)
