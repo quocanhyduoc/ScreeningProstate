@@ -125,6 +125,7 @@ async def submit_screening(survey: SurveyCreate, db: Session = Depends(get_db)):
         # Create new survey
         db_survey = ScreeningSurvey(**survey.dict())
         db.add(db_survey)
+        db.commit()
         
     # 3. Send Emails
     # We do not change patient.status here so they don't skip Reception/Screening workflow.
