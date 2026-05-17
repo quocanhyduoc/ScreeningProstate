@@ -16,6 +16,8 @@ app = FastAPI(title="Prostate Screening API")
 # CORS Configuration
 # Chỉ cho phép frontend domain truy cập API
 ALLOWED_ORIGINS = [
+    "https://sangloctuyentienliet.com",
+    "https://www.sangloctuyentienliet.com",
     "http://103.149.87.0:3000",
     "http://localhost:3000",
     "http://127.0.0.1:3000"
