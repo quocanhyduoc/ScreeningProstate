@@ -259,7 +259,7 @@ export default function AppointmentRegistrationPage() {
            <div className="lg:col-span-8" ref={formSectionRef}>
               {/* Horizontal Steps Navigation */}
               {step <= 4 && (
-                <div className="mb-10 w-full px-2 sm:px-8">
+                <div className="mb-6 md:mb-10 w-full px-2 sm:px-8">
                   <div className="flex justify-between items-start relative mx-auto max-w-2xl">
                     {/* Lines Container */}
                     <div className="absolute top-5 md:top-6 left-[12.5%] right-[12.5%] h-1 -z-10">
@@ -293,7 +293,7 @@ export default function AppointmentRegistrationPage() {
               )}
 
               <div className="bg-white rounded-xl shadow-2xl shadow-blue-100/50 border border-white overflow-hidden">
-                <div className="p-8 md:p-16">
+                <div className="p-4 sm:p-8 md:p-12 lg:p-16">
                   <AnimatePresence mode="wait">
                     {step === 1 && (
                       <Step2AppointmentTime
