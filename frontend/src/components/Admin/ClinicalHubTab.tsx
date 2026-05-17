@@ -6,6 +6,7 @@ import {
    UserCheck, ClipboardList, Droplets, MessageSquare,
    QrCode, RefreshCw, ChevronRight, X, Calendar, User, FlaskConical, Award, Activity, Printer, Search
 } from 'lucide-react';
+import { Html5QrcodeScanner } from 'html5-qrcode';
 import { QRCodeSVG } from 'qrcode.react';
 import { useReactToPrint } from 'react-to-print';
 import { Badge, StatusProgress } from './UIComponents';
@@ -13,6 +14,7 @@ import SurveyPrintTemplate from './SurveyPrintTemplate';
 
 export default function ClinicalHubTab({ activeTab, API_URL, fetchData, setToast, role }: any) {
    const [qrInput, setQrInput] = useState('');
+   const [showScanner, setShowScanner] = useState(false);
    const [scannedPatient, setScannedPatient] = useState<any>(null);
    const [loading, setLoading] = useState(false);
    const [loadingSurvey, setLoadingSurvey] = useState(false);
@@ -29,6 +31,32 @@ export default function ClinicalHubTab({ activeTab, API_URL, fetchData, setToast
       contentRef: printRef,
       documentTitle: `Phieu_Khao_Sat_${scannedPatient?.full_name || 'BN'}`,
    });
+
+   useEffect(() => {
+      let scanner: Html5QrcodeScanner | null = null;
+      if (showScanner) {
+         scanner = new Html5QrcodeScanner(
+            "qr-reader",
+            { fps: 10, qrbox: { width: 250, height: 250 }, supportedScanTypes: [0] },
+            false
+         );
+         scanner.render(
+            (decodedText) => {
+               setQrInput(decodedText);
+               setShowScanner(false);
+               executeScan(decodedText);
+            },
+            (error) => {
+               // Ignore continuous scan errors
+            }
+         );
+      }
+      return () => {
+         if (scanner) {
+            scanner.clear().catch(e => console.error("Lỗi đóng scanner:", e));
+         }
+      };
+   }, [showScanner]);
 
    const fetchSurveyData = async (regId: number) => {
       setLoadingSurvey(true);
@@ -108,13 +136,12 @@ export default function ClinicalHubTab({ activeTab, API_URL, fetchData, setToast
       fetchStationData();
    }, [activeTab, stationSubTab, searchTerm]);
 
-   const handleScan = async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (!qrInput.trim()) return;
+   const executeScan = async (code: string) => {
+      if (!code.trim()) return;
       setLoading(true);
       try {
          const token = localStorage.getItem('token');
-         const res = await axios.get(`${API_URL}/clinical/patient/${qrInput.trim()}`, {
+         const res = await axios.get(`${API_URL}/clinical/patient/${code.trim()}`, {
             headers: { Authorization: `Bearer ${token}` }
          });
          setScannedPatient(res.data);
@@ -126,6 +153,11 @@ export default function ClinicalHubTab({ activeTab, API_URL, fetchData, setToast
       } finally {
          setLoading(false);
       }
+   };
+
+   const handleScan = async (e: React.FormEvent) => {
+      e.preventDefault();
+      executeScan(qrInput);
    };
 
    const handleUpdateStatus = async (id: number, nextStatus: string) => {
@@ -145,45 +177,51 @@ export default function ClinicalHubTab({ activeTab, API_URL, fetchData, setToast
 
    return (
       <div className="space-y-8">
-         <div className="bg-white rounded-xl p-8 border border-slate-200 shadow-sm flex items-center justify-between">
-            <div className="flex items-center gap-4">
-               <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center">
-                  {React.cloneElement(currentStation.icon, { size: 24 })}
+         <div className="bg-white rounded-xl p-4 sm:p-8 border border-slate-200 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="flex items-center gap-4 w-full md:w-auto">
+               <div className="w-10 h-10 sm:w-12 sm:h-12 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center shrink-0">
+                  {React.cloneElement(currentStation.icon, { size: 20 })}
                </div>
                <div>
-                  <h3 className="text-xl font-bold">{currentStation.label}</h3>
-                  <p className="text-slate-400 text-[12px] font-medium uppercase tracking-widest">Quy trình Clinical Onsite</p>
+                  <h3 className="text-lg sm:text-xl font-bold">{currentStation.label}</h3>
+                  <p className="text-slate-400 text-[10px] sm:text-[12px] font-medium uppercase tracking-widest">Quy trình Clinical Onsite</p>
                </div>
             </div>
-            <form onSubmit={handleScan} className="flex items-center gap-3 bg-slate-50 p-2 rounded-lg border border-slate-100">
-               <div className="bg-white rounded-lg flex items-center px-4 py-2 w-64 border border-slate-100 shadow-sm">
-                  <QrCode size={18} className="text-slate-400 mr-2" />
-                  <input autoFocus value={qrInput} onChange={e => setQrInput(e.target.value)} placeholder="Quét QR / Nhập CCCD..." className="bg-transparent border-none outline-none text-[#121C2D] font-bold w-full text-sm" />
-               </div>
-               <button type="submit" disabled={loading} className="px-4 py-2 bg-[#0067b8] text-white rounded-lg font-bold hover:bg-blue-700 transition-all text-xs">
-                  KIỂM TRA
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+               <button onClick={() => setShowScanner(true)} className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-800 text-white rounded-lg font-bold hover:bg-slate-900 transition-all text-xs">
+                  <QrCode size={16} />
+                  QUÉT CAMERA
                </button>
-            </form>
+               <form onSubmit={handleScan} className="flex items-center gap-2 bg-slate-50 p-2 rounded-lg border border-slate-100 flex-1">
+                  <div className="bg-white rounded-lg flex items-center px-3 py-2 w-full sm:w-64 border border-slate-100 shadow-sm">
+                     <Search size={16} className="text-slate-400 mr-2 shrink-0" />
+                     <input value={qrInput} onChange={e => setQrInput(e.target.value)} placeholder="Nhập mã QR / CCCD..." className="bg-transparent border-none outline-none text-[#121C2D] font-bold w-full text-xs sm:text-sm" />
+                  </div>
+                  <button type="submit" disabled={loading} className="px-3 sm:px-4 py-2 bg-[#0067b8] text-white rounded-lg font-bold hover:bg-blue-700 transition-all text-xs shrink-0 whitespace-nowrap">
+                     TÌM
+                  </button>
+               </form>
+            </div>
          </div>
 
          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2">
                <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                  <div className="p-6 border-b border-slate-50 flex items-center justify-between bg-slate-50/50">
-                     <div className="flex items-center gap-6">
-                        <h4 className="font-bold text-sm flex items-center gap-2">Bệnh nhân ({registrations.length})</h4>
+                  <div className="p-4 sm:p-6 border-b border-slate-50 flex flex-col sm:flex-row items-start sm:items-center justify-between bg-slate-50/50 gap-4">
+                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6 w-full sm:w-auto">
+                        <h4 className="font-bold text-sm flex items-center gap-2 whitespace-nowrap">Bệnh nhân ({registrations.length})</h4>
 
                         {(activeTab.startsWith('clinical_')) && (
-                           <div className="flex bg-slate-200 p-1 rounded-lg">
+                           <div className="flex bg-slate-200 p-1 rounded-lg w-full sm:w-auto">
                               <button
                                  onClick={() => setStationSubTab('pending')}
-                                 className={`px-4 py-1.5 rounded-md text-[10px] font-black uppercase tracking-widest transition-all ${stationSubTab === 'pending' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                 className={`flex-1 sm:flex-none px-4 py-1.5 rounded-md text-[10px] font-black uppercase tracking-widest transition-all ${stationSubTab === 'pending' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                               >
                                  Chờ thực hiện
                               </button>
                               <button
                                  onClick={() => setStationSubTab('completed')}
-                                 className={`px-4 py-1.5 rounded-md text-[10px] font-black uppercase tracking-widest transition-all ${stationSubTab === 'completed' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
+                                 className={`flex-1 sm:flex-none px-4 py-1.5 rounded-md text-[10px] font-black uppercase tracking-widest transition-all ${stationSubTab === 'completed' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-700'}`}
                               >
                                  Đã thực hiện
                               </button>
@@ -191,21 +229,21 @@ export default function ClinicalHubTab({ activeTab, API_URL, fetchData, setToast
                         )}
                      </div>
 
-                     <div className="flex items-center gap-3">
-                        <div className="relative">
+                     <div className="flex items-center gap-3 w-full sm:w-auto">
+                        <div className="relative flex-1 sm:flex-none">
                            <input
                               value={searchTerm}
                               onChange={e => setSearchTerm(e.target.value)}
                               placeholder="Tìm tên, CCCD, STT..."
-                              className="pl-8 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold w-64 outline-none focus:border-blue-500 transition-all"
+                              className="pl-8 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-xs font-bold w-full sm:w-64 outline-none focus:border-blue-500 transition-all"
                            />
                            <RefreshCw size={12} className={`absolute left-3 top-2.5 text-slate-400 ${loading ? 'animate-spin' : ''}`} />
                         </div>
-                        <button onClick={fetchStationData} className="p-2 hover:bg-slate-200 rounded-lg transition-all text-slate-400"><RefreshCw size={14} /></button>
+                        <button onClick={fetchStationData} className="p-2 bg-white border border-slate-200 hover:bg-slate-100 rounded-lg transition-all text-slate-400 shrink-0 shadow-sm"><RefreshCw size={14} /></button>
                      </div>
                   </div>
-                  <div className="overflow-x-auto">
-                     <table className="w-full text-left text-[13px]">
+                  <div className="overflow-x-auto w-full">
+                     <table className="w-full text-left text-[13px] min-w-[500px]">
                         <thead>
                            <tr className="border-b border-slate-50">
                               <th className="px-6 py-4 font-black uppercase text-slate-400 text-[10px]">Mã số</th>
@@ -427,6 +465,24 @@ export default function ClinicalHubTab({ activeTab, API_URL, fetchData, setToast
          <div style={{ position: 'absolute', left: '-9999px', top: 0 }}>
             <SurveyPrintTemplate ref={printRef} patient={scannedPatient} survey={selectedSurvey} />
          </div>
+
+         {/* QR Scanner Modal */}
+         <AnimatePresence>
+            {showScanner && (
+               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm">
+                  <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-md">
+                     <div className="p-4 bg-slate-800 text-white flex items-center justify-between">
+                        <h3 className="font-bold flex items-center gap-2"><QrCode size={18} /> Quét mã QR</h3>
+                        <button onClick={() => setShowScanner(false)} className="p-1 hover:bg-slate-700 rounded-lg transition-colors"><X size={20} /></button>
+                     </div>
+                     <div className="p-4">
+                        <div id="qr-reader" className="w-full overflow-hidden rounded-lg border-2 border-slate-200"></div>
+                        <p className="text-center text-xs text-slate-500 mt-4">Hướng camera vào mã QR trên thẻ hoặc mã CCCD của bệnh nhân để tự động nhận diện.</p>
+                     </div>
+                  </motion.div>
+               </motion.div>
+            )}
+         </AnimatePresence>
       </div>
    );
 }
