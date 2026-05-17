@@ -37,76 +37,76 @@ const Step5SuccessBadge: React.FC<Step5Props> = ({
       </div>
 
       {/* Smart ID Card Badge */}
-      <div className="relative group max-w-sm mx-auto my-8">
+      <div className="relative group w-full max-w-[380px] mx-auto my-6 sm:my-8">
         <div className="absolute -inset-4 bg-blue-100/50 rounded-[20px] blur-xl opacity-50 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-        <div ref={badgeRef} className="relative bg-white rounded-[12px] shadow-2xl border border-slate-200 text-left overflow-hidden w-[380px] aspect-[1.586/1] flex flex-col mx-auto transition-transform duration-500 hover:scale-[1.02]">
-          {/* Header Banner - Smaller Height */}
-          <div className="bg-[#005ba1] p-3 text-white flex justify-between items-center h-[65px]">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center p-1 shadow-sm">
+        <div ref={badgeRef} className="relative bg-white rounded-[12px] shadow-2xl border border-slate-200 text-left overflow-hidden w-full aspect-[1.586/1] flex flex-col mx-auto transition-transform duration-500 hover:scale-[1.02]">
+          {/* Header Banner */}
+          <div className="bg-[#005ba1] p-2 sm:p-3 text-white flex justify-between items-center h-[18%] sm:h-[65px]">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-7 h-7 sm:w-9 sm:h-9 bg-white rounded-lg flex items-center justify-center p-1 shadow-sm">
                 <img src="/logo-benh-vien-trung-uong-hue-compressed.webp" alt="Logo" className="w-full h-full object-contain" />
               </div>
               <div>
-                <p className="text-[10px] font-black leading-tight uppercase tracking-tight">Bệnh viện Trung ương Huế</p>
-                <p className="text-[8px] font-bold text-blue-100 uppercase tracking-widest">Chương trình Sàng lọc miễn phí</p>
+                <p className="text-[8px] sm:text-[10px] font-black leading-tight uppercase tracking-tight">Bệnh viện Trung ương Huế</p>
+                <p className="text-[6px] sm:text-[8px] font-bold text-blue-100 uppercase tracking-widest">Chương trình Sàng lọc miễn phí</p>
               </div>
             </div>
-            <div className="text-right flex items-center gap-3">
+            <div className="text-right flex items-center gap-2 sm:gap-3">
               <div className="hidden sm:block">
                 <p className="text-[7px] font-black uppercase tracking-[0.2em] opacity-60">PROSTATE</p>
                 <p className="text-[9px] font-black tracking-tighter">2026</p>
               </div>
-              <Activity size={24} className="text-blue-300 opacity-80" />
+              <Activity className="text-blue-300 opacity-80 w-4 h-4 sm:w-6 sm:h-6" />
             </div>
           </div>
 
-          <div className="flex-1 pt-3 pb-10 px-6 flex">
+          <div className="flex-1 pt-2 pb-4 px-4 sm:pt-3 sm:pb-10 sm:px-6 flex">
             {/* Left Info Section */}
-            <div className="flex-1 space-y-2.5 pt-1 pr-4 border-r border-slate-100">
+            <div className="flex-1 space-y-2 sm:space-y-2.5 pt-1 pr-2 sm:pr-4 border-r border-slate-100">
               <div>
-                <h3 className="text-[9px] font-black text-[#005ba1] uppercase tracking-[0.1em] mb-1.5 opacity-80">Thẻ Tầm Soát Ung Thư TTL</h3>
+                <h3 className="text-[7px] sm:text-[9px] font-black text-[#005ba1] uppercase tracking-[0.1em] mb-1 sm:mb-1.5 opacity-80">Thẻ Tầm Soát Ung Thư TTL</h3>
                 <div className="space-y-0">
-                  <p className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Họ và tên</p>
-                  <p className="text-[17px] font-black text-[#003d6b] uppercase leading-tight whitespace-nowrap truncate">{registrationResult?.full_name}</p>
+                  <p className="text-[7px] sm:text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Họ và tên</p>
+                  <p className="text-[14px] sm:text-[17px] font-black text-[#003d6b] uppercase leading-tight whitespace-nowrap truncate">{registrationResult?.full_name}</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-2 sm:gap-4">
                 <div className="space-y-0">
-                  <p className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Ngày sinh</p>
-                  <p className="text-[13px] font-black text-slate-800">{registrationResult?.dob && new Date(registrationResult?.dob).toLocaleDateString("vi-VN")}</p>
+                  <p className="text-[7px] sm:text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Ngày sinh</p>
+                  <p className="text-[11px] sm:text-[13px] font-black text-slate-800">{registrationResult?.dob && new Date(registrationResult?.dob).toLocaleDateString("vi-VN")}</p>
                 </div>
                 <div className="space-y-0">
-                  <p className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Số CCCD</p>
-                  <p className="text-[13px] font-black text-slate-800">{registrationResult?.cccd}</p>
+                  <p className="text-[7px] sm:text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Số CCCD</p>
+                  <p className="text-[11px] sm:text-[13px] font-black text-slate-800">{registrationResult?.cccd}</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-2 sm:gap-4">
                 <div className="space-y-0">
-                  <p className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Mã đăng ký</p>
-                  <p className="text-[16px] font-black text-[#005ba1]">{registrationResult?.registration_number}</p>
+                  <p className="text-[7px] sm:text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Mã đăng ký</p>
+                  <p className="text-[14px] sm:text-[16px] font-black text-[#005ba1]">{registrationResult?.registration_number}</p>
                 </div>
                 <div className="space-y-0">
-                  <p className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Ngày đăng ký</p>
-                  <p className="text-[12px] font-black text-slate-600">{registrationResult?.created_at && new Date(registrationResult?.created_at).toLocaleDateString("vi-VN")}</p>
+                  <p className="text-[7px] sm:text-[8px] font-bold text-slate-400 uppercase tracking-tighter">Ngày đăng ký</p>
+                  <p className="text-[10px] sm:text-[12px] font-black text-slate-600">{registrationResult?.created_at && new Date(registrationResult?.created_at).toLocaleDateString("vi-VN")}</p>
                 </div>
               </div>
             </div>
 
             {/* Right QR Section */}
-            <div className="w-[115px] flex flex-col items-center justify-center pt-1 pl-4">
-              <div className="p-1 bg-white border-[1.5px] border-[#005ba1] rounded-lg shadow-sm">
+            <div className="w-[85px] sm:w-[115px] flex flex-col items-center justify-center pt-1 pl-3 sm:pl-4">
+              <div className="p-1 w-full bg-white border-[1.5px] border-[#005ba1] rounded-lg shadow-sm">
                 <QRCodeSVG
                   value={String(registrationResult?.cccd)}
-                  size={88}
+                  className="w-full h-auto"
                   level="H"
                   includeMargin={false}
                 />
               </div>
-              <div className="mt-2.5 space-y-1 text-center">
-                <p className="text-[8px] font-black text-[#005ba1] uppercase tracking-widest">Quét Check-in</p>
-                <div className="px-2 py-1 bg-blue-50 text-[#005ba1] rounded-md text-[7px] font-black border border-blue-100 uppercase text-center flex flex-col items-center leading-tight">
+              <div className="mt-2 sm:mt-2.5 space-y-1 w-full text-center">
+                <p className="text-[6px] sm:text-[8px] font-black text-[#005ba1] uppercase tracking-widest">Quét Check-in</p>
+                <div className="px-1 py-1 sm:px-2 bg-blue-50 text-[#005ba1] rounded-md text-[6px] sm:text-[7px] font-black border border-blue-100 uppercase text-center flex flex-col items-center leading-tight">
                   <span>{registrationResult?.appointment_slot?.split(" ")[0]}</span>
                   <span className="mt-0.5 pt-0.5 border-t border-blue-200/50 w-full">
                     {registrationResult?.appointment_slot?.split(" ")[1]}
@@ -117,7 +117,7 @@ const Step5SuccessBadge: React.FC<Step5Props> = ({
           </div>
 
           {/* Footer Decoration */}
-          <div className="h-1.5 bg-[#005ba1] w-full flex">
+          <div className="h-1 sm:h-1.5 bg-[#005ba1] w-full flex">
             <div className="flex-1 bg-blue-400 opacity-40" />
             <div className="flex-1 bg-blue-500 opacity-60" />
             <div className="flex-1 bg-[#005ba1]" />
