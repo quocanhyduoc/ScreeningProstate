@@ -126,16 +126,15 @@ async def submit_screening(survey: SurveyCreate, db: Session = Depends(get_db)):
         db_survey = ScreeningSurvey(**survey.dict())
         db.add(db_survey)
         
-    patient.status = "DA_KHAO_SAT"
-    db.commit()
+    # 3. Send Emails
+    # We do not change patient.status here so they don't skip Reception/Screening workflow.
     
     asyncio.create_task(manager.broadcast({
         "type": "SURVEY_SUBMITTED",
         "patient_id": patient.id,
-        "status": "DA_KHAO_SAT"
+        "status": patient.status
     }))
     
-    # 3. Send Emails
     send_registration_email(
         patient_email=patient.email,
         patient_name=patient.full_name,

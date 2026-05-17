@@ -78,7 +78,12 @@ async def create_survey(
         # Admin can update existing
         for key, value in survey.model_dump().items():
             setattr(existing, key, value)
+            
+        # Advancing status to CHO_XET_NGHIEM if admin saves the survey
+        patient.status = "CHO_XET_NGHIEM"
         db.commit()
+        background_tasks.add_task(manager.broadcast, {"type": "UPDATE_PATIENT", "patient_id": patient.id, "status": "CHO_XET_NGHIEM"})
+        
         db.refresh(existing)
         return existing
     

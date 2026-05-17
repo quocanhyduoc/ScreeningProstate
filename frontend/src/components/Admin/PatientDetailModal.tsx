@@ -115,11 +115,11 @@ export default function PatientDetailModal({
                 <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Thao tác phê duyệt</label>
                 <div className="grid grid-cols-2 gap-3">
                   <button 
-                    disabled={updatingStatus || selectedPatient.status === 'DA_XAC_NHAN'}
+                    disabled={updatingStatus || selectedPatient.status !== 'CHO_XAC_NHAN'}
                     onClick={() => handleUpdateStatus(selectedPatient.id, 'DA_XAC_NHAN')}
                     className="py-3 bg-green-600 text-white rounded-lg font-bold text-[13px] hover:bg-green-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                   >
-                    <CheckCircle size={16} /> CHỐT HẸN
+                    <CheckCircle size={16} /> {selectedPatient.status === 'CHO_XAC_NHAN' ? 'CHỐT HẸN' : 'ĐÃ CHỐT HẸN'}
                   </button>
                   <button 
                     disabled={updatingStatus || selectedPatient.status === 'HUY'}
