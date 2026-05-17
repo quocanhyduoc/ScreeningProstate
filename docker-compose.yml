@@ -24,11 +24,11 @@ services:
     build:
       context: ./frontend
       args:
-        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://103.149.87.0:8000}
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-https://sangloctuyentienliet.com/api}
     ports:
       - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://103.149.87.0:8000}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-https://sangloctuyentienliet.com/api}
     networks:
       - private_net
     depends_on:
