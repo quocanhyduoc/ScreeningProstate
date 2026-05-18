@@ -133,7 +133,7 @@ export default function SurveyForm({ patientId, onComplete }: any) {
              active={formData.brca_mutation} 
              onClick={() => toggleField('brca_mutation')} 
            />
-           <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm flex items-center gap-6">
+           <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6">
               <div className="flex-1 space-y-1">
                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Cha chẩn đoán K lúc</label>
                  <div className="relative">
@@ -219,35 +219,37 @@ export default function SurveyForm({ patientId, onComplete }: any) {
       </section>
 
       {/* Fixed Footer Bar - Modern split buttons */}
-      <div className="fixed bottom-0 left-64 right-0 bg-white/90 backdrop-blur-xl border-t border-slate-200 p-6 z-[50] flex justify-between items-center px-12 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
+      <div className="fixed bottom-0 left-0 lg:left-64 right-0 bg-white/95 backdrop-blur-xl border-t border-slate-200 p-4 md:p-6 z-[50] flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 px-4 md:px-12 shadow-[0_-10px_40px_rgba(0,0,0,0.06)]">
         <button 
           type="button"
           onClick={() => onComplete()}
-          className="bg-white border-2 border-slate-200 text-slate-500 px-8 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center gap-2"
+          className="bg-white border-2 border-slate-200 text-slate-500 w-full sm:w-auto px-6 py-3.5 md:py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-slate-50 transition-all flex items-center justify-center gap-2 order-3 sm:order-1"
         >
           <X size={18} />
           HỦY CHỈNH SỬA
         </button>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto order-1 sm:order-2">
            <button 
              type="button"
              disabled={loading}
              onClick={() => handleAction('save')}
-             className="bg-white border-2 border-[#0067b8] text-[#0067b8] px-10 py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-blue-50 transition-all flex items-center gap-2 shadow-sm"
+             className="bg-white border-2 border-[#0067b8] text-[#0067b8] w-full sm:w-auto px-8 py-3.5 md:py-4 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-blue-50 transition-all flex items-center justify-center gap-2 shadow-sm"
            >
               {loading && actionType === 'save' ? <RefreshCw className="animate-spin" size={18} /> : <Save size={18} />}
-              LƯU LẠI CHỈNH SỬA
+              <span className="hidden sm:inline">LƯU LẠI CHỈNH SỬA</span>
+              <span className="inline sm:hidden">LƯU LẠI</span>
            </button>
 
            <button 
              type="button"
              disabled={loading}
              onClick={() => handleAction('complete')}
-             className="bg-[#0067b8] hover:bg-blue-700 text-white px-12 py-4 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-100 flex items-center gap-3 transition-all active:scale-95 disabled:opacity-50"
+             className="bg-[#0067b8] hover:bg-blue-700 text-white w-full sm:w-auto px-10 py-3.5 md:py-4 rounded-xl font-black text-xs uppercase tracking-widest shadow-xl shadow-blue-100 flex items-center justify-center gap-3 transition-all active:scale-95 disabled:opacity-50"
            >
               {loading && actionType === 'complete' ? <RefreshCw className="animate-spin" size={20} /> : <CheckCircle size={20} />}
-              HOÀN TẤT & CHUYỂN BÀN LẤY MÁU
+              <span className="hidden md:inline">HOÀN TẤT & CHUYỂN BÀN LẤY MÁU</span>
+              <span className="inline md:hidden">HOÀN TẤT & CHUYỂN</span>
            </button>
         </div>
       </div>

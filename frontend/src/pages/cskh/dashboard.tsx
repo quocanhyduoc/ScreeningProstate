@@ -1,2 +1,6 @@
+import React from 'react';
 import ProfessionalAdminDashboard from '../admin/dashboard';
-export default ProfessionalAdminDashboard;
+
+export default function CSKHDashboard() {
+  return <ProfessionalAdminDashboard />;
+}

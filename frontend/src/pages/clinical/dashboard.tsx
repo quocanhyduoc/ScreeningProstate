@@ -11,7 +11,7 @@ import {
   Droplets, MessageSquare, ChevronRight, Bell,
   UserCheck, AlertCircle, Save, ArrowLeft, X,
   ChevronDown, HelpCircle, Activity, Zap, LogOut,
-  Fingerprint, MapPin, Heart, Info, LayoutDashboard
+  Fingerprint, MapPin, Heart, Info, LayoutDashboard, Menu
 } from 'lucide-react';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
@@ -44,6 +44,7 @@ export default function ClinicalDashboard() {
   const [role, setRole] = useState('');
   const [permissions, setPermissions] = useState<string[]>([]);
   const [userPermissions, setUserPermissions] = useState<string[]>([]);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const router = useRouter();
   const [username, setUsername] = useState('Clinical Staff');
@@ -174,6 +175,7 @@ export default function ClinicalDashboard() {
     setActiveStation(key);
     setSelectedPatient(null);
     setLoading(true);
+    setIsMobileMenuOpen(false);
     const queueKey = STATION_TO_QUEUE_KEY[key];
     const q = queueStatus.find(item => item.station === queueKey);
     setManualNumber(String(q?.current_number || ''));
@@ -182,7 +184,7 @@ export default function ClinicalDashboard() {
   if (loading && !clinicalStats && !role) return <LoadingScreen />;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex text-[#1E293B]">
+    <div className="min-h-screen bg-[#F8FAFC] flex text-[#1E293B] overflow-x-hidden">
       <AnimatePresence>
         {toast && (
           <motion.div initial={{ y: -100, opacity: 0 }} animate={{ y: 20, opacity: 1 }} exit={{ y: -100, opacity: 0 }} className="fixed top-4 right-4 z-[100] bg-[#0067b8] text-white px-6 py-4 rounded-lg shadow-2xl flex items-center gap-4 border border-blue-500">
@@ -193,7 +195,15 @@ export default function ClinicalDashboard() {
         )}
       </AnimatePresence>
 
-      <aside className="w-64 bg-white border-r border-slate-200 fixed h-full z-40 flex flex-col shadow-sm">
+      {/* Mobile Sidebar Backdrop */}
+      {isMobileMenuOpen && (
+        <div 
+           className="fixed inset-0 bg-slate-900/50 z-40 lg:hidden backdrop-blur-xs"
+           onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      <aside className={`w-64 bg-white border-r border-slate-200 fixed h-full z-50 flex flex-col shadow-sm transition-transform duration-300 ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}>
         <div className="p-6 space-y-10 flex-1">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center shadow-md">
@@ -230,47 +240,55 @@ export default function ClinicalDashboard() {
         </div>
       </aside>
 
-      <main className="ml-64 flex-1 p-8">
-        <header className="flex justify-between items-center mb-10">
-          <div className="space-y-1">
-             <h2 className="text-2xl font-bold tracking-tight text-[#121C2D]">
-               {currentStation.label}
-             </h2>
-             <p className="text-[12px] text-slate-400 font-medium italic">Hệ thống quản lý hàng đợi và tiến trình Lâm sàng</p>
-          </div>
+      <main className="lg:ml-64 flex-1 p-4 md:p-8 w-full overflow-x-hidden">
+        <header className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6 md:mb-10">
           <div className="flex items-center gap-3">
-             <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-4 py-1 shadow-sm">
+             <button 
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="lg:hidden p-2.5 bg-white border border-slate-200 rounded-lg text-slate-500 hover:bg-slate-50 shadow-sm"
+             >
+                <Menu size={20} />
+             </button>
+             <div className="space-y-1">
+                <h2 className="text-xl md:text-2xl font-bold tracking-tight text-[#121C2D]">
+                  {currentStation.label}
+                </h2>
+                <p className="text-[12px] text-slate-400 font-medium italic hidden sm:block">Hệ thống quản lý hàng đợi và tiến trình Lâm sàng</p>
+             </div>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full md:w-auto">
+             <div className="flex items-center gap-2 bg-white border border-slate-200 rounded-lg px-3 sm:px-4 py-1 shadow-sm shrink-0">
                <input
                  type="number"
                  min={1}
                  value={manualNumber}
                  onChange={e => setManualNumber(e.target.value)}
                  onKeyDown={e => e.key === 'Enter' && handleCallNext(parseInt(manualNumber) || 1)}
-                 className="w-20 text-center text-lg font-black outline-none bg-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                 className="w-14 sm:w-20 text-center text-base sm:text-lg font-black outline-none bg-transparent [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                  placeholder="Số"
                />
              </div>
-             <button onClick={() => handleCallNext(parseInt(manualNumber) || 1)} className="flex items-center gap-2 px-6 py-3 bg-[#0067b8] text-white rounded-lg font-black text-[13px] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 active:scale-95">
-               <Bell size={18} className="animate-pulse" /> MỜI
+             <button onClick={() => handleCallNext(parseInt(manualNumber) || 1)} className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2.5 sm:py-3 bg-[#0067b8] text-white rounded-lg font-black text-xs sm:text-[13px] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 active:scale-95">
+               <Bell size={16} className="animate-pulse" /> MỜI
              </button>
              <button onClick={() => {
                const currentQ = queueStatus.find(q => q.station === STATION_TO_QUEUE_KEY[activeStation]);
                handleCallNext((currentQ?.current_number || 0) + 1);
-             }} className="flex items-center gap-2 px-5 py-3 bg-white border border-slate-200 text-slate-600 rounded-lg font-black text-[12px] hover:bg-slate-50 transition-all shadow-sm">
-               KẾ TIẾP <ChevronRight size={16} />
+             }} className="flex items-center gap-1 sm:gap-2 px-3 sm:px-5 py-2.5 sm:py-3 bg-white border border-slate-200 text-slate-600 rounded-lg font-black text-[11px] sm:text-[12px] hover:bg-slate-50 transition-all shadow-sm">
+               KẾ TIẾP <ChevronRight size={14} />
              </button>
-             <button onClick={fetchData} className="p-3 bg-white border border-slate-200 rounded-lg text-slate-400 hover:bg-slate-50 transition-all shadow-sm">
-               <RefreshCw size={18} />
+             <button onClick={fetchData} className="p-2.5 sm:p-3 bg-white border border-slate-200 rounded-lg text-slate-400 hover:bg-slate-50 transition-all shadow-sm">
+               <RefreshCw size={16} />
              </button>
           </div>
         </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-           <StatCard label="Đang đợi tại bàn" value={registrations.length} color="border-blue-100 text-blue-600" />
-           <StatCard label="Số đang gọi" value={queueStatus.find(q=>q.station===STATION_TO_QUEUE_KEY[activeStation])?.current_number || 0} color="border-orange-100 text-orange-600" />
-           <StatCard label="Đang trong quy trình" value={clinicalStats?.in_progress || 0} color="border-purple-100 text-purple-600" />
-           <StatCard label="Đã hoàn thành" value={clinicalStats?.completed || 0} color="border-green-100 text-green-600" />
-        </div>
+         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-10">
+            <StatCard label="Đang đợi tại bàn" value={registrations.length} color="border-blue-100 text-blue-600" />
+            <StatCard label="Số đang gọi" value={queueStatus.find(q=>q.station===STATION_TO_QUEUE_KEY[activeStation])?.current_number || 0} color="border-orange-100 text-orange-600" />
+            <StatCard label="Đang trong quy trình" value={clinicalStats?.in_progress || 0} color="border-purple-100 text-purple-600" />
+            <StatCard label="Đã hoàn thành" value={clinicalStats?.completed || 0} color="border-green-100 text-green-600" />
+         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
            <div className="lg:col-span-2 space-y-8">

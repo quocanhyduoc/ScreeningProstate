@@ -1,0 +1,49 @@
+name: Ban to chuc - Tu dong deploy len VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Thuc hien Deploy qua SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT || 22 }}
+          script: |
+            echo "============ BAT DAU QUY TRINH DEPLOY HO TONG SIET MAT ============"
+            
+            # 1. Di chuyen vao thu muc du an
+            cd ${{ secrets.DEPLOY_PATH }}
+            
+            # 2. Dong bo ma nguon tu GitHub
+            echo "Syncing code with GitHub..."
+            git fetch --all
+            git reset --hard origin/main
+            
+            # 3. Kiem tra va dam bao file .env da ton tai tren VPS
+            if [ ! -f ./backend/.env ]; then
+              echo "Canh bao: File backend/.env chua ton tai! Vui long cau hinh tren VPS."
+            fi
+            
+            # 4. Khoi dong lai va build he thong bang Docker
+            echo "Rebuilding and restarting docker containers..."
+            docker compose down
+            docker compose up --build -d
+            
+            # 5. Don dep bo nho cache build cua Docker de tiet kiem o cung VPS
+            echo "Cleaning up dangling images and build cache to save VPS space..."
+            docker image prune -f
+            docker system prune -f --volumes
+            
+            echo "============ DEPLOY THANH CONG RU RUC! =============="

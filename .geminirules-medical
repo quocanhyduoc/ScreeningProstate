@@ -1,0 +1,68 @@
+# 🩺 CHỈ DẪN BẮT BUỘC DỰ ÁN: SANGLOCTUYENTIENLIET.COM
+## 📌 Hệ Thống Tầm Soát Ung Thư Tuyến Tiền Liệt - BV Trung Ương Huế
+
+File cấu hình này thiết lập các tiêu chuẩn tối cao về Y khoa, Trải nghiệm Người dùng (UI/UX) và Kỹ thuật Lập trình cho toàn bộ trợ lý AI tham gia phát triển dự án này.
+
+---
+
+## 1. 🔬 QUY TẮC CHUYÊN MÔN Y KHOA (MEDICAL LOGIC)
+
+Hệ thống BẮT BUỘC phải tuân thủ nghiêm ngặt các tiêu chuẩn phân tầng nguy cơ và lọc độ tuổi sau đây:
+
+### A. Thuật Toán Lọc Đối Tượng Tầm Soát (Eligibility Algorithm)
+* **Ngày Chốt Tính Tuổi**: Mốc thời gian cố định là ngày **01/06/2026** (Tuổi bệnh nhân = 2026 - Năm sinh).
+* **Quy tắc phân tầng**:
+  1. **Nhóm Từ Chối (< 45 tuổi)**: Không đủ điều kiện tham gia chương trình tầm soát miễn phí.
+  2. **Nhóm Cân Nhắc (45 - 50 tuổi)**:
+     - **CHẤP NHẬN** nếu: Có **Yếu tố nguy cơ cao** (Tiền sử gia đình có cha/anh/em ruột mắc ung thư tuyến tiền liệt hoặc ung thư vú/buồng trứng, hoặc mang đột biến gen BRCA1/BRCA2).
+     - **TỪ CHỐI** nếu: Không có bất kỳ yếu tố nguy cơ nào kể trên.
+  3. **Nhóm Chỉ Định Mặc Định (>= 50 tuổi)**: Mặc định được chấp nhận tham gia khám tầm soát miễn phí.
+* **Giới Hạn Suất Khám**: Tối đa **300 lượt khám** chính thức (Admin có thể cấu hình tăng/giảm trong Database tùy theo nguồn lực dự án).
+
+### B. Quy Trình Trạng Thái 6 Bước (Clinical Workflow)
+Tất cả các mô-đun dữ liệu và giao diện quản trị phải đồng bộ hóa theo đúng 6 trạng thái nghiệp vụ lâm sàng sau:
+1. `CHO_XAC_NHAN` (Chờ duyệt): Khách hàng quét QR đăng ký online thành công. CSKH gọi điện xác nhận và kiểm tra thông tin.
+2. `DA_XAC_NHAN` (Đã chốt): Đã khớp lịch hẹn khám, hệ thống gửi SMS/Email nhắc lịch tự động.
+3. `DA_TIEP_NHAN` (Tiếp nhận): Bệnh nhân check-in tại bàn đón tiếp bằng mã QR (trên điện thoại hoặc in giấy). Cấp hồ sơ bệnh án.
+4. `DA_XET_NGHIEM` (Xét nghiệm): Lấy mẫu máu làm xét nghiệm PSA (Prostate-Specific Antigen) và siêu âm ổ bụng đo thể tích tuyến tiền liệt.
+5. `CHO_TU_VAN` (Chờ tư vấn): Bác sĩ chuyên khoa tiết niệu đọc kết quả xét nghiệm, khám lâm sàng và tư vấn phương án theo dõi.
+6. `HOAN_THANH` (Hoàn thành): Bệnh nhân nhận đơn tư vấn, ký giấy đồng thuận chương trình và kết thúc quy trình tầm soát.
+
+---
+
+## 2. 🔤 QUY CHUẨN THUẬT NGỮ LÂM SÀNG & TỪ VỰNG
+
+Không dùng từ ngữ tự do, mọi nhãn nhập liệu và xuất dữ liệu phải sử dụng đúng thuật ngữ chuyên môn:
+* **Kháng nguyên đặc hiệu:** `Chỉ số PSA toàn phần (ng/ml)` (Tránh ghi nhầm PSA tự do).
+* **Siêu âm Tuyến tiền liệt:** `Thể tích tuyến tiền liệt (ml)` hoặc `Kích thước tuyến tiền liệt (mm)`.
+* **Mức độ tổn thương:** Phân hạng theo chuẩn `PI-RADS v2.1` (Từ I đến V).
+* **Tiền sử gia đình:** `Tiền sử mắc ung thư tuyến tiền liệt ở người thân trực hệ (Cha/Anh/Em ruột)`.
+* **Giấy tờ pháp lý:** `Giấy đồng thuận tham gia chương trình tầm soát y khoa cộng đồng`.
+
+---
+
+## 3. 🎨 TIÊU CHUẨN GIAO DIỆN & TRẢI NGHIỆM KHÁCH HÀNG (UI/UX)
+
+### A. Tối Ưu Cho Bệnh Nhân Lớn Tuổi (Geriatric UI/UX)
+* **Kích Thước Chữ**: Font chữ tối thiểu phải từ `16px` cho text thường và `20px` trở lên cho tiêu đề. Độ tương phản cao (sử dụng Slate-800 và Blue-900 trên nền trắng).
+* **Hỗ Trợ Hành Chính**: Bộ chọn tỉnh/thành phố, quận/huyện, phường/xã phải có ô tìm kiếm nhanh, ngăn ngừa lỗi treo hoặc sập giao diện khi tải khối lượng dữ liệu lớn.
+* **Hospital Branding**: Luôn hiển thị logo bệnh viện chính thức tại địa chỉ `public/logobv.boder.png` trên phiếu đăng ký khám và thẻ QR Digital Badge.
+
+### B. Tối Ưu Cho Nhân Viên Y Tế (Admin/Clinical Mobile Dashboard)
+* **Responsive Tuyệt Đối**: Giao diện dashboard phải hoạt động mượt mà trên cả iPad, máy tính bảng và điện thoại di động của điều phối viên.
+* **Bộ Lọc Khung Giờ Linh Hoạt**: Cung cấp bộ lọc nhanh khung giờ khám dạng các nút nhấn trực quan để nhân viên y tế thao tác nhanh tại bàn tiếp đón.
+* **Click-To-Sort**: Danh sách bệnh nhân phải hỗ trợ click vào tiêu đề cột (Khung giờ, Trạng thái) để sắp xếp tăng/giảm dần ngay lập tức.
+
+---
+
+## 4. 💻 TIÊU CHUẨN KỸ THUẬT & KIẾN TRÚC CODE
+
+### A. Công Nghệ Sử Dụng (Tech Stack)
+* **Frontend**: Next.js (Pages Router), React 18, Tailwind CSS, Framer Motion, Lucide Icons.
+* **Backend**: FastAPI, SQLAlchemy (ORM), Uvicorn, SQLite/PostgreSQL, JWT Authentication.
+* **Xuất Dữ Liệu**: Thư viện `pandas` và `openpyxl`.
+
+### B. Nguyên Tắc Viết Code (Development Guidelines)
+1. **Tuyệt đối không sử dụng dữ liệu giả (Placeholder)**: Mọi biểu đồ, dữ liệu thống kê phải phản ánh đúng từ API thực tế hoặc có fallback an toàn.
+2. **Quy tắc sửa file**: Luôn bảo tồn các comment y khoa, mô tả logic tuổi và tiền sử bệnh. Không tự ý rút gọn các hàm kiểm tra điều kiện lâm sàng.
+3. **Kiểm tra biên dịch**: Sau mỗi thay đổi liên quan đến giao diện, bắt buộc chạy kiểm tra kiểu dữ liệu với `npx tsc --noEmit` trước khi tiến hành đóng gói.

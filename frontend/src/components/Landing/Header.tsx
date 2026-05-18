@@ -1,5 +1,6 @@
 import React from 'react';
 import { PlayCircle, FileText, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 
 export default function Header({ scrollToForm }: { scrollToForm: () => void }) {
   return (
@@ -9,16 +10,20 @@ export default function Header({ scrollToForm }: { scrollToForm: () => void }) {
             <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center p-1 border border-slate-100">
               <img src="/logo-benh-vien-trung-uong-hue-compressed.webp" alt="Logo" className="w-full h-full object-contain" />
             </div>
-            <div className="hidden md:block">
+            <Link href="/" className="hidden md:block hover:opacity-90 transition-opacity">
               <h1 className="text-[15px] font-black text-blue-900 leading-none uppercase tracking-tight">CHƯƠNG TRÌNH TẦM SOÁT UNG THƯ TUYẾN TIỀN LIỆT 2026</h1>
               <p className="text-[11px] font-bold text-blue-500 uppercase tracking-widest mt-1">Bệnh viện Trung ương Huế</p>
-            </div>
+            </Link>
          </div>
 
          <div className="flex items-center gap-6">
             <nav className="hidden lg:flex items-center gap-6">
-               <button className="text-[13px] font-bold text-slate-500 hover:text-blue-600 transition-colors flex items-center gap-2"><PlayCircle size={18}/> Xem quy trình sàng lọc</button>
-               <button className="text-[13px] font-bold text-slate-500 hover:text-blue-600 transition-colors flex items-center gap-2"><FileText size={18}/> Thông tin truyền thông</button>
+               <Link href="/quy-trinh" className="text-[13px] font-bold text-slate-500 hover:text-blue-600 transition-colors flex items-center gap-2">
+                 <PlayCircle size={18}/> Xem quy trình sàng lọc
+               </Link>
+               <Link href="/truyen-thong" className="text-[13px] font-bold text-slate-500 hover:text-blue-600 transition-colors flex items-center gap-2">
+                 <FileText size={18}/> Thông tin truyền thông
+               </Link>
             </nav>
             <button 
               onClick={scrollToForm}

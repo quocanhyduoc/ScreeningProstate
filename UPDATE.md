@@ -1,67 +1,89 @@
-# 📋 Tổng Quan Hệ Thống (System Overview)
+# 📝 NHẬT KÝ NÂNG CẤP & PHÁT TRIỂN HỆ THỐNG (CHANGELOG)
+## 📌 Hệ Thống Tầm Soát Ung Thư Tuyến Tiền Liệt - BV Trung Ương Huế
+> Địa chỉ tên miền chính thức: **sangloctuyentienliet.com**
 
-| Thành phần | Công nghệ / Đặc điểm | Vai trò & Chức năng |
-| :--- | :--- | :--- |
-| **Frontend** | Next.js (Pages Router), TypeScript, Tailwind CSS, Framer Motion, Lucide React | Giao diện người dùng (Patient Portal), Dashboard quản trị và giao diện lâm sàng. |
-| **Backend** | Python, FastAPI, SQLAlchemy, Pydantic, JWT Authentication | Cung cấp RESTful API, xử lý logic nghiệp vụ, quản lý hàng đợi và xác thực người dùng. |
-| **Database** | SQLite (mặc định), SQLAlchemy ORM | Lưu trữ thông tin bệnh nhân, dữ liệu khảo sát lâm sàng và cấu hình hệ thống. |
-| **Xác thực** | JWT (JSON Web Token) | Phân quyền người dùng (RBAC): `SUPERADMIN`, `CLINICAL`, `CSKH`. |
-| **Triển khai** | Docker, Docker Compose | Đóng gói toàn bộ hệ thống để triển khai nhất quán trên VPS/Server. |
-| **Tính năng chính** | 6-Step Funnel, QR Digital Badge, Real-time Queue, Excel Export | Tự động hóa quy trình tầm soát từ đăng ký online đến khám onsite. |
+Tài liệu này ghi chép chi tiết toàn bộ các cột mốc nâng cấp, các phiên bản cập nhật kỹ thuật và chức năng nghiệp vụ của hệ thống từ giai đoạn sơ khai đến phiên bản hiện tại.
 
 ---
 
-# 📂 Chi Tiết Từng Phần (Detailed Components)
+## 🚀 PHIÊN BẢN 2.1 - TỐI ƯU HÓA QUẢN TRỊ ĐA NỀN TẢNG (PHIÊN BẢN HIỆN TẠI)
+*Ngày cập nhật: 18/05/2026*
 
-## 1. Frontend Architecture (Next.js)
+Phiên bản này tập trung vào trải nghiệm thực chiến tại bệnh viện, giúp điều phối viên và nhân viên y tế dễ dàng vận hành hệ thống trực tiếp trên các thiết bị di động cầm tay (iPad, Tablet, Smartphone) tại bàn tiếp nhận nhanh.
 
-Hệ thống frontend được xây dựng theo hướng **Component-driven**, tập trung vào trải nghiệm người dùng cao cấp (Premium UI/UX) và khả năng tương tác mượt mà.
-
-*   **Quy trình đăng ký (Patient Funnel):** Nằm tại `src/pages/index.tsx`, gồm 6 bước:
-    1.  **Thông tin cá nhân:** Thu thập họ tên, DOB, CCCD, SĐT, Email và địa chỉ (dữ liệu hành chính Việt Nam).
-    2.  **Thời gian khám:** Chọn khung giờ từ `TIME_SLOTS`, hỗ trợ cơ chế "Extra Slot" khi hết suất chính thức.
-    3.  **Tiền sử bệnh:** Sàng lọc tiền sử gia đình (Cha/Anh em bị K) và triệu chứng cơ bản.
-    4.  **Xác nhận:** Kiểm tra lại dữ liệu và đồng ý điều khoản chia sẻ thông tin.
-    5.  **Digital Badge:** Tạo mã QR duy nhất cho bệnh nhân, cho phép tải về dạng ảnh (sử dụng `html-to-image`).
-    6.  **Khảo sát lâm sàng:** Tích hợp sâu các câu hỏi chuyên môn y khoa sau khi đăng ký thành công.
-*   **Hệ thống Dashboard:**
-    *   `admin/`: Theo dõi số liệu thống kê tổng thể, quản lý danh sách, xuất Excel và cấu hình hệ thống.
-    *   `clinical/`: Dành cho bác sĩ tra cứu bệnh nhân nhanh bằng QR, nhập kết quả siêu âm, chỉ số PSA và quản lý hàng đợi gọi số.
-*   **Giao diện hiển thị (Display):** `display.tsx` cập nhật trạng thái hàng đợi thời gian thực qua WebSocket.
-
-## 2. Backend Architecture (FastAPI)
-
-Backend được tổ chức theo cấu trúc module hóa, đảm bảo tính mở rộng và bảo mật.
-
-*   **Models (`app/models.py`):**
-    *   `PatientRegistration`: Thông tin cốt lõi, trạng thái (`CHO_XAC_NHAN`, `DA_TIEP_NHAN`, `HOAN_THANH`).
-    *   `ScreeningSurvey`: Dữ liệu y khoa chi tiết (Biến dị BRCA, loại thuốc đang dùng, kết quả xét nghiệm).
-    *   `User`: Quản lý tài khoản cán bộ y tế và quyền hạn.
-    *   `QueueStatus`: Lưu trữ số thứ tự hiện tại của từng trạm (Tiếp nhận, Lấy mẫu, Siêu âm...).
-*   **Routes (`app/routes/`):**
-    *   `registration.py`: Tiếp nhận đăng ký mới, kiểm tra thống kê suất khám.
-    *   `admin.py`: Xử lý các tác vụ quản trị cao cấp, xuất báo cáo Excel, reset dữ liệu.
-    *   `clinical.py`: Các API phục vụ trực tiếp tại bàn khám (Nhập khảo sát, gọi số hàng đợi).
-    *   `auth.py`: Đăng nhập và cấp phát Token.
-
-## 3. Quy Trình Dữ Liệu (Workflow)
-
-1.  **Đăng ký:** Bệnh nhân đăng ký qua funnel -> Dữ liệu lưu vào `patient_registrations`.
-2.  **Check-in:** Tại hiện trường, nhân viên quét QR (CCCD hoặc mã số) -> Backend trả về thông tin bệnh nhân qua endpoint `/admin/scan/{qr_code}`.
-3.  **Khám lâm sàng:** Bác sĩ điền khảo sát -> Lưu vào `screening_surveys` và tự động cập nhật trạng thái bệnh nhân.
-4.  **Kết quả:** Kết quả PSA và siêu âm được cập nhật -> Hệ thống chuyển trạng thái về `HOAN_THANH`.
-
-## 4. Environment & Deployment
-
-*   **Biến môi trường:** Được quản lý qua file `.env` (Backend) và `.env.local` (Frontend). Quan trọng nhất là `NEXT_PUBLIC_API_URL`.
-*   **Dockerization:**
-    *   `docker-compose.yml`: Điều phối Container Frontend (Port 3000) và Backend (Port 8000).
-    *   `uploads/`: Thư mục lưu trữ ảnh siêu âm và dữ liệu tĩnh.
+### 🌟 Tính Năng Mới
+1. **Bộ Lọc Khung Giờ Khám Trực Quan (`CalendarTab.tsx`)**:
+   - Thêm bảng bộ lọc khung giờ khám dạng các nút bấm lớn, nhạy bén và hiển thị số đếm số lượng đăng ký thực tế trong từng khung giờ.
+   - Hỗ trợ nhân viên y tế lọc nhanh hàng đợi khám ngay tại sảnh chờ.
+2. **Sắp Xếp Danh Sách Đa Năng (Click-To-Sort & Dropdown Sort)**:
+   - **Giao diện Desktop**: Cho phép bấm trực tiếp vào tiêu đề cột **Khung giờ hẹn** và **Trạng thái** để sắp xếp danh sách tăng/giảm dần với biểu tượng mũi tên chỉ hướng sinh động.
+   - **Giao diện Di động/Tablet**: Tích hợp hộp chọn sắp xếp chuyên dụng ngay trong bảng lọc nâng cao để nhân viên thao tác vuốt chạm nhanh mà không cần thu phóng bảng.
+3. **Nâng Cấp Xuất Dữ Liệu Excel Đa Phân Hệ & Tổng Thể (`admin.py` & `dashboard.tsx`)**:
+   - **Báo cáo Phân hệ**: Xuất báo cáo riêng biệt cho từng trạm làm việc (`patients`, `clinical_screening`, `clinical_lab`, `clinical_consult`).
+   - **Báo cáo Tổng thể (Mới)**: Cho phép Admin tối cao (`SUPERADMIN`) xuất file Excel tổng hợp toàn bộ hệ thống (`section=overall`) chứa **5 Sheet khác nhau** trong cùng một File (Tài khoản Nhân viên, Danh sách Đăng ký, Khảo sát Sàng lọc, Xét nghiệm & Siêu âm, Tư vấn & Trả kết quả).
+   - Tên file tải về tự động đổi theo ngôn ngữ tiếng Việt dễ đọc, có gắn ngày tháng xuất báo cáo thực tế.
 
 ---
 
-> [!TIP]
-> **Hướng dẫn cho AI Agent tiếp theo:** 
-> - Nếu muốn tái cấu trúc Frontend: Tập trung vào việc tách các bước trong `index.tsx` thành các Component riêng lẻ để dễ bảo trì.
-> - Nếu muốn nâng cấp Backend: Có thể chuyển từ SQLite sang PostgreSQL bằng cách thay đổi `DATABASE_URL` trong file `.env` mà không cần sửa code logic nhờ SQLAlchemy.
-> - Chú ý logic tính toán độ tuổi và tiền sử gia đình tại hàm `isEligible` trong frontend để đảm bảo sàng lọc đúng đối tượng.
+## 🎨 PHIÊN BẢN 2.0 - REDESIGN TRẢI NGHIỆM NGƯỜI DÂN & THƯƠNG HIỆU HỆ THỐNG
+*Ngày cập nhật: 16/05/2026*
+
+Đợt cập nhật lớn nhằm khoác lên hệ thống một diện mạo hoàn toàn mới, đồng thời tích hợp các nội dung truyền thông y tế cộng đồng chất lượng cao giúp tăng tỷ lệ chuyển đổi đăng ký.
+
+### 🌟 Tính Năng Mới
+1. **Redesign Giao Diện Phễu Đăng Ký 6 Bước (`/quy-trinh`)**:
+   - Rút gọn và tối ưu hóa quy trình đăng ký thành phễu trải nghiệm 6 bước mượt mà:
+     `Quét QR Đăng ký & Sàng lọc Lâm sàng ➔ CSKH gọi xác nhận lịch hẹn ➔ Check-in tại bàn tiếp nhận ➔ Xét nghiệm máu & Siêu âm ➔ Bác sĩ chuyên khoa tư vấn kết quả ➔ Kết thúc quy trình & Ký cam kết`.
+   - Ứng dụng hiệu ứng chuyển động mượt mà của `framer-motion` cùng các dải chuyển màu (gradient) cao cấp chuẩn y khoa.
+2. **Trang FAQ & Truyền Thông Y Khoa (`/truyen-thong`)**:
+   - Xây dựng trang thông tin giáo dục y tế mô phỏng theo mô hình chuẩn của **PCF (Prostate Cancer Foundation)**.
+   - Cung cấp kiến thức trực quan về ý nghĩa của xét nghiệm PSA, cách theo dõi sức khỏe và các câu hỏi thường gặp.
+   - Tích hợp thanh tìm kiếm thông minh giúp người dân tra cứu câu hỏi cực nhanh.
+3. **Đồng Bộ Thương Hiệu Bệnh Viện**:
+   - Thay thế toàn bộ hình ảnh demo bằng Logo chính thức của **Bệnh viện Trung ương Huế** (`public/logobv.boder.png`).
+   - Tự động hiển thị logo sắc nét trên Digital Badge và phiếu đăng ký của bệnh nhân khi tải về điện thoại.
+4. **Sửa Lỗi Hiển Thị Mobile**:
+   - Tối ưu hóa toàn bộ giao diện khảo sát bệnh án lâm sàng sau đăng ký, triệt tiêu hoàn toàn lỗi tràn khung, tràn text trên các thiết bị màn hình nhỏ.
+
+---
+
+## 🛠️ PHIÊN BẢN 1.2 - TÍCH HỢP THIẾT BỊ NGOẠI VI & QR ĐỒNG BỘ
+*Ngày cập nhật: 12/05/2026*
+
+Nâng cấp quan trọng phục vụ trực tiếp cho hoạt động Onsite tại bàn khám thực địa, tăng tốc độ xử lý thủ tục hành chính.
+
+### 🌟 Tính Năng Mới
+1. **Mô-đun Máy Quét QR Camera Tốc Độ Cao**:
+   - Tích hợp thư viện quét QR bằng camera thiết bị, hỗ trợ quét mã số CCCD vật lý và mã QR Digital Badge trên điện thoại của bệnh nhân.
+   - Tự động điền nhanh và truy xuất hồ sơ bệnh án của khách hàng chỉ trong vòng dưới 1 giây.
+2. **Đồng Bộ Số Thứ Tự & Trạm Gọi Số**:
+   - Phát triển trang hiển thị hàng đợi tại sảnh chờ (`display.tsx`) hoạt động thời gian thực qua WebSockets/API.
+   - Hỗ trợ bác sĩ tại các trạm Siêu âm, Xét nghiệm máu, Khám lâm sàng bấm gọi số thứ tự tiếp theo một cách đồng bộ.
+
+---
+
+## 🔒 PHIÊN BẢN 1.1 - ỔN ĐỊNH BẢO MẬT & ĐƠN GIẢN HÓA ĐĂNG KÝ
+*Ngày cập nhật: 11/05/2026*
+
+Giải quyết triệt để các rào cản kỹ thuật gây gián đoạn quy trình và tối ưu hóa bảo mật hệ thống.
+
+### 🌟 Tính Năng Mới
+1. **Tối Ưu Hóa JWT Authentication**:
+   - Xử lý triệt để lỗi `401 Unauthorized` bằng cách mở rộng thời gian sống của token hành chính và cấu hình cơ chế bypass bảo mật đối với cổng khảo sát lâm sàng công khai của bệnh nhân.
+2. **Gỡ Bỏ OTP Xác Thực**:
+   - Chuyển đổi phương thức đăng ký từ xác thực OTP sang xác thực bằng thuật toán kết hợp (CCCD + SĐT) nhằm giảm ma sát đăng ký đối với người dân lớn tuổi không thành thạo công nghệ.
+
+---
+
+## 🏗️ PHIÊN BẢN 1.0 - KHỞI TẠO NỀN TẢNG HỆ THỐNG
+*Ngày cập nhật: 05/05/2026*
+
+Đặt nền móng kỹ thuật và cơ sở dữ liệu cho toàn bộ chương trình tầm soát ung thư tuyến tiền liệt.
+
+### 🌟 Tính Năng Mới
+1. **Mô hình Dữ liệu Core (SQLite + SQLAlchemy)**:
+   - Thiết lập cấu trúc cơ sở dữ liệu lưu trữ thông tin bệnh nhân, lịch sử tiền sử gia đình, chỉ số PSA, kết quả siêu âm và phân hạng rủi ro PI-RADS.
+2. **Thuật Toán Phân Loại Độ Tuổi Lâm Sàng**:
+   - Cài đặt bộ lọc sàng lọc thông minh: Từ chối người dưới 45 tuổi, kiểm tra tiền sử đối với người từ 45-50 tuổi, chỉ định khám mặc định đối với người trên 50 tuổi.
+3. **Phân Quyền Người Dùng (Role-Based Access Control)**:
+   - Khởi tạo 3 nhóm quyền cốt lõi: `SUPERADMIN` (quản lý tối cao), `CLINICAL` (bác sĩ khám lâm sàng), `CSKH` (điều phối telesale).

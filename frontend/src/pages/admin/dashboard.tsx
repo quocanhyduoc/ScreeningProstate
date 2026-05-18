@@ -7,7 +7,8 @@ import {
   RefreshCw, Activity, 
   Filter, Download, Fingerprint, Heart,
   Phone, Calendar, Zap, Bell, X, Info, Trash2, Edit,
-  QrCode, AlertCircle, Search, UserPlus, Menu
+  QrCode, AlertCircle, Search, UserPlus, Menu,
+  ChevronUp, ChevronDown
 } from 'lucide-react';
 import { useReactToPrint } from 'react-to-print';
 import { formatDate } from '../../utils/date';
@@ -62,6 +63,8 @@ export default function ProfessionalAdminDashboard() {
   const [extraSlotFilter, setExtraSlotFilter] = useState('ALL');
   const [historyFilter, setHistoryFilter] = useState('ALL');
   const [showFilters, setShowFilters] = useState(false);
+  const [sortBy, setSortBy] = useState<'none' | 'slot' | 'status'>('none');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
   // Detail Modal
   const [selectedPatient, setSelectedPatient] = useState<any>(null);
@@ -232,29 +235,53 @@ export default function ProfessionalAdminDashboard() {
     }
   };
 
-  const handleExport = async () => {
+  const handleExport = async (isOverall: boolean = false) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`${API_URL}/admin/export`, {
+      const sectionParam = isOverall ? 'overall' : activeTab;
+      const response = await axios.get(`${API_URL}/admin/export?section=${sectionParam}`, {
         headers: { Authorization: `Bearer ${token}` },
         responseType: 'blob'
       });
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', `Danh_sach_tam_soat_${new Date().toLocaleDateString('vi-VN').replace(/\//g, '-')}.xlsx`);
+      
+      let filename = `Danh_sach_benh_nhan_${new Date().toLocaleDateString('vi-VN').replace(/\//g, '-')}.xlsx`;
+      if (isOverall) {
+        filename = `Bao_cao_tong_the_toan_he_thong_${new Date().toLocaleDateString('vi-VN').replace(/\//g, '-')}.xlsx`;
+      } else if (activeTab === 'clinical_screening') {
+        filename = `Bao_cao_sang_loc_lam_sang_${new Date().toLocaleDateString('vi-VN').replace(/\//g, '-')}.xlsx`;
+      } else if (activeTab === 'clinical_lab') {
+        filename = `Ket_qua_xet_nghiem_sieu_am_${new Date().toLocaleDateString('vi-VN').replace(/\//g, '-')}.xlsx`;
+      } else if (activeTab === 'clinical_consult') {
+        filename = `Danh_sach_tu_van_tra_ket_qua_${new Date().toLocaleDateString('vi-VN').replace(/\//g, '-')}.xlsx`;
+      }
+      
+      link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
+      document.body.removeChild(link);
     } catch (e) {
       setToast("Lỗi khi xuất file");
     }
   };
 
+
   const handleSelectAll = (e: any) => {
     if (e.target.checked) {
-      setSelectedIds(filteredRegistrations.map(r => r.id));
+      setSelectedIds(sortedRegistrations.map(r => r.id));
     } else {
       setSelectedIds([]);
+    }
+  };
+
+  const handleSort = (field: 'slot' | 'status') => {
+    if (sortBy === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(field);
+      setSortOrder('asc');
     }
   };
 
@@ -421,6 +448,30 @@ export default function ProfessionalAdminDashboard() {
     return matchesSearch && matchesStatus && matchesHistory && matchesSlot && matchesExtra;
   });
 
+  const sortedRegistrations = [...filteredRegistrations].sort((a, b) => {
+    if (sortBy === 'none') return 0;
+    if (sortBy === 'slot') {
+      const valA = a.appointment_slot || '';
+      const valB = b.appointment_slot || '';
+      return sortOrder === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+    }
+    if (sortBy === 'status') {
+      const statusPriority: Record<string, number> = {
+        'CHO_XAC_NHAN': 1,
+        'DA_XAC_NHAN': 2,
+        'DA_TIEP_NHAN': 3,
+        'DA_XET_NGHIEM': 4,
+        'CHO_TU_VAN': 5,
+        'HOAN_THANH': 6,
+        'DA_HUY': 7,
+      };
+      const valA = statusPriority[a.status] || 99;
+      const valB = statusPriority[b.status] || 99;
+      return sortOrder === 'asc' ? valA - valB : valB - valA;
+    }
+    return 0;
+  });
+
   if (loading && !stats) return <LoadingScreen />;
 
   return (
@@ -541,8 +592,13 @@ export default function ProfessionalAdminDashboard() {
            </div>
           </div>
           <div className="flex items-center gap-2 md:gap-3">
-             <button onClick={handleExport} className="hidden sm:flex items-center gap-2 px-6 py-2.5 bg-white border border-slate-200 text-[#121C2D] rounded-lg font-bold text-[13px] hover:bg-slate-50 transition-all shadow-sm">
-                <Download size={18} /> Xuất Excel
+             {role === 'SUPERADMIN' && (
+                <button onClick={() => handleExport(true)} className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-lg font-bold text-[13px] hover:bg-blue-700 transition-all shadow-md">
+                   <Download size={18} /> Xuất Excel Tổng Thể
+                </button>
+             )}
+             <button onClick={() => handleExport(false)} className="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-[#121C2D] rounded-lg font-bold text-[13px] hover:bg-slate-50 transition-all shadow-sm">
+                <Download size={18} /> Xuất Excel Phân Hệ
              </button>
              <button onClick={() => fetchData()} className="p-2.5 md:p-3 bg-white border border-slate-200 rounded-lg text-slate-400 hover:bg-slate-50 transition-all shadow-sm">
                <RefreshCw size={18} />
@@ -640,10 +696,9 @@ export default function ProfessionalAdminDashboard() {
                        <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2"><Calendar size={14}/> Khung giờ</label>
                        <select value={slotFilter} onChange={(e) => setSlotFilter(e.target.value)} className="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg text-[13px] font-bold outline-none">
                           <option value="ALL">Tất cả khung giờ</option>
-                          <option value="7:00-11:30 ngày 30/5 (Thứ 7)">Sáng 30/5</option>
-                          <option value="13:30-16:00 ngày 30/5 (Thứ 7)">Chiều 30/5</option>
-                          <option value="7:00-11:30 ngày 31/5 (Chủ nhật)">Sáng 31/5</option>
-                          <option value="13:30-16:00 ngày 31/5 (Chủ nhật)">Chiều 31/5</option>
+                          {Array.from(new Set(registrations.map(r => r.appointment_slot).filter(Boolean))).map((slot: any) => (
+                             <option key={slot} value={slot}>{slot}</option>
+                          ))}
                        </select>
                     </div>
                     <div className="space-y-2">
@@ -662,6 +717,23 @@ export default function ProfessionalAdminDashboard() {
                           <option value="NO">Không có tiền sử</option>
                        </select>
                     </div>
+                    <div className="space-y-2">
+                       <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2"><RefreshCw size={14}/> Sắp xếp danh sách</label>
+                       <div className="flex gap-2">
+                          <select value={sortBy} onChange={(e) => setSortBy(e.target.value as any)} className="flex-1 p-3 bg-slate-50 border border-slate-200 rounded-lg text-[13px] font-bold outline-none">
+                             <option value="none">Mặc định (Không)</option>
+                             <option value="slot">Khung giờ hẹn</option>
+                             <option value="status">Trạng thái hồ sơ</option>
+                          </select>
+                          <button
+                             onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+                             className="p-3 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100 transition-colors flex items-center justify-center w-12 border-slate-200"
+                             title={sortOrder === 'asc' ? 'Sắp xếp tăng dần' : 'Sắp xếp giảm dần'}
+                          >
+                             {sortOrder === 'asc' ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                          </button>
+                       </div>
+                    </div>
                  </motion.div>
                )}
             </AnimatePresence>
@@ -671,18 +743,34 @@ export default function ProfessionalAdminDashboard() {
                   <thead>
                      <tr className="bg-slate-50 border-b border-slate-200">
                          <th className="px-6 py-4 w-10">
-                            <input type="checkbox" className="rounded cursor-pointer" onChange={handleSelectAll} checked={selectedIds.length === filteredRegistrations.length && filteredRegistrations.length > 0} />
+                            <input type="checkbox" className="rounded cursor-pointer" onChange={handleSelectAll} checked={selectedIds.length === sortedRegistrations.length && sortedRegistrations.length > 0} />
                          </th>
                          <th className="px-2 py-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">STT / Bệnh nhân</th>
                         <th className="px-4 py-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">CCCD / Phone</th>
                         <th className="px-4 py-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">Địa chỉ</th>
-                        <th className="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">Khung giờ hẹn</th>
-                        <th className="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider">Trạng thái</th>
+                        <th 
+                           className="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-slate-100 transition-colors"
+                           onClick={() => handleSort('slot')}
+                         >
+                           <div className="flex items-center gap-1 select-none">
+                              Khung giờ hẹn
+                              {sortBy === 'slot' && (sortOrder === 'asc' ? <ChevronUp size={12} className="text-blue-600" /> : <ChevronDown size={12} className="text-blue-600" />)}
+                           </div>
+                         </th>
+                        <th 
+                           className="px-6 py-4 text-left text-[11px] font-bold text-gray-400 uppercase tracking-wider cursor-pointer hover:bg-slate-100 transition-colors"
+                           onClick={() => handleSort('status')}
+                         >
+                           <div className="flex items-center gap-1 select-none">
+                              Trạng thái
+                              {sortBy === 'status' && (sortOrder === 'asc' ? <ChevronUp size={12} className="text-blue-600" /> : <ChevronDown size={12} className="text-blue-600" />)}
+                           </div>
+                         </th>
                         <th className="px-6 py-4 text-[10px] font-black uppercase text-slate-500 tracking-wider text-right">Thao tác</th>
                      </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                     {filteredRegistrations.map((reg) => (
+                     {sortedRegistrations.map((reg) => (
                         <tr key={reg.id} className={`hover:bg-blue-50/20 transition-all cursor-pointer ${selectedIds.includes(reg.id) ? 'bg-blue-50/40' : ''}`} onClick={() => setSelectedPatient(reg)}>
                            <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                               <input type="checkbox" className="rounded cursor-pointer" checked={selectedIds.includes(reg.id)} onChange={() => handleSelectRow(reg.id)} />
