@@ -111,6 +111,7 @@ export default function AppointmentRegistrationPage() {
     trigger,
     formState: { errors }
   } = useForm({
+    mode: 'onTouched',
     defaultValues: {
       full_name: '',
       dob: '',
@@ -234,8 +235,13 @@ export default function AppointmentRegistrationPage() {
       const currentCount = slotStats[data.appointment_slot] || 0;
       const isExtraSlot = selectedSlot ? currentCount >= selectedSlot.limit : false;
 
+      const sanitizedData = { ...data };
+      if (sanitizedData.email === '') {
+        sanitizedData.email = null;
+      }
+
       const payload = {
-        ...data,
+        ...sanitizedData,
         is_extra_slot: isExtraSlot,
         registration_date: new Date().toISOString().split('T')[0]
       };

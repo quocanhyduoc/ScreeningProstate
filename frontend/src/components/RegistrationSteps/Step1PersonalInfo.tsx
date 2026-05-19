@@ -73,7 +73,13 @@ const Step1PersonalInfo: React.FC<Step1Props> = ({
             <Fingerprint size={16} className="text-blue-600" /> Số CCCD <span className="text-red-500">*</span>
           </label>
           <input
-            {...register('cccd', { required: 'Không được để trống' })}
+            {...register('cccd', { 
+              required: 'Không được để trống',
+              pattern: {
+                value: /^[0-9]{12}$/,
+                message: 'Số CCCD phải bao gồm đúng 12 chữ số'
+              }
+            })}
             className="w-full px-4 py-3 md:px-5 md:py-4 bg-gray-50 border-2 border-gray-100 rounded-xl focus:bg-white focus:border-blue-500 outline-none transition-all font-black text-[16px] md:text-[18px] text-blue-900 shadow-sm"
             placeholder="012345678901"
           />
