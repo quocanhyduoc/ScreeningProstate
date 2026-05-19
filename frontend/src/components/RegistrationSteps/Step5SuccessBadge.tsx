@@ -46,7 +46,13 @@ const Step5SuccessBadge: React.FC<Step5Props> = ({
           <div className="bg-[#005ba1] p-2 sm:p-3 text-white flex justify-between items-center h-[18%] sm:h-[65px]">
             <div className="flex items-center gap-2 sm:gap-3">
               <div className="w-7 h-7 sm:w-9 sm:h-9 bg-white rounded-lg flex items-center justify-center p-1 shadow-sm">
-                <img src={HOSPITAL_LOGO_BASE64} alt="Logo" className="w-full h-full object-contain" />
+                <img 
+                  src={HOSPITAL_LOGO_BASE64} 
+                  alt="Logo" 
+                  width="36" 
+                  height="36" 
+                  className="w-full h-full object-contain" 
+                />
               </div>
               <div>
                 <p className="text-[8px] sm:text-[10px] font-black leading-tight uppercase tracking-tight">Bệnh viện Trung ương Huế</p>
