@@ -38,6 +38,54 @@ const STEPS = [
   { id: 4, title: 'Hoàn tất & Tải thẻ', desc: 'Xác nhận đăng ký' }
 ];
 
+const formatErrorDetail = (err: any, defaultMsg: string): string => {
+  if (!err.response?.data?.detail) {
+    return err.message || defaultMsg;
+  }
+  
+  const detail = err.response.data.detail;
+  if (typeof detail === 'string') {
+    return detail;
+  }
+  
+  if (Array.isArray(detail)) {
+    return detail.map((e: any) => {
+      const field = e.loc && e.loc.length > 1 ? e.loc[1] : '';
+      let fieldName = field;
+      if (field === 'dob') fieldName = 'Ngày sinh';
+      else if (field === 'email') fieldName = 'Email';
+      else if (field === 'phone') fieldName = 'Số điện thoại';
+      else if (field === 'cccd') fieldName = 'Số CCCD';
+      else if (field === 'full_name') fieldName = 'Họ và tên';
+      else if (field === 'district') fieldName = 'Quận/Huyện';
+      else if (field === 'ward') fieldName = 'Phường/Xã';
+      else if (field === 'address_detail') fieldName = 'Địa chỉ chi tiết';
+      else if (field === 'father_age_diag') fieldName = 'Tuổi cha chẩn đoán';
+      else if (field === 'brother_age_diag') fieldName = 'Tuổi anh/em chẩn đoán';
+      
+      const msg = e.msg || '';
+      let friendlyMsg = msg;
+      if (msg.includes('value is not a valid datetime') || msg.includes('datetime_parsing')) {
+        friendlyMsg = 'không đúng định dạng ngày tháng';
+      } else if (msg.includes('value is not a valid email') || msg.includes('value_error.email')) {
+        friendlyMsg = 'không đúng định dạng email';
+      } else if (msg.includes('value is not a valid integer') || msg.includes('integer_parsing')) {
+        friendlyMsg = 'phải là số nguyên';
+      } else if (msg.includes('field required')) {
+        friendlyMsg = 'không được để trống';
+      }
+      
+      return fieldName ? `${fieldName}: ${friendlyMsg}` : friendlyMsg;
+    }).join('; ');
+  }
+  
+  if (typeof detail === 'object') {
+    return JSON.stringify(detail);
+  }
+  
+  return defaultMsg;
+};
+
 export default function AppointmentRegistrationPage() {
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -196,7 +244,7 @@ export default function AppointmentRegistrationPage() {
       setRegistrationResult(response.data);
       setStep(5);
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Có lỗi xảy ra khi gửi đăng ký.');
+      setError(formatErrorDetail(err, 'Có lỗi xảy ra khi gửi đăng ký.'));
     } finally {
       setIsSubmitting(false);
     }
@@ -221,7 +269,7 @@ export default function AppointmentRegistrationPage() {
       setStep(7);
     } catch (err: any) {
       console.error("DEBUG: Error submitting clinical survey:", err);
-      setError(err.response?.data?.detail || 'Có lỗi xảy ra khi gửi khảo sát.');
+      setError(formatErrorDetail(err, 'Có lỗi xảy ra khi gửi khảo sát.'));
     } finally {
       setIsSubmitting(false);
     }
