@@ -18,6 +18,7 @@ import Step7ThankYou from '../components/RegistrationSteps/Step7ThankYou';
 // Landing Components
 import Header from '../components/Landing/Header';
 import HeroBanner from '../components/Landing/HeroBanner';
+import DisclaimerBanner from '../components/Landing/DisclaimerBanner';
 import QuickHighlights from '../components/Landing/QuickHighlights';
 import EventSidebar from '../components/Landing/EventSidebar';
 import Footer from '../components/Landing/Footer';
@@ -320,6 +321,7 @@ export default function AppointmentRegistrationPage() {
 
       <main className="pt-20">
         <HeroBanner />
+        <DisclaimerBanner />
         <QuickHighlights />
 
         <div className="max-w-[1440px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start mb-20">
