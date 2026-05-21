@@ -53,7 +53,7 @@ export default function DisclaimerBanner() {
             </span>
             <div className="h-24 flex items-center justify-center mb-4 px-4 w-full">
               <img 
-                src="/LOGO Hội VUNA.jpg" 
+                src="/logo-vuna.jpg" 
                 alt="Logo Hội Tiết niệu - Thận học Việt Nam" 
                 className="max-h-full max-w-[80%] object-contain filter drop-shadow-sm rounded-lg group-hover:scale-105 transition-transform duration-300"
               />
