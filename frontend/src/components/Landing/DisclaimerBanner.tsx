@@ -5,11 +5,11 @@ export default function DisclaimerBanner() {
   return (
     <div className="max-w-[1440px] mx-auto px-6 mb-12">
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-50/80 via-white to-blue-50/30 backdrop-blur-md border border-blue-100/60 shadow-xl shadow-blue-100/20 p-6 md:p-10">
-        
+
         {/* Background decorative elements */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-blue-100/30 rounded-full blur-3xl pointer-events-none -z-10" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-100/20 rounded-full blur-2xl pointer-events-none -z-10" />
-        
+
         {/* Section title */}
         <div className="flex flex-col items-center text-center mb-8">
           <span className="px-4 py-1.5 bg-blue-50 text-blue-700 text-xs font-black uppercase tracking-widest rounded-full mb-3 border border-blue-100/50">
@@ -23,16 +23,16 @@ export default function DisclaimerBanner() {
 
         {/* Partners Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 items-stretch mb-8">
-          
+
           {/* Partner 1: Bệnh viện Trung ương Huế */}
           <div className="flex flex-col items-center justify-between p-6 bg-white/70 backdrop-blur-sm rounded-2xl border border-slate-100 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-blue-100 group">
             <span className="text-[11px] font-black uppercase tracking-wider text-blue-600 bg-blue-50/60 px-3 py-1 rounded-md mb-4 flex items-center gap-1.5">
               <Heart size={12} className="text-blue-500 fill-blue-500" /> Đơn vị thực hiện
             </span>
             <div className="h-24 flex items-center justify-center mb-4 px-4 w-full">
-              <img 
-                src="/logobv.boder.png" 
-                alt="Logo Bệnh viện Trung ương Huế" 
+              <img
+                src="/logobv.boder.png"
+                alt="Logo Bệnh viện Trung ương Huế"
                 className="max-h-full max-w-[80%] object-contain filter drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
               />
             </div>
@@ -52,9 +52,9 @@ export default function DisclaimerBanner() {
               <Award size={12} className="text-indigo-500" /> Đơn vị cố vấn
             </span>
             <div className="h-24 flex items-center justify-center mb-4 px-4 w-full">
-              <img 
-                src="/logo-vuna.jpg" 
-                alt="Logo Hội Tiết niệu - Thận học Việt Nam" 
+              <img
+                src="/logo-vuna.jpg"
+                alt="Logo Hội Tiết niệu - Thận học Việt Nam"
                 className="max-h-full max-w-[80%] object-contain filter drop-shadow-sm rounded-lg group-hover:scale-105 transition-transform duration-300"
               />
             </div>
@@ -74,9 +74,9 @@ export default function DisclaimerBanner() {
               <ShieldCheck size={12} className="text-emerald-500" /> Đơn vị tài trợ
             </span>
             <div className="h-24 flex items-center justify-center mb-4 px-4 w-full">
-              <img 
-                src="https://www.astrixinc.com/wp-content/uploads/2023/03/astrazeneca-PNG-logo.png" 
-                alt="Logo AstraZeneca" 
+              <img
+                src="https://www.astrixinc.com/wp-content/uploads/2023/03/astrazeneca-PNG-logo.png"
+                alt="Logo AstraZeneca"
                 className="max-h-full max-w-[90%] object-contain filter drop-shadow-sm group-hover:scale-105 transition-transform duration-300"
                 onError={(e) => {
                   // Fallback to local image in case of external loading error
@@ -86,10 +86,10 @@ export default function DisclaimerBanner() {
             </div>
             <div className="text-center mt-auto">
               <h3 className="text-[15px] font-black text-slate-800 leading-snug group-hover:text-emerald-700 transition-colors uppercase">
-                Công ty AstraZeneca
+                Công ty TNHH AstraZeneca Việt Nam
               </h3>
               <p className="text-[11px] text-slate-400 font-bold tracking-wider mt-1 uppercase">
-                AstraZeneca PLC
+                AstraZeneca Vietnam Company Limited
               </p>
             </div>
           </div>
