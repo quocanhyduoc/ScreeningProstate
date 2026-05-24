@@ -9,35 +9,35 @@ export default function Footer() {
                {/* Left Column: Brand & Logo */}
                <div className="space-y-4">
                   <div className="flex items-center gap-4">
-                     <img 
-                        src="/logo-benh-vien-trung-uong-hue-compressed.webp" 
-                        alt="Logo Bệnh viện Trung ương Huế" 
-                        className="h-16 w-auto object-contain" 
+                     <img
+                        src="/logo-benh-vien-trung-uong-hue-compressed.webp"
+                        alt="Logo Bệnh viện Trung ương Huế"
+                        className="h-16 w-auto object-contain"
                      />
                      <div>
                         <h4 className="text-[16px] font-black text-blue-900 uppercase leading-snug">Bệnh viện Trung ương Huế</h4>
                         <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Hue Central Hospital</p>
                      </div>
                   </div>
-                  <p className="text-[12px] text-slate-500 font-semibold max-w-md leading-relaxed">
-                     Chương trình Tầm soát Ung thư Tuyến tiền liệt Cộng đồng 2026. Chung tay hành động vì sức khỏe nam giới lớn tuổi và nâng cao nhận thức y khoa cộng đồng.
+                  <p className="text-[12px] text-slate-500 font-semibold max-w-md text-justify leading-relaxed w-full">
+                     Chương trình Tầm soát Ung thư Tuyến tiền liệt Cộng đồng 2026.
                   </p>
                </div>
 
                {/* Right Column: Contact Details */}
                <div className="space-y-3 text-slate-600">
                   <h5 className="text-[13px] font-black text-blue-900 uppercase tracking-wider mb-2">Thông tin liên hệ</h5>
-                  
+
                   <div className="flex items-start gap-3 text-[13px]">
                      <MapPin size={16} className="text-blue-600 shrink-0 mt-0.5" />
                      <span><strong className="font-bold text-slate-700">Địa chỉ:</strong> 16 Lê Lợi - Phường Thuận Hóa - Thành phố Huế</span>
                   </div>
-                  
+
                   <div className="flex items-center gap-3 text-[13px]">
                      <Phone size={16} className="text-blue-600 shrink-0" />
                      <span><strong className="font-bold text-slate-700">Số điện thoại:</strong> +84 - 234 - 3822325</span>
                   </div>
-                  
+
                   <div className="flex items-center gap-3 text-[13px]">
                      <Mail size={16} className="text-blue-600 shrink-0" />
                      <span>
@@ -52,10 +52,10 @@ export default function Footer() {
                      <Facebook size={16} className="text-blue-600 shrink-0" />
                      <span>
                         <strong className="font-bold text-slate-700">Facebook:</strong>{' '}
-                        <a 
-                           href="https://facebook.com/bvtwhue" 
-                           target="_blank" 
-                           rel="noopener noreferrer" 
+                        <a
+                           href="https://facebook.com/bvtwhue"
+                           target="_blank"
+                           rel="noopener noreferrer"
                            className="hover:text-blue-600 transition-colors font-medium"
                         >
                            facebook.com/bvtwhue
