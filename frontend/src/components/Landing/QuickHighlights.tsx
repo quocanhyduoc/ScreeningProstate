@@ -1,22 +1,97 @@
 import React from 'react';
-import { ShieldCheck, Users, Zap } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-function HighlightCard({ icon, title, desc, color }: any) {
+interface HighlightCardProps {
+  tag: string;
+  children: React.ReactNode;
+}
+
+function HighlightCard({ tag, children }: HighlightCardProps) {
   return (
-    <div className={`p-8 ${color} rounded-2xl border-2 border-white shadow-lg flex flex-col items-center text-center gap-4 transition-transform hover:scale-[1.02]`}>
-      <div className="p-3 bg-white/50 rounded-xl shadow-inner">{icon}</div>
-      <h4 className="text-xl font-black uppercase tracking-tight leading-tight">{title}</h4>
-      <p className="text-[16px] font-black opacity-90 leading-relaxed">{desc}</p>
+    <div className="relative bg-white rounded-2xl border-2 border-blue-100 shadow-xl shadow-blue-50/40 p-6 pt-10 flex flex-col items-center justify-center text-center gap-2 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:border-prostate-navy/20 min-h-[140px] w-full">
+      {/* Orange category tag centered on the top border */}
+      <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-5 py-1 bg-gradient-to-r from-prostate-orange to-orange-500 text-white rounded-full text-[10px] sm:text-[11px] font-black uppercase tracking-wider shadow-md shadow-orange-500/10 whitespace-nowrap">
+        {tag}
+      </div>
+      {children}
     </div>
   );
 }
 
 export default function QuickHighlights() {
   return (
-    <div className="max-w-[1440px] mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-      <HighlightCard icon={<ShieldCheck size={36} />} title="Hoàn toàn miễn phí" desc="Tài trợ 100% chi phí xét nghiệm PSA" color="bg-emerald-50 text-emerald-700" />
-      <HighlightCard icon={<Users size={36} />} title="Chuyên gia tư vấn" desc="Đội ngũ bác sĩ đầu Ngoại Tiết niệu" color="bg-blue-50 text-blue-700" />
-      <HighlightCard icon={<Zap size={36} />} title="Bảo mật tuyệt đối" desc="Thông tin bệnh nhân được bảo mật tuyệt đối" color="bg-indigo-50 text-indigo-700" />
+    <div className="max-w-[1440px] mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 mb-16">
+      
+      {/* Card 1: Số lượng giới hạn */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="flex"
+      >
+        <HighlightCard tag="Số lượng giới hạn">
+          <p className="leading-none mt-1">
+            <span className="text-4xl md:text-5xl font-black text-prostate-navy font-display tracking-tight">300</span>
+            <span className="text-xl md:text-2xl font-black text-slate-600 font-display ml-2">người</span>
+          </p>
+        </HighlightCard>
+      </motion.div>
+
+      {/* Card 2: Thời gian đăng ký */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="flex"
+      >
+        <HighlightCard tag="Thời gian đăng ký">
+          <p className="text-2xl sm:text-3xl font-black text-prostate-navy font-display tracking-tight leading-none mt-1">
+            15 - 29/05/2026
+          </p>
+        </HighlightCard>
+      </motion.div>
+
+      {/* Card 3: Thời gian khám */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        className="flex"
+      >
+        <HighlightCard tag="Thời gian khám">
+          <div className="space-y-1 mt-1">
+            <p className="text-[12px] sm:text-[13px] font-black text-prostate-orange uppercase tracking-wide leading-none">
+              Thứ Bảy và Chủ Nhật
+            </p>
+            <p className="text-2xl sm:text-3xl font-black text-prostate-navy font-display tracking-tight leading-none mt-1">
+              30 - 31/05/2026
+            </p>
+          </div>
+        </HighlightCard>
+      </motion.div>
+
+      {/* Card 4: Địa điểm khám */}
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.4 }}
+        className="flex"
+      >
+        <HighlightCard tag="Địa điểm khám">
+          <div className="space-y-1 mt-1">
+            <p className="text-[14px] sm:text-[15px] font-black text-prostate-navy font-display leading-tight uppercase tracking-tight">
+              Bệnh viện Quốc tế
+            </p>
+            <p className="text-[14px] sm:text-[15px] font-black text-prostate-navy font-display leading-tight uppercase tracking-tight">
+              Trung ương Huế
+            </p>
+            <p className="text-[11px] sm:text-[12px] text-slate-500 font-extrabold leading-normal mt-1.5">
+              Tầng 1, số 03 Ngô Quyền, Huế
+            </p>
+          </div>
+        </HighlightCard>
+      </motion.div>
+
     </div>
   );
 }

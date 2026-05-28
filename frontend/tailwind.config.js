@@ -8,6 +8,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        prostate: {
+          navy: '#0b3c82',
+          orange: '#ff5500',
+          'dark-orange': '#d13400',
+        },
         hospital: {
           50: '#f0f9ff',
           100: '#e0f2fe',
@@ -17,6 +22,9 @@ module.exports = {
           800: '#075985',
           900: '#0c4a6e',
         }
+      },
+      fontFamily: {
+        display: ['Montserrat', 'sans-serif'],
       },
     },
   },

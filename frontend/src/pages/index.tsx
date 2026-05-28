@@ -20,7 +20,6 @@ import Header from '../components/Landing/Header';
 import HeroBanner from '../components/Landing/HeroBanner';
 import DisclaimerBanner from '../components/Landing/DisclaimerBanner';
 import QuickHighlights from '../components/Landing/QuickHighlights';
-import EventSidebar from '../components/Landing/EventSidebar';
 import Footer from '../components/Landing/Footer';
 
 const API_URL = 'https://sangloctuyentienliet.com/api';
@@ -321,13 +320,9 @@ export default function AppointmentRegistrationPage() {
 
       <main className="pt-20">
         <HeroBanner />
-        <DisclaimerBanner />
         <QuickHighlights />
 
-        <div className="max-w-[1440px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start mb-20">
-           <EventSidebar step={step} STEPS={STEPS} />
-
-           <div className="lg:col-span-8" ref={formSectionRef}>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-20" ref={formSectionRef}>
               {/* Horizontal Steps Navigation */}
               {step <= 4 && (
                 <div className="mb-6 md:mb-10 w-full px-2 sm:px-8">
@@ -336,7 +331,7 @@ export default function AppointmentRegistrationPage() {
                     <div className="absolute top-5 md:top-6 left-[12.5%] right-[12.5%] h-1 -z-10">
                       <div className="w-full h-full bg-slate-200 rounded-full" />
                       <motion.div 
-                        className="absolute top-0 left-0 h-full bg-blue-600 rounded-full"
+                        className="absolute top-0 left-0 h-full bg-prostate-navy rounded-full"
                         initial={{ width: 0 }}
                         animate={{ width: `${Math.min(100, Math.max(0, ((step - 1) / (STEPS.length - 1)) * 100))}%` }}
                         transition={{ duration: 0.3 }}
@@ -346,14 +341,14 @@ export default function AppointmentRegistrationPage() {
                     {STEPS.map((s) => (
                       <div key={s.id} className="flex flex-col items-center w-1/4 relative z-10">
                         <div className={`w-10 h-10 md:w-12 md:h-12 rounded-full flex items-center justify-center font-black text-sm md:text-lg transition-all duration-300 ${
-                          step === s.id ? 'bg-blue-600 text-white shadow-xl shadow-blue-200 ring-4 ring-white scale-110' : 
-                          step > s.id ? 'bg-blue-600 text-white ring-4 ring-white' : 'bg-slate-100 text-slate-400 ring-4 ring-white'
+                          step === s.id ? 'bg-prostate-navy text-white shadow-xl shadow-prostate-navy/20 ring-4 ring-white scale-110' : 
+                          step > s.id ? 'bg-prostate-navy text-white ring-4 ring-white' : 'bg-slate-100 text-slate-400 ring-4 ring-white'
                         }`}>
                           {step > s.id ? <CheckCircle size={20} /> : s.id}
                         </div>
-                        <p className={`mt-3 text-[10px] sm:text-[11px] md:text-[13px] font-black uppercase tracking-tight text-center px-1 leading-tight ${
-                          step === s.id ? 'text-blue-900' : 
-                          step > s.id ? 'text-blue-900' : 'text-slate-400'
+                        <p className={`mt-3 text-[10px] sm:text-[11px] md:text-[13px] font-black font-display uppercase tracking-tight text-center px-1 leading-tight ${
+                          step === s.id ? 'text-prostate-navy' : 
+                          step > s.id ? 'text-prostate-navy' : 'text-slate-400'
                         }`}>
                           {s.title}
                         </p>
@@ -458,18 +453,18 @@ export default function AppointmentRegistrationPage() {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-blue-900/40 backdrop-blur-sm"
+                    className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-prostate-navy/40 backdrop-blur-sm"
                   >
                     <motion.div
                       initial={{ scale: 0.9, y: 20 }}
                       animate={{ scale: 1, y: 0 }}
                       exit={{ scale: 0.9, y: 20 }}
-                      className="bg-white rounded-3xl p-10 max-w-xl w-full shadow-2xl border-[6px] border-blue-50"
+                      className="bg-white rounded-3xl p-10 max-w-xl w-full shadow-2xl border-[6px] border-prostate-navy/5"
                     >
-                      <div className="w-20 h-20 bg-orange-100 rounded-2xl flex items-center justify-center text-orange-600 mb-8 mx-auto">
+                      <div className="w-20 h-20 bg-orange-100 rounded-2xl flex items-center justify-center text-prostate-orange mb-8 mx-auto">
                         <AlertCircle size={48} />
                       </div>
-                      <h3 className="text-3xl font-black text-blue-900 mb-6 leading-tight text-center uppercase">XÁC NHẬN CHỌN KHUNG GIỜ NÀY?</h3>
+                      <h3 className="text-3xl font-black font-display text-prostate-navy mb-6 leading-tight text-center uppercase">XÁC NHẬN CHỌN KHUNG GIỜ NÀY?</h3>
                       <div className="space-y-6 text-slate-600 font-black text-lg leading-relaxed text-center mb-10">
                         <p>
                           Khung giờ Ông chọn hiện tại đã <span className="text-red-600 underline underline-offset-4 decoration-2">hết suất đăng ký chính thức</span>. 
@@ -493,7 +488,7 @@ export default function AppointmentRegistrationPage() {
                             setShowExtraSlotConfirm(false);
                             setStep(step + 1);
                           }}
-                          className="flex-1 py-5 bg-blue-600 text-white rounded-2xl font-black text-xl shadow-2xl shadow-blue-200 hover:bg-blue-700 transition-all order-1 sm:order-2 active:scale-[0.98]"
+                          className="flex-1 py-5 bg-prostate-navy text-white rounded-2xl font-black text-xl shadow-2xl shadow-prostate-navy/20 hover:bg-prostate-navy/95 transition-all order-1 sm:order-2 active:scale-[0.98]"
                         >
                           TÔI ĐỒNG Ý
                         </button>
@@ -502,8 +497,8 @@ export default function AppointmentRegistrationPage() {
                   </motion.div>
                 )}
               </AnimatePresence>
-           </div>
         </div>
+        <DisclaimerBanner />
       </main>
 
       <Footer />

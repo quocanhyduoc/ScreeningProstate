@@ -14,9 +14,9 @@ export default function Header({ scrollToForm }: { scrollToForm: () => void }) {
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white rounded-lg flex items-center justify-center p-1 border border-slate-100 shrink-0">
                <img src="/logo-benh-vien-trung-uong-hue-compressed.webp" alt="Logo" className="w-full h-full object-contain" />
             </div>
-            <Link href="/" className="hidden md:block hover:opacity-90 transition-opacity">
-               <h1 className="text-[14px] sm:text-[15px] font-black text-blue-900 leading-none uppercase tracking-tight">CHƯƠNG TRÌNH TẦM SOÁT UNG THƯ TUYẾN TIỀN LIỆT 2026</h1>
-               <p className="text-[10px] sm:text-[11px] font-bold text-blue-500 uppercase tracking-widest mt-1">Bệnh viện Trung ương Huế</p>
+            <Link href="/" className="hover:opacity-90 transition-opacity">
+               <h1 className="text-[14px] sm:text-[15px] font-black font-display text-prostate-navy leading-none uppercase tracking-tight">CHƯƠNG TRÌNH TẦM SOÁT UNG THƯ TUYẾN TIỀN LIỆT 2026</h1>
+               <p className="text-[10px] sm:text-[11px] font-bold text-prostate-orange uppercase tracking-widest mt-1">Bệnh viện Trung ương Huế</p>
             </Link>
          </div>
 
@@ -24,11 +24,11 @@ export default function Header({ scrollToForm }: { scrollToForm: () => void }) {
          <div className="flex items-center gap-2 sm:gap-6">
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-6">
-               <Link href="/quy-trinh" className="text-[13px] font-bold text-slate-500 hover:text-blue-600 transition-colors flex items-center gap-2">
-                 <PlayCircle size={18}/> Xem quy trình sàng lọc
+               <Link href="/quy-trinh" className="text-[13px] font-bold text-slate-600 hover:text-prostate-navy transition-colors flex items-center gap-2">
+                 <PlayCircle size={18} className="text-prostate-navy" /> Xem quy trình sàng lọc
                </Link>
-               <Link href="/truyen-thong" className="text-[13px] font-bold text-slate-500 hover:text-blue-600 transition-colors flex items-center gap-2">
-                 <FileText size={18}/> Thông tin truyền thông
+               <Link href="/truyen-thong" className="text-[13px] font-bold text-slate-600 hover:text-prostate-navy transition-colors flex items-center gap-2">
+                 <FileText size={18} className="text-prostate-navy" /> Thông tin truyền thông
                </Link>
             </nav>
 
@@ -38,7 +38,7 @@ export default function Header({ scrollToForm }: { scrollToForm: () => void }) {
                 setIsOpen(false);
                 scrollToForm();
               }}
-              className="px-3 sm:px-6 py-2 sm:py-2.5 bg-blue-600 text-white rounded-lg font-black text-[12px] sm:text-[13px] hover:bg-blue-700 transition-all shadow-lg shadow-blue-100 flex items-center gap-1 sm:gap-2 active:scale-[0.98]"
+              className="px-3 sm:px-6 py-2 sm:py-2.5 bg-prostate-orange text-white rounded-xl font-black text-[12px] sm:text-[13px] hover:bg-prostate-orange/95 transition-all shadow-lg shadow-prostate-orange/15 flex items-center gap-1 sm:gap-2 active:scale-[0.98]"
             >
                Đăng ký ngay <ChevronRight size={15} />
             </button>
@@ -46,7 +46,7 @@ export default function Header({ scrollToForm }: { scrollToForm: () => void }) {
             {/* Mobile Hamburger toggle */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden p-2 text-slate-500 hover:text-blue-600 hover:bg-slate-50 rounded-lg transition-colors flex items-center justify-center"
+              className="lg:hidden p-2 text-slate-500 hover:text-prostate-navy hover:bg-slate-50 rounded-lg transition-colors flex items-center justify-center"
               aria-label="Toggle navigation menu"
             >
               {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -68,17 +68,17 @@ export default function Header({ scrollToForm }: { scrollToForm: () => void }) {
               <Link 
                 href="/quy-trinh" 
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 py-3.5 px-4 rounded-xl text-[14px] font-black text-slate-600 hover:text-blue-600 hover:bg-blue-50/50 transition-all"
+                className="flex items-center gap-3 py-3.5 px-4 rounded-xl text-[14px] font-black text-slate-700 hover:text-prostate-navy hover:bg-prostate-navy/5 transition-all"
               >
-                <PlayCircle size={20} className="text-blue-600" />
+                <PlayCircle size={20} className="text-prostate-navy" />
                 <span>Xem quy trình sàng lọc</span>
               </Link>
               <Link 
                 href="/truyen-thong" 
                 onClick={() => setIsOpen(false)}
-                className="flex items-center gap-3 py-3.5 px-4 rounded-xl text-[14px] font-black text-slate-600 hover:text-blue-600 hover:bg-blue-50/50 transition-all"
+                className="flex items-center gap-3 py-3.5 px-4 rounded-xl text-[14px] font-black text-slate-700 hover:text-prostate-navy hover:bg-prostate-navy/5 transition-all"
               >
-                <FileText size={20} className="text-blue-600" />
+                <FileText size={20} className="text-prostate-navy" />
                 <span>Thông tin truyền thông</span>
               </Link>
             </div>

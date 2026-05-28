@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  ChevronLeft, ChevronRight, Home, MapPin, 
+  ChevronLeft, ChevronRight, MapPin, 
   CheckCircle2, QrCode, ClipboardList, 
-  Stethoscope, MessageSquare, PhoneCall, Activity, ClipboardCheck
+  PhoneCall, Activity, ClipboardCheck, MessageSquare
 } from 'lucide-react';
 import Link from 'next/link';
 import Head from 'next/head';
@@ -15,8 +15,8 @@ const STEPS = [
     desc: "Người dân quét mã QR trên các tài liệu truyền thông hoặc truy cập trực tiếp website để đăng ký thông tin hành chính (CCCD, Họ tên, Số điện thoại) và trả lời bảng câu hỏi sàng lọc ban đầu. Nếu chưa tiện, bạn hoàn toàn có thể hoàn thành phần khảo sát sức khỏe sau đó.",
     icon: <QrCode className="w-8 h-8 md:w-10 md:h-10" />,
     image: "https://images.unsplash.com/photo-1595079676339-1534801ad6cf?auto=format&fit=crop&q=80&w=800",
-    color: "bg-blue-600 shadow-blue-200",
-    hex: "#2563eb"
+    color: "bg-prostate-navy shadow-prostate-navy/20",
+    hex: "#0b3c82"
   },
   {
     id: 2,
@@ -136,7 +136,7 @@ export default function QuyTrinhPage() {
             rotate: [0, 8, 0],
           }}
           transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          className="absolute top-[-5%] left-[-5%] w-[45%] h-[45%] bg-blue-400 rounded-full blur-[130px]" 
+          className="absolute top-[-5%] left-[-5%] w-[45%] h-[45%] bg-prostate-navy/10 rounded-full blur-[130px]" 
         />
         <motion.div 
           animate={{ 
@@ -151,17 +151,17 @@ export default function QuyTrinhPage() {
       {/* Header */}
       <header className="sticky top-0 w-full bg-white/80 backdrop-blur-xl z-50 border-b border-slate-100 shadow-sm transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 text-slate-600 font-bold hover:text-blue-600 transition-colors group">
+          <Link href="/" className="flex items-center gap-2 text-slate-600 font-bold hover:text-prostate-navy transition-colors group">
             <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
             <span className="text-[13px] sm:text-sm">Trang chủ</span>
           </Link>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-100">
+            <div className="w-10 h-10 bg-prostate-navy rounded-lg flex items-center justify-center shadow-lg shadow-prostate-navy/15">
               <ClipboardList className="text-white" size={20} />
             </div>
-            <h1 className="text-[14px] sm:text-lg font-black text-slate-800 tracking-tight uppercase">QUY TRÌNH SÀNG LỌC</h1>
+            <h1 className="text-[14px] sm:text-lg font-black font-display text-slate-800 tracking-tight uppercase">QUY TRÌNH SÀNG LỌC</h1>
           </div>
-          <Link href="/#dang-ky" className="px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white rounded-lg text-xs sm:text-[13px] font-black transition-all">
+          <Link href="/#dang-ky" className="px-4 py-2 bg-prostate-orange/10 text-prostate-orange hover:bg-prostate-orange hover:text-white rounded-lg text-xs sm:text-[13px] font-black transition-all">
             Đăng ký ngay
           </Link>
         </div>
@@ -178,7 +178,7 @@ export default function QuyTrinhPage() {
             
             {/* Active Highlight Line */}
             <motion.div 
-              className="absolute left-[8%] h-1 bg-blue-600 top-1/2 -translate-y-1/2 z-0 rounded-full shadow-[0_0_8px_rgba(37,99,235,0.3)]"
+              className="absolute left-[8%] h-1 bg-prostate-navy top-1/2 -translate-y-1/2 z-0 rounded-full shadow-[0_0_8px_rgba(11,60,130,0.2)]"
               initial={{ width: 0 }}
               animate={{ width: `${(currentStep / (STEPS.length - 1)) * 84}%` }}
               transition={{ type: "spring", stiffness: 90, damping: 18 }}
@@ -199,7 +199,7 @@ export default function QuyTrinhPage() {
                   }}
                   className={`w-9 h-9 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
                     idx === currentStep ? `${step.color} text-white shadow-lg` :
-                    idx < currentStep ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-slate-400 border-2 border-slate-100 hover:border-blue-100 hover:text-blue-500 shadow-sm'
+                    idx < currentStep ? 'bg-prostate-navy text-white shadow-md' : 'bg-white text-slate-400 border-2 border-slate-100 hover:border-blue-100 hover:text-prostate-navy shadow-sm'
                   }`}
                 >
                   <span className="text-xs sm:text-[15px] font-black">{step.id}</span>
@@ -207,7 +207,7 @@ export default function QuyTrinhPage() {
                 
                 {/* Micro step label under on tablets & desktop */}
                 <span className={`absolute top-12 sm:top-14 text-[10px] sm:text-xs font-bold tracking-tight whitespace-nowrap hidden md:block transition-all duration-300 ${
-                  idx === currentStep ? 'text-slate-800 scale-105 font-black' : 'text-slate-400 group-hover:text-slate-600'
+                  idx === currentStep ? 'text-slate-800 scale-105 font-black font-display' : 'text-slate-400 group-hover:text-slate-600'
                 }`}>
                   Bước {step.id}
                 </span>
@@ -263,8 +263,8 @@ export default function QuyTrinhPage() {
                     {STEPS[currentStep].icon}
                   </motion.div>
                   <div className="space-y-1">
-                    <p className="text-blue-600 font-extrabold tracking-widest text-[11px] sm:text-xs uppercase">BƯỚC 0{STEPS[currentStep].id} / 06</p>
-                    <h2 className="text-xl sm:text-3xl font-black text-slate-800 leading-tight tracking-tight">{STEPS[currentStep].title}</h2>
+                    <p className="text-prostate-navy font-extrabold tracking-widest text-[11px] sm:text-xs uppercase font-display">BƯỚC 0{STEPS[currentStep].id} / 06</p>
+                    <h2 className="text-xl sm:text-3xl font-black text-slate-800 leading-tight tracking-tight font-display">{STEPS[currentStep].title}</h2>
                   </div>
                 </div>
                 
@@ -278,7 +278,7 @@ export default function QuyTrinhPage() {
                     <div 
                       key={i} 
                       className={`h-1.5 rounded-full transition-all duration-300 ${
-                        i === currentStep ? 'w-6 bg-blue-600' : 'w-1.5 bg-slate-200'
+                        i === currentStep ? 'w-6 bg-prostate-navy' : 'w-1.5 bg-slate-200'
                       }`}
                     />
                   ))}
@@ -290,7 +290,7 @@ export default function QuyTrinhPage() {
                     onClick={prev} 
                     disabled={currentStep === 0}
                     className={`p-3 px-5 sm:p-4 sm:px-6 rounded-xl border-2 transition-all flex items-center gap-2 text-xs sm:text-sm font-bold ${
-                      currentStep === 0 ? 'border-slate-100 text-slate-300 opacity-50 cursor-not-allowed' : 'border-slate-200 text-slate-600 hover:bg-slate-50 active:scale-95 hover:border-blue-200 hover:text-blue-600'
+                      currentStep === 0 ? 'border-slate-100 text-slate-300 opacity-50 cursor-not-allowed' : 'border-slate-200 text-slate-600 hover:bg-slate-50 active:scale-95 hover:border-prostate-navy/30 hover:text-prostate-navy'
                     }`}
                   >
                     <ChevronLeft size={18} />
@@ -300,7 +300,7 @@ export default function QuyTrinhPage() {
                     onClick={next} 
                     disabled={currentStep === STEPS.length - 1}
                     className={`flex-grow p-3 sm:p-4 rounded-xl transition-all flex items-center justify-center gap-2 text-xs sm:text-[15px] font-black shadow-lg ${
-                      currentStep === STEPS.length - 1 ? 'bg-slate-100 text-slate-300 cursor-not-allowed shadow-none' : 'bg-blue-600 text-white hover:bg-blue-700 active:scale-[0.98] shadow-blue-100 hover:shadow-blue-200'
+                      currentStep === STEPS.length - 1 ? 'bg-slate-100 text-slate-300 cursor-not-allowed shadow-none' : 'bg-prostate-navy text-white hover:bg-prostate-navy/95 active:scale-[0.98] shadow-prostate-navy/15 hover:shadow-prostate-navy/20'
                     }`}
                   >
                     {currentStep === STEPS.length - 1 ? "Hoàn tất tìm hiểu" : "Bước tiếp theo"}
