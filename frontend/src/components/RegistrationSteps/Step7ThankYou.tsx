@@ -24,22 +24,22 @@ const Step7ThankYou: React.FC<Step7Props> = ({ registrationResult }) => {
           <span className="text-blue-600">ĐĂNG KÝ VÀ SÀNG LỌC</span>
         </h2>
 
-        <div className="p-8 bg-blue-50 rounded-3xl border-4 border-white shadow-xl inline-block">
-          <p className="text-[15px] font-black text-blue-900 uppercase tracking-widest mb-4">LỊCH HẸN KHÁM CỦA ÔNG:</p>
-          <div className="flex items-center justify-center gap-4 text-3xl font-black text-blue-700">
-            <Clock size={36} /> {registrationResult?.appointment_slot}
+        <div className="p-8 bg-blue-50 rounded-3xl border-4 border-white shadow-xl inline-block max-w-lg mx-auto">
+          <p className="text-[13px] sm:text-[15px] font-black text-blue-900 uppercase tracking-widest mb-3">LỊCH HẸN KHÁM CỦA ÔNG:</p>
+          <div className="flex items-center justify-center gap-3 text-2xl sm:text-3xl font-black text-blue-700">
+            <Clock size={32} /> {registrationResult?.appointment_slot || 'Sẽ cập nhật sau'}
           </div>
-          <p className="text-[14px] text-blue-400 font-black mt-4 uppercase tracking-widest">BỆNH VIỆN QUỐC TẾ TRUNG ƯƠNG HUẾ</p>
+          <p className="text-xs sm:text-[13px] text-blue-500 font-bold mt-3 leading-relaxed">
+            Ban tổ chức sẽ liên hệ trực tiếp qua Số điện thoại của Ông để thông báo thời gian và số thứ tự khám cụ thể.
+          </p>
+          <p className="text-[12px] text-blue-400 font-black mt-3 uppercase tracking-widest border-t border-blue-100 pt-2">BỆNH VIỆN QUỐC TẾ TRUNG ƯƠNG HUẾ</p>
         </div>
       </div>
 
       <div className="max-w-xl mx-auto space-y-8">
         <div className="bg-slate-50 p-6 rounded-2xl border border-slate-100">
-          <p className="text-slate-600 text-lg font-bold leading-relaxed">
-            {/* Hệ thống đã gửi email xác nhận đến: <br />
-            <span className="text-blue-900 font-black underline decoration-2">{registrationResult?.email || 'địa chỉ của Ông'}</span>.
-            <br /> */}
-            Vui lòng kiểm tra lại thông tin và đến đúng giờ để được hỗ trợ tốt nhất.
+          <p className="text-slate-600 text-base sm:text-lg font-bold leading-relaxed">
+            Vui lòng lưu lại Thẻ đăng ký (Mã số hoặc ảnh thẻ QR) và chú ý điện thoại để nhận thông báo từ Bệnh viện Trung ương Huế.
           </p>
         </div>
 

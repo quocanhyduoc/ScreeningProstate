@@ -21,7 +21,7 @@ function HighlightCard({ tag, children }: HighlightCardProps) {
 export default function QuickHighlights() {
   return (
     <div className="max-w-[1440px] mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 mb-16">
-      
+
       {/* Card 1: Số lượng giới hạn */}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
@@ -45,8 +45,11 @@ export default function QuickHighlights() {
         className="flex"
       >
         <HighlightCard tag="Thời gian đăng ký">
-          <p className="text-2xl sm:text-3xl font-black text-prostate-navy font-display tracking-tight leading-none mt-1">
-            15 - 29/05/2026
+          <p className="text-xl sm:text-2xl font-black text-prostate-navy font-display tracking-tight leading-tight mt-1 text-center">
+            Từ 1/11/2026
+          </p>
+          <p className="text-[11px] sm:text-xs text-slate-400 font-bold mt-0.5">
+            Đến khi đủ số lượng
           </p>
         </HighlightCard>
       </motion.div>
@@ -59,12 +62,12 @@ export default function QuickHighlights() {
         className="flex"
       >
         <HighlightCard tag="Thời gian khám">
-          <div className="space-y-1 mt-1">
-            <p className="text-[12px] sm:text-[13px] font-black text-prostate-orange uppercase tracking-wide leading-none">
-              Thứ Bảy và Chủ Nhật
+          <div className="space-y-1 mt-1 text-center">
+            <p className="text-xl sm:text-2xl font-black text-prostate-navy font-display tracking-tight leading-tight">
+              Sẽ cập nhật sau
             </p>
-            <p className="text-2xl sm:text-3xl font-black text-prostate-navy font-display tracking-tight leading-none mt-1">
-              30 - 31/05/2026
+            <p className="text-[11px] sm:text-xs text-prostate-orange font-bold uppercase tracking-tight">
+              BTC sẽ liên hệ thông báo lịch cụ thể
             </p>
           </div>
         </HighlightCard>

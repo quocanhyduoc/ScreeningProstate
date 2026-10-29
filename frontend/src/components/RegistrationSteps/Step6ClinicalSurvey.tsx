@@ -29,6 +29,69 @@ const Step6ClinicalSurvey: React.FC<Step6Props> = ({
   onFinalSubmit,
   error
 }) => {
+  const [noneFlags, React_useState_none] = React.useState<{ [key: string]: boolean }>({
+    genetics: false,
+    exclusions: false,
+    history: false,
+    meds: false,
+    symptoms: false,
+  });
+
+  const handleSelectNone = (section: string) => {
+    React_useState_none(prev => {
+      const willBeActive = !prev[section];
+      if (willBeActive) {
+        if (section === 'genetics') {
+          setValue('brca_mutation', false);
+          setValue('father_age_diag', '');
+          setValue('brother_age_diag', '');
+        } else if (section === 'exclusions') {
+          setValue('exclusion_sex_24h', false);
+          setValue('exclusion_cystoscopy_48h', false);
+          setValue('exclusion_dre_1w', false);
+        } else if (section === 'history') {
+          setValue('biopsy_3y', false);
+          setValue('prostatectomy', false);
+          setValue('cancer_history', []);
+          setValue('cancer_treatment', false);
+          setValue('severe_organ_disease', false);
+          setValue('alzheimer', false);
+          setValue('other_studies', false);
+        } else if (section === 'meds') {
+          setValue('meds_5alpha_inhibitor', false);
+          setValue('meds_estrogen', false);
+          setValue('meds_progesterone', false);
+          setValue('meds_androgen', false);
+          setValue('meds_corticoids', false);
+          setValue('meds_saw_palmetto', false);
+        } else if (section === 'symptoms') {
+          setValue('symptom_difficulty', false);
+          setValue('symptom_frequency', false);
+          setValue('symptom_urgency', false);
+          setValue('symptom_incomplete', false);
+          setValue('symptom_hematuria', false);
+          setValue('symptom_bone_pain', false);
+        }
+      }
+      return { ...prev, [section]: willBeActive };
+    });
+  };
+
+  const hasGeneticsActive = watch('brca_mutation') || !!watch('father_age_diag') || !!watch('brother_age_diag');
+  const isNoneGenetics = noneFlags.genetics && !hasGeneticsActive;
+
+  const hasExclusionsActive = watch('exclusion_sex_24h') || watch('exclusion_cystoscopy_48h') || watch('exclusion_dre_1w');
+  const isNoneExclusions = noneFlags.exclusions && !hasExclusionsActive;
+
+  const hasHistoryActive = watch('biopsy_3y') || watch('prostatectomy') || (watch('cancer_history')?.length > 0) || watch('cancer_treatment') || watch('severe_organ_disease') || watch('alzheimer') || watch('other_studies');
+  const isNoneHistory = noneFlags.history && !hasHistoryActive;
+
+  const hasMedsActive = watch('meds_5alpha_inhibitor') || watch('meds_estrogen') || watch('meds_progesterone') || watch('meds_androgen') || watch('meds_corticoids') || watch('meds_saw_palmetto');
+  const isNoneMeds = noneFlags.meds && !hasMedsActive;
+
+  const hasSymptomsActive = watch('symptom_difficulty') || watch('symptom_frequency') || watch('symptom_urgency') || watch('symptom_incomplete') || watch('symptom_hematuria') || watch('symptom_bone_pain');
+  const isNoneSymptoms = noneFlags.symptoms && !hasSymptomsActive;
+
   if (isReviewing) {
     return (
       <motion.div key="review" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="space-y-8">
@@ -110,7 +173,7 @@ const Step6ClinicalSurvey: React.FC<Step6Props> = ({
             Quay lại chỉnh sửa
           </button>
           <button
-            onClick={handleSubmit(onFinalSubmit, (errs) => console.error("DEBUG: Validation Errors:", errs))}
+            onClick={handleSubmit(onFinalSubmit, (errs: any) => console.error("DEBUG: Validation Errors:", errs))}
             disabled={isSubmitting}
             className="flex-1 py-4 md:py-6 bg-green-600 text-white rounded-xl md:rounded-2xl font-black text-[15px] md:text-2xl shadow-xl md:shadow-2xl shadow-green-100 hover:bg-green-700 transition-all active:scale-[0.98] flex items-center justify-center gap-2 md:gap-3 order-1 sm:order-2"
           >
@@ -146,22 +209,50 @@ const Step6ClinicalSurvey: React.FC<Step6Props> = ({
             <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 shadow-sm"><Dna size={24} /></div>
             <h3 className="text-[14px] font-black text-slate-500 uppercase tracking-[0.2em]">I. DI TRUYỀN & TIỀN SỬ GIA ĐÌNH</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <QuestionToggle
               label="Đột biến gen BRCA1/BRCA2"
               active={watch('brca_mutation')}
-              onClick={() => setValue('brca_mutation', !watch('brca_mutation'))}
+              onClick={() => {
+                setValue('brca_mutation', !watch('brca_mutation'));
+                React_useState_none(prev => ({ ...prev, genetics: false }));
+              }}
             />
-            <div className="bg-gray-50 p-8 rounded-2xl border-2 border-gray-100 flex items-center gap-6 shadow-sm">
+            <div className="bg-gray-50 p-6 rounded-2xl border-2 border-gray-100 flex items-center gap-4 shadow-sm">
               <div className="flex-1 space-y-2">
                 <label className="text-[12px] font-black text-slate-400 uppercase tracking-widest">Cha chẩn đoán lúc</label>
-                <input type="number" {...register('father_age_diag')} className="w-full bg-white border-2 border-gray-100 rounded-xl px-5 py-3 text-[18px] font-black text-blue-900 focus:border-blue-500 outline-none transition-all" placeholder="Tuổi" />
+                <input 
+                  type="number" 
+                  {...register('father_age_diag')} 
+                  onChange={(e) => {
+                    register('father_age_diag').onChange(e);
+                    React_useState_none(prev => ({ ...prev, genetics: false }));
+                  }}
+                  className="w-full bg-white border-2 border-gray-100 rounded-xl px-4 py-3 text-[18px] font-black text-blue-900 focus:border-blue-500 outline-none transition-all" 
+                  placeholder="Tuổi" 
+                />
               </div>
               <div className="flex-1 space-y-2">
                 <label className="text-[12px] font-black text-slate-400 uppercase tracking-widest">Anh/Em chẩn đoán lúc</label>
-                <input type="number" {...register('brother_age_diag')} className="w-full bg-white border-2 border-gray-100 rounded-xl px-5 py-3 text-[18px] font-black text-blue-900 focus:border-blue-500 outline-none transition-all" placeholder="Tuổi" />
+                <input 
+                  type="number" 
+                  {...register('brother_age_diag')} 
+                  onChange={(e) => {
+                    register('brother_age_diag').onChange(e);
+                    React_useState_none(prev => ({ ...prev, genetics: false }));
+                  }}
+                  className="w-full bg-white border-2 border-gray-100 rounded-xl px-4 py-3 text-[18px] font-black text-blue-900 focus:border-blue-500 outline-none transition-all" 
+                  placeholder="Tuổi" 
+                />
               </div>
             </div>
+            <QuestionToggle
+              label="Không cái nào"
+              sublabel="Không có đột biến gen & người thân mắc K"
+              active={isNoneGenetics}
+              onClick={() => handleSelectNone('genetics')}
+              isNone
+            />
           </div>
         </section>
 
@@ -171,10 +262,41 @@ const Step6ClinicalSurvey: React.FC<Step6Props> = ({
             <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center text-red-600 shadow-sm"><AlertCircle size={24} /></div>
             <h3 className="text-[14px] font-black text-slate-500 uppercase tracking-[0.2em]">II. TIÊU CHUẨN LOẠI TRỪ (TẠM THỜI)</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <QuestionToggle label="Quan hệ tình dục / Xuất tinh (24h)" active={watch('exclusion_sex_24h')} onClick={() => setValue('exclusion_sex_24h', !watch('exclusion_sex_24h'))} warning />
-            <QuestionToggle label="Nội soi bàng quang / Thông tiểu (48h)" active={watch('exclusion_cystoscopy_48h')} onClick={() => setValue('exclusion_cystoscopy_48h', !watch('exclusion_cystoscopy_48h'))} warning />
-            <QuestionToggle label="Thăm trực tràng / Đạp xe (1 tuần)" active={watch('exclusion_dre_1w')} onClick={() => setValue('exclusion_dre_1w', !watch('exclusion_dre_1w'))} warning />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <QuestionToggle 
+              label="Quan hệ / Xuất tinh (24h)" 
+              active={watch('exclusion_sex_24h')} 
+              onClick={() => {
+                setValue('exclusion_sex_24h', !watch('exclusion_sex_24h'));
+                React_useState_none(prev => ({ ...prev, exclusions: false }));
+              }} 
+              warning 
+            />
+            <QuestionToggle 
+              label="Nội soi / Thông tiểu (48h)" 
+              active={watch('exclusion_cystoscopy_48h')} 
+              onClick={() => {
+                setValue('exclusion_cystoscopy_48h', !watch('exclusion_cystoscopy_48h'));
+                React_useState_none(prev => ({ ...prev, exclusions: false }));
+              }} 
+              warning 
+            />
+            <QuestionToggle 
+              label="Thăm trực tràng / Đạp xe (1 tuần)" 
+              active={watch('exclusion_dre_1w')} 
+              onClick={() => {
+                setValue('exclusion_dre_1w', !watch('exclusion_dre_1w'));
+                React_useState_none(prev => ({ ...prev, exclusions: false }));
+              }} 
+              warning 
+            />
+            <QuestionToggle
+              label="Không cái nào"
+              sublabel="Không có tiêu chuẩn loại trừ nào ở trên"
+              active={isNoneExclusions}
+              onClick={() => handleSelectNone('exclusions')}
+              isNone
+            />
           </div>
         </section>
 
@@ -184,31 +306,134 @@ const Step6ClinicalSurvey: React.FC<Step6Props> = ({
             <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 shadow-sm"><ShieldCheck size={24} /></div>
             <h3 className="text-[14px] font-black text-slate-500 uppercase tracking-[0.2em]">III. TIỀN SỬ BỆNH LÝ & THUỐC ĐANG DÙNG</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <QuestionToggle label="Sinh thiết TTL trong vòng 3 năm" active={watch('biopsy_3y')} onClick={() => setValue('biopsy_3y', !watch('biopsy_3y'))} />
-            <QuestionToggle label="Đã cắt bỏ tuyến tiền liệt" active={watch('prostatectomy')} onClick={() => setValue('prostatectomy', !watch('prostatectomy'))} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <QuestionToggle 
+              label="Sinh thiết TTL (3 năm)" 
+              active={watch('biopsy_3y')} 
+              onClick={() => {
+                setValue('biopsy_3y', !watch('biopsy_3y'));
+                React_useState_none(prev => ({ ...prev, history: false }));
+              }} 
+            />
+            <QuestionToggle 
+              label="Đã cắt bỏ tuyến tiền liệt" 
+              active={watch('prostatectomy')} 
+              onClick={() => {
+                setValue('prostatectomy', !watch('prostatectomy'));
+                React_useState_none(prev => ({ ...prev, history: false }));
+              }} 
+            />
             <QuestionToggle
               label="Tiền sử K (TTL, Đại trực tràng, Phổi)"
               active={watch('cancer_history')?.length > 0}
               onClick={() => {
                 const current = watch('cancer_history') || [];
                 setValue('cancer_history', current.length > 0 ? [] : ['PROSTATE_COLON_LUNG']);
+                React_useState_none(prev => ({ ...prev, history: false }));
               }}
             />
-            <QuestionToggle label="Đang điều trị ung thư" active={watch('cancer_treatment')} onClick={() => setValue('cancer_treatment', !watch('cancer_treatment'))} />
-            <QuestionToggle label="Bệnh tim, não, phổi, gan, thận nặng" active={watch('severe_organ_disease')} onClick={() => setValue('severe_organ_disease', !watch('severe_organ_disease'))} />
-            <QuestionToggle label="Mắc bệnh Alzheimer" active={watch('alzheimer')} onClick={() => setValue('alzheimer', !watch('alzheimer'))} />
-            <QuestionToggle label="Tham gia nghiên cứu sàng lọc khác" active={watch('other_studies')} onClick={() => setValue('other_studies', !watch('other_studies'))} />
+            <QuestionToggle 
+              label="Đang điều trị ung thư" 
+              active={watch('cancer_treatment')} 
+              onClick={() => {
+                setValue('cancer_treatment', !watch('cancer_treatment'));
+                React_useState_none(prev => ({ ...prev, history: false }));
+              }} 
+            />
+            <QuestionToggle 
+              label="Bệnh tim, não, phổi, gan, thận nặng" 
+              active={watch('severe_organ_disease')} 
+              onClick={() => {
+                setValue('severe_organ_disease', !watch('severe_organ_disease'));
+                React_useState_none(prev => ({ ...prev, history: false }));
+              }} 
+            />
+            <QuestionToggle 
+              label="Mắc bệnh Alzheimer" 
+              active={watch('alzheimer')} 
+              onClick={() => {
+                setValue('alzheimer', !watch('alzheimer'));
+                React_useState_none(prev => ({ ...prev, history: false }));
+              }} 
+            />
+            <QuestionToggle 
+              label="Tham gia nghiên cứu khác" 
+              active={watch('other_studies')} 
+              onClick={() => {
+                setValue('other_studies', !watch('other_studies'));
+                React_useState_none(prev => ({ ...prev, history: false }));
+              }} 
+            />
+            <QuestionToggle
+              label="Không cái nào"
+              sublabel="Không có tiền sử bệnh lý nào ở trên"
+              active={isNoneHistory}
+              onClick={() => handleSelectNone('history')}
+              isNone
+            />
 
-            <div className="md:col-span-2 p-8 bg-slate-50 rounded-3xl border-2 border-slate-100 space-y-6">
-              <p className="text-[12px] font-black text-slate-400 uppercase tracking-widest">Đang sử dụng các loại thuốc sau:</p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <QuestionToggle label="Chất ức chế 5α-reductase (Finasteride, Dutasteride)" active={watch('meds_5alpha_inhibitor')} onClick={() => setValue('meds_5alpha_inhibitor', !watch('meds_5alpha_inhibitor'))} />
-                <QuestionToggle label="Estrogen" active={watch('meds_estrogen')} onClick={() => setValue('meds_estrogen', !watch('meds_estrogen'))} />
-                <QuestionToggle label="Thuốc progesterone" active={watch('meds_progesterone')} onClick={() => setValue('meds_progesterone', !watch('meds_progesterone'))} />
-                <QuestionToggle label="Androgen" active={watch('meds_androgen')} onClick={() => setValue('meds_androgen', !watch('meds_androgen'))} />
-                <QuestionToggle label="Corticoid điều trị toàn thân lâu dài" active={watch('meds_corticoids')} onClick={() => setValue('meds_corticoids', !watch('meds_corticoids'))} />
-                <QuestionToggle label="Dược liệu (Cây cọ lùn...) giảm PSA" active={watch('meds_saw_palmetto')} onClick={() => setValue('meds_saw_palmetto', !watch('meds_saw_palmetto'))} />
+            <div className="col-span-1 md:col-span-2 lg:col-span-4 p-8 bg-slate-50 rounded-3xl border-2 border-slate-100 space-y-6">
+              <div className="flex items-center justify-between">
+                <p className="text-[12px] font-black text-slate-400 uppercase tracking-widest">Đang sử dụng các loại thuốc sau:</p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <QuestionToggle 
+                  label="Chất ức chế 5α-reductase (Finasteride...)" 
+                  active={watch('meds_5alpha_inhibitor')} 
+                  onClick={() => {
+                    setValue('meds_5alpha_inhibitor', !watch('meds_5alpha_inhibitor'));
+                    React_useState_none(prev => ({ ...prev, meds: false }));
+                  }} 
+                />
+                <QuestionToggle 
+                  label="Estrogen" 
+                  active={watch('meds_estrogen')} 
+                  onClick={() => {
+                    setValue('meds_estrogen', !watch('meds_estrogen'));
+                    React_useState_none(prev => ({ ...prev, meds: false }));
+                  }} 
+                />
+                <QuestionToggle 
+                  label="Thuốc progesterone" 
+                  active={watch('meds_progesterone')} 
+                  onClick={() => {
+                    setValue('meds_progesterone', !watch('meds_progesterone'));
+                    React_useState_none(prev => ({ ...prev, meds: false }));
+                  }} 
+                />
+                <QuestionToggle 
+                  label="Androgen" 
+                  active={watch('meds_androgen')} 
+                  onClick={() => {
+                    setValue('meds_androgen', !watch('meds_androgen'));
+                    React_useState_none(prev => ({ ...prev, meds: false }));
+                  }} 
+                />
+                <QuestionToggle 
+                  label="Corticoid điều trị toàn thân lâu dài" 
+                  active={watch('meds_corticoids')} 
+                  onClick={() => {
+                    setValue('meds_corticoids', !watch('meds_corticoids'));
+                    React_useState_none(prev => ({ ...prev, meds: false }));
+                  }} 
+                />
+                <QuestionToggle 
+                  label="Dược liệu (Cây cọ lùn...) giảm PSA" 
+                  active={watch('meds_saw_palmetto')} 
+                  onClick={() => {
+                    setValue('meds_saw_palmetto', !watch('meds_saw_palmetto'));
+                    React_useState_none(prev => ({ ...prev, meds: false }));
+                  }} 
+                />
+                <div className="sm:col-span-2">
+                  <QuestionToggle
+                    label="Không cái nào"
+                    sublabel="Không sử dụng bất kỳ loại thuốc nào ở trên"
+                    active={isNoneMeds}
+                    onClick={() => handleSelectNone('meds')}
+                    isNone
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -220,13 +445,64 @@ const Step6ClinicalSurvey: React.FC<Step6Props> = ({
             <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600 shadow-sm"><Activity size={24} /></div>
             <h3 className="text-[14px] font-black text-slate-500 uppercase tracking-[0.2em]">IV. TRIỆU CHỨNG ĐƯỜNG TIỂU</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <QuestionToggle label="Tiểu khó / Tia yếu" active={watch('symptom_difficulty')} onClick={() => setValue('symptom_difficulty', !watch('symptom_difficulty'))} />
-            <QuestionToggle label="Tiểu nhiều lần (Ngày/Đêm)" active={watch('symptom_frequency')} onClick={() => setValue('symptom_frequency', !watch('symptom_frequency'))} />
-            <QuestionToggle label="Tiểu gấp / Không nhịn được" active={watch('symptom_urgency')} onClick={() => setValue('symptom_urgency', !watch('symptom_urgency'))} />
-            <QuestionToggle label="Tiểu không hết / Nhỏ giọt" active={watch('symptom_incomplete')} onClick={() => setValue('symptom_incomplete', !watch('symptom_incomplete'))} />
-            <QuestionToggle label="Tiểu máu" active={watch('symptom_hematuria')} onClick={() => setValue('symptom_hematuria', !watch('symptom_hematuria'))} />
-            <QuestionToggle label="Đau xương" active={watch('symptom_bone_pain')} onClick={() => setValue('symptom_bone_pain', !watch('symptom_bone_pain'))} />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <QuestionToggle 
+              label="Tiểu khó / Tia yếu" 
+              active={watch('symptom_difficulty')} 
+              onClick={() => {
+                setValue('symptom_difficulty', !watch('symptom_difficulty'));
+                React_useState_none(prev => ({ ...prev, symptoms: false }));
+              }} 
+            />
+            <QuestionToggle 
+              label="Tiểu nhiều lần (Ngày/Đêm)" 
+              active={watch('symptom_frequency')} 
+              onClick={() => {
+                setValue('symptom_frequency', !watch('symptom_frequency'));
+                React_useState_none(prev => ({ ...prev, symptoms: false }));
+              }} 
+            />
+            <QuestionToggle 
+              label="Tiểu gấp / Không nhịn được" 
+              active={watch('symptom_urgency')} 
+              onClick={() => {
+                setValue('symptom_urgency', !watch('symptom_urgency'));
+                React_useState_none(prev => ({ ...prev, symptoms: false }));
+              }} 
+            />
+            <QuestionToggle 
+              label="Tiểu không hết / Nhỏ giọt" 
+              active={watch('symptom_incomplete')} 
+              onClick={() => {
+                setValue('symptom_incomplete', !watch('symptom_incomplete'));
+                React_useState_none(prev => ({ ...prev, symptoms: false }));
+              }} 
+            />
+            <QuestionToggle 
+              label="Tiểu máu" 
+              active={watch('symptom_hematuria')} 
+              onClick={() => {
+                setValue('symptom_hematuria', !watch('symptom_hematuria'));
+                React_useState_none(prev => ({ ...prev, symptoms: false }));
+              }} 
+            />
+            <QuestionToggle 
+              label="Đau xương" 
+              active={watch('symptom_bone_pain')} 
+              onClick={() => {
+                setValue('symptom_bone_pain', !watch('symptom_bone_pain'));
+                React_useState_none(prev => ({ ...prev, symptoms: false }));
+              }} 
+            />
+            <div className="md:col-span-2">
+              <QuestionToggle
+                label="Không cái nào"
+                sublabel="Hoàn toàn không có triệu chứng đường tiểu nào"
+                active={isNoneSymptoms}
+                onClick={() => handleSelectNone('symptoms')}
+                isNone
+              />
+            </div>
           </div>
         </section>
 
@@ -254,21 +530,36 @@ const Step6ClinicalSurvey: React.FC<Step6Props> = ({
 
 export default Step6ClinicalSurvey;
 
-function QuestionToggle({ label, active, onClick, warning }: any) {
+function QuestionToggle({ label, sublabel, active, onClick, warning, isNone }: any) {
   return (
     <div
       onClick={onClick}
-      className={`p-6 rounded-2xl border-2 cursor-pointer transition-all flex items-center justify-between gap-6 shadow-sm hover:shadow-md ${
+      className={`p-6 rounded-2xl border-2 cursor-pointer transition-all flex items-center justify-between gap-4 shadow-sm hover:shadow-md ${
         active
-          ? (warning ? 'bg-red-50 border-red-500 text-red-900 ring-4 ring-red-50' : 'bg-blue-50 border-blue-600 text-blue-900 ring-4 ring-blue-50')
-          : 'bg-white border-gray-100 hover:border-blue-200'
+          ? (isNone
+              ? 'bg-emerald-50 border-emerald-500 text-emerald-950 ring-4 ring-emerald-100 shadow-emerald-50'
+              : (warning 
+                  ? 'bg-red-50 border-red-500 text-red-900 ring-4 ring-red-50' 
+                  : 'bg-blue-50 border-blue-600 text-blue-900 ring-4 ring-blue-50'))
+          : (isNone 
+              ? 'bg-emerald-50/40 border-2 border-dashed border-emerald-300 hover:border-emerald-500 text-emerald-800 hover:bg-emerald-50' 
+              : 'bg-white border-gray-100 hover:border-blue-200')
       }`}
     >
-      <span className="text-[16px] font-black leading-tight uppercase tracking-tight">{label}</span>
+      <div className="flex flex-col">
+        <span className={`text-[16px] font-black leading-tight uppercase tracking-tight ${isNone && active ? 'text-emerald-900' : ''}`}>
+          {label}
+        </span>
+        {sublabel && (
+          <span className={`text-[12px] font-bold mt-1.5 leading-snug ${isNone ? (active ? 'text-emerald-700' : 'text-emerald-600/90') : 'text-slate-400'}`}>
+            {sublabel}
+          </span>
+        )}
+      </div>
       <div className={`w-8 h-8 rounded-xl border-2 flex items-center justify-center transition-all shrink-0 ${
         active
-          ? (warning ? 'bg-red-600 border-red-600' : 'bg-blue-600 border-blue-600')
-          : 'border-gray-200 bg-gray-50'
+          ? (isNone ? 'bg-emerald-600 border-emerald-600 text-white' : (warning ? 'bg-red-600 border-red-600' : 'bg-blue-600 border-blue-600'))
+          : (isNone ? 'border-emerald-200 bg-white' : 'border-gray-200 bg-gray-50')
       }`}>
         {active && <Check size={20} className="text-white" />}
       </div>

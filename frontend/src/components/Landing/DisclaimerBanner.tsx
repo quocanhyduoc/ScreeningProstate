@@ -18,8 +18,8 @@ const TEXTS = {
   doctorHung: 'PHẠM NGỌC HÙNG',
   roleHung: 'Trưởng khoa Ngoại Tiết niệu A',
   titleTHS_BS: 'THS.BS.',
-  doctorAnh: 'NGUYỄN VĂN QUỐC ANH',
-  roleAnh: 'Khoa Ngoại Tiết niệu A',
+  doctorTuan: 'TRƯƠNG MINH TUẤN',
+  roleTuan: 'Khoa Ngoại Tiết niệu A',
   programCommitment: 'Cam kết từ chương trình',
   commitmentPart1: 'Chương trình được thực hiện bởi ',
   commitmentPart2: 'Bệnh viện Trung ương Huế',
@@ -153,19 +153,19 @@ export default function DisclaimerBanner() {
             {/* Contact 2 */}
             <div className="space-y-4">
               <a
-                href="tel:0795671597"
+                href="tel:0708111632"
                 className="inline-flex items-center gap-3 bg-prostate-navy hover:bg-prostate-navy/95 text-white px-5 py-2.5 rounded-full font-display font-black text-base shadow-md transition-all hover:scale-[1.02] active:scale-95 shrink-0"
               >
                 <Phone size={16} fill="currentColor" className="text-white shrink-0" />
-                <span>079 567 1597</span>
+                <span>0708 111 632</span>
               </a>
               <div className="space-y-1 pl-1">
                 <h4 className="text-[15px] leading-tight font-black font-display">
                   <span className="text-prostate-orange mr-1.5">{TEXTS.titleTHS_BS}</span>
-                  <span className="text-prostate-navy">{TEXTS.doctorAnh}</span>
+                  <span className="text-prostate-navy">{TEXTS.doctorTuan}</span>
                 </h4>
                 <p className="text-xs sm:text-sm text-slate-500 font-extrabold">
-                  {TEXTS.roleAnh}
+                  {TEXTS.roleTuan}
                 </p>
               </div>
             </div>

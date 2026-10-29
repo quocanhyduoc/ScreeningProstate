@@ -76,7 +76,7 @@ export default function HeroBanner() {
                   <Check size={14} strokeWidth={3} />
                 </div>
                 <p className="text-base sm:text-lg font-black leading-snug text-slate-800">
-                  Nam giới <span className="text-prostate-navy font-black underline underline-offset-4 decoration-2 decoration-prostate-orange text-lg sm:text-xl">trên 50</span> tuổi.
+                  Nam giới từ <span className="text-prostate-navy font-black underline underline-offset-4 decoration-2 decoration-prostate-orange text-lg sm:text-xl">50 đến dưới 70</span> tuổi.
                 </p>
               </div>
 
@@ -86,7 +86,7 @@ export default function HeroBanner() {
                 </div>
                 <div className="space-y-1.5">
                   <p className="text-base sm:text-lg font-black leading-snug text-slate-800">
-                    Nam giới <span className="text-prostate-navy font-black underline underline-offset-4 decoration-2 decoration-prostate-orange text-lg sm:text-xl">trên 45</span> tuổi.
+                    Nam giới từ <span className="text-prostate-navy font-black underline underline-offset-4 decoration-2 decoration-prostate-orange text-lg sm:text-xl">45 đến dưới 70</span> tuổi.
                   </p>
                   <p className="text-sm sm:text-base text-slate-500 font-extrabold leading-relaxed">
                     Có bố hoặc anh/em trai ruột mắc ung thư tuyến tiền liệt.

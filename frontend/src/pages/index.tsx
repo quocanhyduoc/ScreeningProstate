@@ -7,8 +7,8 @@ import { AlertCircle, CheckCircle } from 'lucide-react';
 import { toPng } from 'html-to-image';
 
 // Step Components
+import Step1Consent from '../components/RegistrationSteps/Step1Consent';
 import Step1PersonalInfo from '../components/RegistrationSteps/Step1PersonalInfo';
-import Step2AppointmentTime from '../components/RegistrationSteps/Step2AppointmentTime';
 import Step3MedicalHistory from '../components/RegistrationSteps/Step3MedicalHistory';
 import Step4Confirmation from '../components/RegistrationSteps/Step4Confirmation';
 import Step5SuccessBadge from '../components/RegistrationSteps/Step5SuccessBadge';
@@ -32,7 +32,7 @@ const TIME_SLOTS = [
 ];
 
 const STEPS = [
-  { id: 1, title: 'Chọn thời gian', desc: 'Chọn khung giờ khám' },
+  { id: 1, title: 'Đồng thuận', desc: 'Xác nhận đối tượng & Cam kết' },
   { id: 2, title: 'Thông tin cá nhân', desc: 'Họ tên, SĐT và Địa chỉ' },
   { id: 3, title: 'Tiền sử bệnh lý', desc: 'Thông tin sức khỏe' },
   { id: 4, title: 'Hoàn tất & Tải thẻ', desc: 'Xác nhận đăng ký' }
@@ -113,6 +113,8 @@ export default function AppointmentRegistrationPage() {
   } = useForm({
     mode: 'onTouched',
     defaultValues: {
+      eligibility_group: '',
+      consent_agree: false,
       full_name: '',
       dob: '',
       cccd: '',
@@ -122,10 +124,13 @@ export default function AppointmentRegistrationPage() {
       district: 'Quận Thuận Hóa',
       ward: '',
       address_detail: '',
-      appointment_slot: '',
+      appointment_slot: 'Sẽ cập nhật sau',
       history_father: false,
       history_brother: false,
-      symptoms: '',
+      has_urinary_symptoms: 'NO',
+      selected_luts: [] as string[],
+      other_symptoms: '',
+      symptoms: 'Không có triệu chứng đường tiểu',
       consent: false,
       brca_mutation: false,
       father_age_diag: '',
@@ -183,7 +188,17 @@ export default function AppointmentRegistrationPage() {
   };
 
   const isEligible = () => {
+    if (!formData.dob) return true;
     const age = calculateAge(formData.dob);
+    if (age < 45 || age >= 70) return false;
+    
+    if (formData.eligibility_group === '50_TO_69') {
+      return age >= 50 && age < 70;
+    }
+    if (formData.eligibility_group === '45_TO_69_FAMILY') {
+      return age >= 45 && age < 70;
+    }
+
     if (age >= 50) return true;
     if (age >= 45 && (formData.history_father || formData.history_brother)) return true;
     return false;
@@ -197,32 +212,49 @@ export default function AppointmentRegistrationPage() {
     setError('');
     
     if (step === 1) {
-      // Step 1: Appointment Slot
-      if (!formData.appointment_slot) {
-        setError('Vui lòng chọn khung giờ khám.');
+      // Step 1: Consent & Eligibility Group
+      if (!formData.eligibility_group) {
+        setError('Vui lòng chọn nhóm đối tượng tham gia phù hợp với Ông.');
         return;
       }
-      const selectedSlot = TIME_SLOTS.find(s => s.value === formData.appointment_slot);
-      const currentCount = slotStats[formData.appointment_slot] || 0;
-      if (selectedSlot && currentCount >= selectedSlot.limit) {
-        setShowExtraSlotConfirm(true);
-      } else {
-        setStep(2);
+      if (!formData.consent_agree) {
+        setError('Vui lòng xác nhận và tích chọn đồng ý với các điều khoản của chương trình.');
+        return;
       }
+      setStep(2);
     } else if (step === 2) {
       // Step 2: Personal Info
       const fieldsToValidate = ['full_name', 'dob', 'cccd', 'phone', 'province', 'district', 'ward', 'address_detail'];
       const isValid = await trigger(fieldsToValidate as any);
       if (isValid) {
+        const age = calculateAge(formData.dob);
+        if (age >= 70) {
+          setError('Chương trình tầm soát chỉ áp dụng cho nam giới dưới 70 tuổi.');
+          return;
+        }
+        if (age < 45) {
+          setError('Chương trình chỉ áp dụng cho độ tuổi từ 45 trở lên.');
+          return;
+        }
+        if (formData.eligibility_group === '50_TO_69' && age < 50) {
+          setError('Ông đã chọn nhóm "Từ 50 đến dưới 70 tuổi", nhưng ngày sinh thể hiện chưa đủ 50 tuổi. Vui lòng kiểm tra lại ngày sinh hoặc chọn lại nhóm phù hợp.');
+          return;
+        }
         if (!isEligible()) {
-          setError('Bạn không thuộc đối tượng tầm soát của chương trình (Yêu cầu ≥ 45 tuổi).');
+          setError('Bạn không thuộc đối tượng tầm soát của chương trình (Yêu cầu nam giới từ 50 - dưới 70 tuổi, hoặc 45 - dưới 70 tuổi nếu có tiền sử gia đình).');
           return;
         }
         setStep(3);
       }
     } else if (step === 3) {
       // Step 3: Medical History
-      if (!isEligible()) return;
+      const age = calculateAge(formData.dob);
+      if (formData.eligibility_group === '45_TO_69_FAMILY' || (age >= 45 && age < 50)) {
+        if (!formData.history_father && !formData.history_brother) {
+          setError('Nhóm tuổi 45 đến dưới 50 tuổi yêu cầu có tiền sử gia đình (bố hoặc anh/em trai ruột mắc ung thư tuyến tiền liệt). Vui lòng tích chọn tiền sử gia đình để tiếp tục.');
+          return;
+        }
+      }
       setStep(4);
     }
   };
@@ -231,18 +263,18 @@ export default function AppointmentRegistrationPage() {
     setIsSubmitting(true);
     setError('');
     try {
-      const selectedSlot = TIME_SLOTS.find(s => s.value === data.appointment_slot);
-      const currentCount = slotStats[data.appointment_slot] || 0;
-      const isExtraSlot = selectedSlot ? currentCount >= selectedSlot.limit : false;
-
       const sanitizedData = { ...data };
       if (sanitizedData.email === '') {
         sanitizedData.email = null;
       }
+      if (!sanitizedData.appointment_slot) {
+        sanitizedData.appointment_slot = 'Sẽ cập nhật sau';
+      }
 
       const payload = {
         ...sanitizedData,
-        is_extra_slot: isExtraSlot,
+        appointment_slot: sanitizedData.appointment_slot || 'Sẽ cập nhật sau',
+        is_extra_slot: false,
         registration_date: new Date().toISOString().split('T')[0]
       };
 
@@ -362,14 +394,11 @@ export default function AppointmentRegistrationPage() {
                 <div className="p-4 sm:p-8 md:p-12 lg:p-16">
                   <AnimatePresence mode="wait">
                     {step === 1 && (
-                      <Step2AppointmentTime
-                        setValue={setValue}
+                      <Step1Consent
                         watch={watch}
-                        setStep={setStep}
-                        TIME_SLOTS={TIME_SLOTS}
-                        slotStats={slotStats}
-                        error={error}
+                        setValue={setValue}
                         handleNext={handleNext}
+                        error={error}
                       />
                     )}
 
@@ -396,6 +425,8 @@ export default function AppointmentRegistrationPage() {
                         setStep={setStep}
                         isEligible={isEligible}
                         handleNext={handleNext}
+                        watch={watch}
+                        setValue={setValue}
                       />
                     )}
 

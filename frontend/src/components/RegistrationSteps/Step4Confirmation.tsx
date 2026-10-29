@@ -56,8 +56,8 @@ const Step4Confirmation: React.FC<Step4Props> = ({
 
           <div className="text-gray-400 font-black uppercase tracking-tight text-[11px] md:text-[13px] self-center">Thời gian khám</div>
           <div className="text-right">
-            <span className="font-black text-blue-600 bg-blue-100 px-3 py-1.5 md:px-4 md:py-2 rounded-xl inline-block text-[13px] md:text-base">
-              {formData.appointment_slot}
+            <span className="font-black text-amber-800 bg-amber-50 border border-amber-200/80 px-3 py-1.5 md:px-4 md:py-2 rounded-xl inline-block text-[12px] md:text-sm">
+              {formData.appointment_slot || 'Sẽ cập nhật sau (BTC sẽ thông báo)'}
             </span>
           </div>
 
@@ -66,6 +66,11 @@ const Step4Confirmation: React.FC<Step4Props> = ({
             {formData.history_father && <span className="block text-red-600 underline underline-offset-4 decoration-2">Bố ruột bị K Tuyến tiền liệt</span>}
             {formData.history_brother && <span className="block text-red-600 underline underline-offset-4 decoration-2">Anh/Em ruột bị K Tuyến tiền liệt</span>}
             {!formData.history_father && !formData.history_brother && <span className="text-gray-500 italic">Không có tiền sử</span>}
+          </div>
+
+          <div className="text-gray-400 font-black uppercase tracking-tight text-[11px] md:text-[13px] self-center">Triệu chứng đường tiểu</div>
+          <div className="text-right font-black text-[12px] md:text-[14px] text-slate-800 leading-snug">
+            {formData.symptoms || 'Không có triệu chứng'}
           </div>
         </div>
       </div>

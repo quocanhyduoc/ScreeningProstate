@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ChevronLeft, ChevronRight, MapPin, 
-  CheckCircle2, QrCode, ClipboardList, 
+import {
+  ChevronLeft, ChevronRight, MapPin,
+  CheckCircle2, QrCode, ClipboardList,
   PhoneCall, Activity, ClipboardCheck, MessageSquare
 } from 'lucide-react';
 import Link from 'next/link';
@@ -32,7 +32,7 @@ const STEPS = [
     title: "Đến bàn tiếp nhận Check-in",
     desc: "Đến ngày hẹn, người dân di chuyển tới khu vực tiếp đón của chương trình tại Bệnh viện Trung ương Huế. Ban tổ chức sẽ thực hiện check-in nhanh chóng bằng cách quét mã QR trên điện thoại/bản in thẻ badge hoặc sử dụng thẻ Căn cước công dân (CCCD).",
     icon: <CheckCircle2 className="w-8 h-8 md:w-10 md:h-10" />,
-    image: "https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80&w=800",
+    image: "https://imagevietnam.vnanet.vn//MediaUpload/Org/2026/03/24/29-hoa24-11-22-50.jpg",
     color: "bg-purple-500 shadow-purple-200",
     hex: "#a855f7"
   },
@@ -41,7 +41,7 @@ const STEPS = [
     title: "Xét nghiệm máu & Siêu âm",
     desc: "Người dân được thực hiện các chỉ định cận lâm sàng chuyên sâu hoàn toàn miễn phí: lấy mẫu máu xét nghiệm chỉ số PSA (kháng nguyên đặc hiệu tuyến tiền liệt) để phát hiện sớm các nguy cơ ung thư, đồng thời tiến hành siêu âm tổng quát vùng bụng và tuyến tiền liệt.",
     icon: <Activity className="w-8 h-8 md:w-10 md:h-10" />,
-    image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&q=80&w=800",
+    image: "https://suckhoedoisong.qltns.mediacdn.vn/thumb_w/730/324455921873985536/2022/10/3/xet-nghiem-mau-1-1664789630140409996321.jpeg",
     color: "bg-pink-500 shadow-pink-200",
     hex: "#ec4899"
   },
@@ -50,7 +50,7 @@ const STEPS = [
     title: "Trả kết quả & Bác sĩ tư vấn",
     desc: "Sau khi có kết quả xét nghiệm PSA và siêu âm, người dân được hướng dẫn đến bàn trả kết quả. Bác sĩ chuyên khoa tiết niệu sẽ trực tiếp đọc kết quả, giải thích chi tiết ý nghĩa các chỉ số và đưa ra tư vấn chăm sóc sức khỏe, phòng ngừa hoặc phác đồ theo dõi cụ thể.",
     icon: <MessageSquare className="w-8 h-8 md:w-10 md:h-10" />,
-    image: "https://images.unsplash.com/photo-1576091160550-2173dad99901?auto=format&fit=crop&q=80&w=800",
+    image: "https://www.voca.vn/assets/img/news/nhung-cau-noi-tieng-anh-dung-tai-phong-kham-bac-si-1543204273.jpg",
     color: "bg-green-500 shadow-green-200",
     hex: "#22c55e"
   },
@@ -59,7 +59,7 @@ const STEPS = [
     title: "Kết thúc & Ký giấy đồng thuận",
     desc: "Người dân hoàn tất quy trình khám sàng lọc, nhận lại toàn bộ hồ sơ bệnh án cá nhân cùng các tài liệu hướng dẫn theo dõi sức khỏe tại nhà. Đồng thời, thực hiện ký giấy xác nhận đồng thuận tham gia chương trình để hỗ trợ công tác quản lý sức khỏe cộng đồng.",
     icon: <ClipboardCheck className="w-8 h-8 md:w-10 md:h-10" />,
-    image: "https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&q=80&w=800",
+    image: "https://suckhoedoisong.qltns.mediacdn.vn/zoom/1200_630/324455921873985536/2022/10/11/anh-3-16654825250661448408025-0-0-1250-2000-crop-1665482619736828120856.jpeg",
     color: "bg-teal-500 shadow-teal-200",
     hex: "#14b8a6"
   }
@@ -75,7 +75,7 @@ export default function QuyTrinhPage() {
       setCurrentStep(currentStep + 1);
     }
   };
-  
+
   const prev = () => {
     if (currentStep > 0) {
       setDirection(-1);
@@ -120,31 +120,31 @@ export default function QuyTrinhPage() {
       </Head>
 
       {/* Dynamic Ambient Background Glow */}
-      <motion.div 
+      <motion.div
         className="fixed top-0 left-0 w-full h-full pointer-events-none -z-10"
         animate={{
           background: `radial-gradient(circle at 50% 40%, ${STEPS[currentStep].hex}15 0%, transparent 70%)`,
         }}
         transition={{ duration: 0.8 }}
       />
-      
+
       {/* Background Soft Blobs */}
       <div className="fixed top-0 left-0 w-full h-full pointer-events-none -z-20 opacity-20">
-        <motion.div 
-          animate={{ 
+        <motion.div
+          animate={{
             scale: [1, 1.08, 1],
             rotate: [0, 8, 0],
           }}
           transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          className="absolute top-[-5%] left-[-5%] w-[45%] h-[45%] bg-prostate-navy/10 rounded-full blur-[130px]" 
+          className="absolute top-[-5%] left-[-5%] w-[45%] h-[45%] bg-prostate-navy/10 rounded-full blur-[130px]"
         />
-        <motion.div 
-          animate={{ 
+        <motion.div
+          animate={{
             scale: [1.08, 1, 1.08],
             rotate: [0, -8, 0],
           }}
           transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-[-5%] right-[-5%] w-[45%] h-[45%] bg-teal-300 rounded-full blur-[130px]" 
+          className="absolute bottom-[-5%] right-[-5%] w-[45%] h-[45%] bg-teal-300 rounded-full blur-[130px]"
         />
       </div>
 
@@ -169,15 +169,15 @@ export default function QuyTrinhPage() {
 
       {/* Main Flow Content */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 flex flex-col justify-center">
-        
+
         {/* Modern Step Timeline Indicator */}
         <div className="w-full max-w-4xl mx-auto mb-10 sm:mb-16">
           <div className="flex justify-between items-center relative">
             {/* Background Line */}
             <div className="absolute left-[8%] right-[8%] h-1 bg-slate-200/70 top-1/2 -translate-y-1/2 z-0 rounded-full" />
-            
+
             {/* Active Highlight Line */}
-            <motion.div 
+            <motion.div
               className="absolute left-[8%] h-1 bg-prostate-navy top-1/2 -translate-y-1/2 z-0 rounded-full shadow-[0_0_8px_rgba(11,60,130,0.2)]"
               initial={{ width: 0 }}
               animate={{ width: `${(currentStep / (STEPS.length - 1)) * 84}%` }}
@@ -185,30 +185,28 @@ export default function QuyTrinhPage() {
             />
 
             {STEPS.map((step, idx) => (
-              <div 
-                key={step.id} 
+              <div
+                key={step.id}
                 onClick={() => {
                   setDirection(idx > currentStep ? 1 : -1);
                   setCurrentStep(idx);
                 }}
                 className="relative z-10 flex flex-col items-center cursor-pointer group"
               >
-                <motion.div 
+                <motion.div
                   animate={{
                     scale: idx === currentStep ? 1.15 : 1,
                   }}
-                  className={`w-9 h-9 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                    idx === currentStep ? `${step.color} text-white shadow-lg` :
+                  className={`w-9 h-9 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${idx === currentStep ? `${step.color} text-white shadow-lg` :
                     idx < currentStep ? 'bg-prostate-navy text-white shadow-md' : 'bg-white text-slate-400 border-2 border-slate-100 hover:border-blue-100 hover:text-prostate-navy shadow-sm'
-                  }`}
+                    }`}
                 >
                   <span className="text-xs sm:text-[15px] font-black">{step.id}</span>
                 </motion.div>
-                
+
                 {/* Micro step label under on tablets & desktop */}
-                <span className={`absolute top-12 sm:top-14 text-[10px] sm:text-xs font-bold tracking-tight whitespace-nowrap hidden md:block transition-all duration-300 ${
-                  idx === currentStep ? 'text-slate-800 scale-105 font-black font-display' : 'text-slate-400 group-hover:text-slate-600'
-                }`}>
+                <span className={`absolute top-12 sm:top-14 text-[10px] sm:text-xs font-bold tracking-tight whitespace-nowrap hidden md:block transition-all duration-300 ${idx === currentStep ? 'text-slate-800 scale-105 font-black font-display' : 'text-slate-400 group-hover:text-slate-600'
+                  }`}>
                   Bước {step.id}
                 </span>
               </div>
@@ -219,7 +217,7 @@ export default function QuyTrinhPage() {
         {/* Content Box Grid */}
         <div className="w-full flex-1 flex items-center justify-center min-h-[400px] mt-6">
           <AnimatePresence mode="wait" custom={direction}>
-            <motion.div 
+            <motion.div
               key={currentStep}
               custom={direction}
               variants={variants}
@@ -237,13 +235,13 @@ export default function QuyTrinhPage() {
               <div className="lg:col-span-6 relative group">
                 <div className={`absolute inset-0 ${STEPS[currentStep].color} rounded-2xl blur-3xl opacity-15 group-hover:opacity-25 transition-opacity duration-700`} />
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl border-[8px] border-white aspect-[4/3] bg-white transform hover:scale-[1.01] transition-transform duration-500">
-                  <motion.img 
+                  <motion.img
                     key={STEPS[currentStep].image}
                     initial={{ scale: 1.12, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 0.55 }}
-                    src={STEPS[currentStep].image} 
-                    alt={STEPS[currentStep].title} 
+                    src={STEPS[currentStep].image}
+                    alt={STEPS[currentStep].title}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-6 pt-16">
@@ -256,7 +254,7 @@ export default function QuyTrinhPage() {
               {/* Text / Action Column */}
               <div className="lg:col-span-6 space-y-6 md:space-y-8">
                 <div className="flex items-start gap-5">
-                  <motion.div 
+                  <motion.div
                     whileHover={{ rotate: 5, scale: 1.05 }}
                     className={`w-14 h-14 sm:w-16 sm:h-16 ${STEPS[currentStep].color} rounded-2xl flex items-center justify-center text-white shadow-xl flex-shrink-0`}
                   >
@@ -267,7 +265,7 @@ export default function QuyTrinhPage() {
                     <h2 className="text-xl sm:text-3xl font-black text-slate-800 leading-tight tracking-tight font-display">{STEPS[currentStep].title}</h2>
                   </div>
                 </div>
-                
+
                 <p className="text-sm sm:text-lg text-slate-500 leading-relaxed font-semibold">
                   {STEPS[currentStep].desc}
                 </p>
@@ -275,33 +273,30 @@ export default function QuyTrinhPage() {
                 {/* Mobile indicators */}
                 <div className="flex items-center gap-1.5 md:hidden">
                   {STEPS.map((_, i) => (
-                    <div 
-                      key={i} 
-                      className={`h-1.5 rounded-full transition-all duration-300 ${
-                        i === currentStep ? 'w-6 bg-prostate-navy' : 'w-1.5 bg-slate-200'
-                      }`}
+                    <div
+                      key={i}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${i === currentStep ? 'w-6 bg-prostate-navy' : 'w-1.5 bg-slate-200'
+                        }`}
                     />
                   ))}
                 </div>
 
                 {/* Control buttons */}
                 <div className="flex items-center gap-4 pt-4 sm:pt-6">
-                  <button 
-                    onClick={prev} 
+                  <button
+                    onClick={prev}
                     disabled={currentStep === 0}
-                    className={`p-3 px-5 sm:p-4 sm:px-6 rounded-xl border-2 transition-all flex items-center gap-2 text-xs sm:text-sm font-bold ${
-                      currentStep === 0 ? 'border-slate-100 text-slate-300 opacity-50 cursor-not-allowed' : 'border-slate-200 text-slate-600 hover:bg-slate-50 active:scale-95 hover:border-prostate-navy/30 hover:text-prostate-navy'
-                    }`}
+                    className={`p-3 px-5 sm:p-4 sm:px-6 rounded-xl border-2 transition-all flex items-center gap-2 text-xs sm:text-sm font-bold ${currentStep === 0 ? 'border-slate-100 text-slate-300 opacity-50 cursor-not-allowed' : 'border-slate-200 text-slate-600 hover:bg-slate-50 active:scale-95 hover:border-prostate-navy/30 hover:text-prostate-navy'
+                      }`}
                   >
                     <ChevronLeft size={18} />
                     Quay lại
                   </button>
-                  <button 
-                    onClick={next} 
+                  <button
+                    onClick={next}
                     disabled={currentStep === STEPS.length - 1}
-                    className={`flex-grow p-3 sm:p-4 rounded-xl transition-all flex items-center justify-center gap-2 text-xs sm:text-[15px] font-black shadow-lg ${
-                      currentStep === STEPS.length - 1 ? 'bg-slate-100 text-slate-300 cursor-not-allowed shadow-none' : 'bg-prostate-navy text-white hover:bg-prostate-navy/95 active:scale-[0.98] shadow-prostate-navy/15 hover:shadow-prostate-navy/20'
-                    }`}
+                    className={`flex-grow p-3 sm:p-4 rounded-xl transition-all flex items-center justify-center gap-2 text-xs sm:text-[15px] font-black shadow-lg ${currentStep === STEPS.length - 1 ? 'bg-slate-100 text-slate-300 cursor-not-allowed shadow-none' : 'bg-prostate-navy text-white hover:bg-prostate-navy/95 active:scale-[0.98] shadow-prostate-navy/15 hover:shadow-prostate-navy/20'
+                      }`}
                   >
                     {currentStep === STEPS.length - 1 ? "Hoàn tất tìm hiểu" : "Bước tiếp theo"}
                     <ChevronRight size={18} />
@@ -318,7 +313,7 @@ export default function QuyTrinhPage() {
       <footer className="w-full border-t border-slate-100 py-6 bg-white/50 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-6 text-center space-y-2">
           <p className="text-slate-400 font-bold text-xs sm:text-sm">
-            * Quy trình này được thiết kế để tối ưu hóa thời gian và đảm bảo độ chính xác cao nhất cho mỗi người dân.
+            Mọi chi tiết xin vui lòng liên hệ <span className="text-prostate-navy">Phụ trách chương trình: THS.BS Trương Minh Tuấn - 0708 111 632 (Zalo)</span>
           </p>
           <p className="text-slate-400 text-[10px] sm:text-xs">
             © 2026 Chương trình Tầm soát Ung thư Tuyến tiền liệt. Bệnh viện Trung ương Huế.

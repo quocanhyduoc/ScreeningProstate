@@ -33,17 +33,12 @@ export default function EventSidebar({ step, STEPS }: EventSidebarProps) {
                   </div>
                   <div>
                      <p className="text-[11px] font-black uppercase tracking-widest text-blue-200 mb-1">Thời gian thực hiện</p>
-                     <p className="text-xl font-black font-display leading-tight">Ngày 30 - 31/05/2026</p>
+                     <p className="text-xl font-black font-display leading-tight">Sẽ cập nhật sau</p>
                      
-                     <div className="flex flex-col gap-2 mt-3">
-                        <div className="bg-white/5 px-4 py-2 rounded-xl border border-white/10">
-                           <p className="text-[9px] font-black uppercase tracking-widest text-blue-200 leading-none">Buổi Sáng</p>
-                           <p className="text-[15px] font-black font-display mt-0.5">07:00 - 12:30</p>
-                        </div>
-                        <div className="bg-white/5 px-4 py-2 rounded-xl border border-white/10">
-                           <p className="text-[9px] font-black uppercase tracking-widest text-blue-200 leading-none">Buổi Chiều</p>
-                           <p className="text-[15px] font-black font-display mt-0.5">13:00 - 16:00</p>
-                        </div>
+                     <div className="mt-3 bg-white/5 p-3 rounded-xl border border-white/10">
+                        <p className="text-[12px] text-blue-100 font-medium leading-relaxed">
+                           Ban tổ chức sẽ liên hệ trực tiếp qua điện thoại để thông báo khung giờ và hướng dẫn chi tiết.
+                        </p>
                      </div>
                   </div>
                </div>
@@ -61,14 +56,14 @@ export default function EventSidebar({ step, STEPS }: EventSidebarProps) {
                <div className="p-4 bg-orange-50/60 rounded-xl border-l-4 border-prostate-orange shadow-sm">
                   <p className="text-[14px] sm:text-base font-bold text-slate-700 leading-snug">
                      1. Nam giới độ tuổi <br />
-                     <span className="text-2xl font-black text-prostate-orange font-display uppercase tracking-tight">≥ 50 TUỔI</span>
+                     <span className="text-xl sm:text-2xl font-black text-prostate-orange font-display uppercase tracking-tight">50 ĐẾN &lt; 70 TUỔI</span>
                   </p>
                </div>
                
                {/* 45+ family history */}
                <div className="p-4 bg-blue-50/50 rounded-xl border-l-4 border-prostate-navy shadow-sm">
                   <p className="text-[14px] sm:text-base font-bold text-slate-700 leading-snug">
-                     2. Nam giới <span className="text-lg font-black text-prostate-navy font-display uppercase">≥ 45 TUỔI</span> <br />
+                     2. Nam giới <span className="text-lg font-black text-prostate-navy font-display uppercase">45 ĐẾN &lt; 70 TUỔI</span> <br />
                      <span className="text-[13px] text-slate-500 font-bold">Có bố hoặc anh/em trai ruột mắc ung thư tuyến tiền liệt.</span>
                   </p>
                </div>

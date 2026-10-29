@@ -115,10 +115,16 @@ const Step5SuccessBadge: React.FC<Step5Props> = ({
               <div className="mt-2 sm:mt-2.5 space-y-1 w-full text-center">
                 <p className="text-[6px] sm:text-[8px] font-black text-[#005ba1] uppercase tracking-widest">Quét Check-in</p>
                 <div className="px-1 py-1 sm:px-2 bg-blue-50 text-[#005ba1] rounded-md text-[6px] sm:text-[7px] font-black border border-blue-100 uppercase text-center flex flex-col items-center leading-tight">
-                  <span>{registrationResult?.appointment_slot?.split(" ")[0]}</span>
-                  <span className="mt-0.5 pt-0.5 border-t border-blue-200/50 w-full">
-                    {registrationResult?.appointment_slot?.split(" ")[1]}
-                  </span>
+                  {registrationResult?.appointment_slot && !registrationResult.appointment_slot.toLowerCase().includes('cập nhật') ? (
+                    <>
+                      <span>{registrationResult?.appointment_slot?.split(" ")[0]}</span>
+                      <span className="mt-0.5 pt-0.5 border-t border-blue-200/50 w-full">
+                        {registrationResult?.appointment_slot?.split(" ")[1]}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="py-0.5 font-bold">SẼ CẬP NHẬT SAU</span>
+                  )}
                 </div>
               </div>
             </div>

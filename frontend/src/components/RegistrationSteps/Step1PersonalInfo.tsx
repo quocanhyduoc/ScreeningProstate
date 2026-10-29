@@ -170,7 +170,7 @@ const Step1PersonalInfo: React.FC<Step1Props> = ({
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="mt-4 md:mt-6 p-4 md:p-8 bg-red-50 rounded-2xl border-2 border-red-100 flex flex-col md:flex-row items-center gap-3 md:gap-6 shadow-lg shadow-red-50">
           <AlertCircle className="text-red-500 shrink-0" size={32} />
           <p className="text-red-900 font-black text-[14px] md:text-[16px] leading-tight text-center md:text-left">
-            Ông không thuộc nhóm tầm soát ung thư tuyến tiền liệt của chương trình này (Yêu cầu ≥ 45 tuổi).
+            Ông không thuộc nhóm đối tượng tầm soát của chương trình (Yêu cầu nam giới từ 50 đến dưới 70 tuổi, hoặc từ 45 đến dưới 70 tuổi có tiền sử gia đình).
           </p>
         </motion.div>
       )}

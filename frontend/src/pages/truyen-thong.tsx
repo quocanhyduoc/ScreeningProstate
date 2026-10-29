@@ -26,7 +26,7 @@ const FAQS = [
     id: 2,
     category: 'tam-quan-trong',
     question: "Ai là đối tượng khuyến cáo cần tham gia chương trình tầm soát này?",
-    answer: "Chương trình khuyến cáo đặc biệt dành cho nam giới từ 50 tuổi trở lên - nhóm tuổi có nguy cơ mắc bệnh tăng cao. Đối với nam giới có tiền sử gia đình trực hệ (cha, anh trai hoặc em trai ruột) từng mắc ung thư tuyến tiền liệt, độ tuổi khuyến cáo bắt đầu tầm soát sớm hơn, từ khoảng 40-45 tuổi."
+    answer: "Chương trình khuyến cáo đặc biệt dành cho nam giới từ 50 đến dưới 70 tuổi - nhóm tuổi có nguy cơ mắc bệnh tăng cao. Đối với nam giới có tiền sử gia đình trực hệ (cha, anh trai hoặc em trai ruột) từng mắc ung thư tuyến tiền liệt, độ tuổi khuyến cáo bắt đầu tầm soát từ 45 đến dưới 70 tuổi."
   },
   {
     id: 3,

@@ -45,6 +45,14 @@ export default function SurveyForm({ patientId, onComplete }: any) {
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [actionType, setActionType] = useState<'save' | 'complete' | null>(null);
 
+  const [noneFlags, setNoneFlags] = useState<{ [key: string]: boolean }>({
+    genetics: false,
+    exclusions: false,
+    history: false,
+    meds: false,
+    symptoms: false,
+  });
+
   React.useEffect(() => {
     const fetchExistingSurvey = async () => {
       try {
@@ -57,6 +65,20 @@ export default function SurveyForm({ patientId, onComplete }: any) {
         if (res.data) {
           setFormData(res.data);
           setInitialData(JSON.parse(JSON.stringify(res.data))); // Deep clone for comparison
+          
+          const hasGenetics = !!res.data.brca_mutation || !!res.data.father_age_diag || !!res.data.brother_age_diag;
+          const hasExcl = !!res.data.exclusion_sex_24h || !!res.data.exclusion_cystoscopy_48h || !!res.data.exclusion_dre_1w;
+          const hasHist = !!res.data.biopsy_3y || !!res.data.prostatectomy || (!!res.data.cancer_history && res.data.cancer_history.length > 0) || !!res.data.cancer_treatment || !!res.data.severe_organ_disease || !!res.data.alzheimer || !!res.data.other_studies;
+          const hasMeds = !!res.data.meds_5alpha_inhibitor || !!res.data.meds_estrogen || !!res.data.meds_progesterone || !!res.data.meds_androgen || !!res.data.meds_corticoids || !!res.data.meds_saw_palmetto;
+          const hasSymp = !!res.data.symptom_difficulty || !!res.data.symptom_frequency || !!res.data.symptom_urgency || !!res.data.symptom_incomplete || !!res.data.symptom_dribbling || !!res.data.symptom_bone_pain || !!res.data.symptom_hematuria;
+
+          setNoneFlags({
+            genetics: !hasGenetics,
+            exclusions: !hasExcl,
+            history: !hasHist,
+            meds: !hasMeds,
+            symptoms: !hasSymp,
+          });
         } else {
           setInitialData(JSON.parse(JSON.stringify(formData)));
         }
@@ -114,9 +136,73 @@ export default function SurveyForm({ patientId, onComplete }: any) {
     }
   };
 
-  const toggleField = (field: string) => {
+  const toggleField = (field: string, section?: string) => {
     setFormData((prev: any) => ({ ...prev, [field]: !prev[field] }));
+    if (section) {
+      setNoneFlags(prev => ({ ...prev, [section]: false }));
+    }
   };
+
+  const handleSelectNone = (section: string) => {
+    setNoneFlags(prev => {
+      const willBeActive = !prev[section];
+      if (willBeActive) {
+        if (section === 'genetics') {
+          setFormData((f: any) => ({ ...f, brca_mutation: false, father_age_diag: null, brother_age_diag: null }));
+        } else if (section === 'exclusions') {
+          setFormData((f: any) => ({ ...f, exclusion_sex_24h: false, exclusion_cystoscopy_48h: false, exclusion_dre_1w: false }));
+        } else if (section === 'history') {
+          setFormData((f: any) => ({
+            ...f,
+            biopsy_3y: false,
+            prostatectomy: false,
+            cancer_history: [],
+            cancer_treatment: false,
+            severe_organ_disease: false,
+            alzheimer: false,
+            other_studies: false,
+          }));
+        } else if (section === 'meds') {
+          setFormData((f: any) => ({
+            ...f,
+            meds_5alpha_inhibitor: false,
+            meds_estrogen: false,
+            meds_progesterone: false,
+            meds_androgen: false,
+            meds_corticoids: false,
+            meds_saw_palmetto: false,
+          }));
+        } else if (section === 'symptoms') {
+          setFormData((f: any) => ({
+            ...f,
+            symptom_difficulty: false,
+            symptom_frequency: false,
+            symptom_urgency: false,
+            symptom_incomplete: false,
+            symptom_dribbling: false,
+            symptom_bone_pain: false,
+            symptom_hematuria: false,
+          }));
+        }
+      }
+      return { ...prev, [section]: willBeActive };
+    });
+  };
+
+  const hasGeneticsActive = formData.brca_mutation || !!formData.father_age_diag || !!formData.brother_age_diag;
+  const isNoneGenetics = noneFlags.genetics && !hasGeneticsActive;
+
+  const hasExclusionsActive = formData.exclusion_sex_24h || formData.exclusion_cystoscopy_48h || formData.exclusion_dre_1w;
+  const isNoneExclusions = noneFlags.exclusions && !hasExclusionsActive;
+
+  const hasHistoryActive = formData.biopsy_3y || formData.prostatectomy || (formData.cancer_history && formData.cancer_history.length > 0) || formData.cancer_treatment || formData.severe_organ_disease || formData.alzheimer || formData.other_studies;
+  const isNoneHistory = noneFlags.history && !hasHistoryActive;
+
+  const hasMedsActive = formData.meds_5alpha_inhibitor || formData.meds_estrogen || formData.meds_progesterone || formData.meds_androgen || formData.meds_corticoids || formData.meds_saw_palmetto;
+  const isNoneMeds = noneFlags.meds && !hasMedsActive;
+
+  const hasSymptomsActive = formData.symptom_difficulty || formData.symptom_frequency || formData.symptom_urgency || formData.symptom_incomplete || formData.symptom_dribbling || formData.symptom_bone_pain || formData.symptom_hematuria;
+  const isNoneSymptoms = noneFlags.symptoms && !hasSymptomsActive;
 
   return (
     <form onSubmit={(e) => e.preventDefault()} className="space-y-12 pb-32">
@@ -127,28 +213,53 @@ export default function SurveyForm({ patientId, onComplete }: any) {
            <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600"><Dna size={18} /></div>
            <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">I. Di truyền & Tiền sử gia đình</h3>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
            <ToggleCard 
              label="Đột biến gen BRCA1/BRCA2" 
              active={formData.brca_mutation} 
-             onClick={() => toggleField('brca_mutation')} 
+             onClick={() => toggleField('brca_mutation', 'genetics')} 
            />
-           <div className="bg-white p-6 rounded-lg border border-slate-200 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6">
+           <div className="bg-white p-6 rounded-[28px] border-2 border-slate-100 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center gap-4 sm:gap-6">
               <div className="flex-1 space-y-1">
                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Cha chẩn đoán K lúc</label>
                  <div className="relative">
-                    <input type="number" value={formData.father_age_diag || ""} onChange={(e) => setFormData({...formData, father_age_diag: e.target.value ? parseInt(e.target.value) : null})} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm font-bold outline-none focus:border-blue-500 transition-all" placeholder="Tuổi" />
+                    <input 
+                      type="number" 
+                      value={formData.father_age_diag || ""} 
+                      onChange={(e) => {
+                        setFormData({...formData, father_age_diag: e.target.value ? parseInt(e.target.value) : null});
+                        setNoneFlags(prev => ({ ...prev, genetics: false }));
+                      }} 
+                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm font-bold outline-none focus:border-blue-500 transition-all" 
+                      placeholder="Tuổi" 
+                    />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">TUỔI</span>
                  </div>
               </div>
               <div className="flex-1 space-y-1">
                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Anh/Em chẩn đoán K lúc</label>
                  <div className="relative">
-                    <input type="number" value={formData.brother_age_diag || ""} onChange={(e) => setFormData({...formData, brother_age_diag: e.target.value ? parseInt(e.target.value) : null})} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm font-bold outline-none focus:border-blue-500 transition-all" placeholder="Tuổi" />
+                    <input 
+                      type="number" 
+                      value={formData.brother_age_diag || ""} 
+                      onChange={(e) => {
+                        setFormData({...formData, brother_age_diag: e.target.value ? parseInt(e.target.value) : null});
+                        setNoneFlags(prev => ({ ...prev, genetics: false }));
+                      }} 
+                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-sm font-bold outline-none focus:border-blue-500 transition-all" 
+                      placeholder="Tuổi" 
+                    />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-400">TUỔI</span>
                  </div>
               </div>
            </div>
+           <ToggleCard 
+             label="Không cái nào" 
+             sublabel="Không có đột biến gen & không có người thân mắc K TTL"
+             active={isNoneGenetics} 
+             onClick={() => handleSelectNone('genetics')} 
+             isNone
+           />
         </div>
       </section>
 
@@ -158,10 +269,17 @@ export default function SurveyForm({ patientId, onComplete }: any) {
            <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center text-red-600"><AlertTriangle size={18} /></div>
            <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">II. Tiêu chuẩn loại trừ (Tạm thời)</h3>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-           <ToggleCard label="Quan hệ tình dục / Xuất tinh (24h)" active={formData.exclusion_sex_24h} onClick={() => toggleField('exclusion_sex_24h')} warning />
-           <ToggleCard label="Nội soi bàng quang / Thông tiểu (48h)" active={formData.exclusion_cystoscopy_48h} onClick={() => toggleField('exclusion_cystoscopy_48h')} warning />
-           <ToggleCard label="Thăm trực tràng / Đạp xe (1 tuần)" active={formData.exclusion_dre_1w} onClick={() => toggleField('exclusion_dre_1w')} warning />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+           <ToggleCard label="Quan hệ tình dục / Xuất tinh (24h)" active={formData.exclusion_sex_24h} onClick={() => toggleField('exclusion_sex_24h', 'exclusions')} warning />
+           <ToggleCard label="Nội soi bàng quang / Thông tiểu (48h)" active={formData.exclusion_cystoscopy_48h} onClick={() => toggleField('exclusion_cystoscopy_48h', 'exclusions')} warning />
+           <ToggleCard label="Thăm trực tràng / Đạp xe (1 tuần)" active={formData.exclusion_dre_1w} onClick={() => toggleField('exclusion_dre_1w', 'exclusions')} warning />
+           <ToggleCard 
+             label="Không cái nào" 
+             sublabel="Không có hoạt động hay can thiệp loại trừ trên"
+             active={isNoneExclusions} 
+             onClick={() => handleSelectNone('exclusions')} 
+             isNone
+           />
         </div>
       </section>
 
@@ -171,17 +289,25 @@ export default function SurveyForm({ patientId, onComplete }: any) {
            <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center text-slate-600"><Activity size={18} /></div>
            <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">III. Tiền sử bệnh lý</h3>
         </div>
-         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <ToggleCard label="Sinh thiết TLN (3 năm)" active={formData.biopsy_3y} onClick={() => toggleField('biopsy_3y')} />
-            <ToggleCard label="Phẫu thuật cắt TLN" active={formData.prostatectomy} onClick={() => toggleField('prostatectomy')} />
+         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <ToggleCard label="Sinh thiết TLN (3 năm)" active={formData.biopsy_3y} onClick={() => toggleField('biopsy_3y', 'history')} />
+            <ToggleCard label="Phẫu thuật cắt TLN" active={formData.prostatectomy} onClick={() => toggleField('prostatectomy', 'history')} />
             <ToggleCard label="Tiền sử K (TTL, Phổi...)" active={formData.cancer_history?.length > 0} onClick={() => {
                 const current = formData.cancer_history || [];
                 setFormData({...formData, cancer_history: current.length > 0 ? [] : ['PROSTATE_COLON_LUNG']});
+                setNoneFlags(prev => ({ ...prev, history: false }));
             }} />
-            <ToggleCard label="Đang điều trị ung thư" active={formData.cancer_treatment} onClick={() => toggleField('cancer_treatment')} />
-            <ToggleCard label="Bệnh cơ quan nặng" active={formData.severe_organ_disease} onClick={() => toggleField('severe_organ_disease')} />
-            <ToggleCard label="Sa sút trí tuệ" active={formData.alzheimer} onClick={() => toggleField('alzheimer')} />
-            <ToggleCard label="Tham gia NC khác" active={formData.other_studies} onClick={() => toggleField('other_studies')} />
+            <ToggleCard label="Đang điều trị ung thư" active={formData.cancer_treatment} onClick={() => toggleField('cancer_treatment', 'history')} />
+            <ToggleCard label="Bệnh cơ quan nặng" active={formData.severe_organ_disease} onClick={() => toggleField('severe_organ_disease', 'history')} />
+            <ToggleCard label="Sa sút trí tuệ" active={formData.alzheimer} onClick={() => toggleField('alzheimer', 'history')} />
+            <ToggleCard label="Tham gia NC khác" active={formData.other_studies} onClick={() => toggleField('other_studies', 'history')} />
+            <ToggleCard 
+              label="Không cái nào" 
+              sublabel="Không có tiền sử bệnh lý nào ở trên"
+              active={isNoneHistory} 
+              onClick={() => handleSelectNone('history')} 
+              isNone
+            />
          </div>
       </section>
 
@@ -192,12 +318,21 @@ export default function SurveyForm({ patientId, onComplete }: any) {
            <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">IV. Đang sử dụng thuốc</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-           <ToggleCard label="Chất ức chế 5α-reductase (Finasteride, Dutasteride)" active={formData.meds_5alpha_inhibitor} onClick={() => toggleField('meds_5alpha_inhibitor')} />
-           <ToggleCard label="Estrogen" active={formData.meds_estrogen} onClick={() => toggleField('meds_estrogen')} />
-           <ToggleCard label="Thuốc progesterone" active={formData.meds_progesterone} onClick={() => toggleField('meds_progesterone')} />
-           <ToggleCard label="Androgen" active={formData.meds_androgen} onClick={() => toggleField('meds_androgen')} />
-           <ToggleCard label="Corticoid điều trị toàn thân lâu dài" active={formData.meds_corticoids} onClick={() => toggleField('meds_corticoids')} />
-           <ToggleCard label="Dược liệu (Ví dụ: Cây cọ lùn) giảm PSA" active={formData.meds_saw_palmetto} onClick={() => toggleField('meds_saw_palmetto')} />
+           <ToggleCard label="Chất ức chế 5α-reductase (Finasteride, Dutasteride)" active={formData.meds_5alpha_inhibitor} onClick={() => toggleField('meds_5alpha_inhibitor', 'meds')} />
+           <ToggleCard label="Estrogen" active={formData.meds_estrogen} onClick={() => toggleField('meds_estrogen', 'meds')} />
+           <ToggleCard label="Thuốc progesterone" active={formData.meds_progesterone} onClick={() => toggleField('meds_progesterone', 'meds')} />
+           <ToggleCard label="Androgen" active={formData.meds_androgen} onClick={() => toggleField('meds_androgen', 'meds')} />
+           <ToggleCard label="Corticoid điều trị toàn thân lâu dài" active={formData.meds_corticoids} onClick={() => toggleField('meds_corticoids', 'meds')} />
+           <ToggleCard label="Dược liệu (Ví dụ: Cây cọ lùn) giảm PSA" active={formData.meds_saw_palmetto} onClick={() => toggleField('meds_saw_palmetto', 'meds')} />
+           <div className="md:col-span-2">
+             <ToggleCard 
+               label="Không cái nào" 
+               sublabel="Không sử dụng bất kỳ loại thuốc nào ở trên"
+               active={isNoneMeds} 
+               onClick={() => handleSelectNone('meds')} 
+               isNone
+             />
+           </div>
         </div>
       </section>
 
@@ -208,13 +343,20 @@ export default function SurveyForm({ patientId, onComplete }: any) {
            <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">V. Triệu chứng đường tiểu</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-           <ToggleCard label="Tiểu khó / Tia yếu" active={formData.symptom_difficulty} onClick={() => toggleField('symptom_difficulty')} />
-           <ToggleCard label="Tiểu nhiều lần (Ngày/Đêm)" active={formData.symptom_frequency} onClick={() => toggleField('symptom_frequency')} />
-           <ToggleCard label="Tiểu gấp / Không nhịn được" active={formData.symptom_urgency} onClick={() => toggleField('symptom_urgency')} />
-           <ToggleCard label="Tiểu không hết (Tồn lưu)" active={formData.symptom_incomplete} onClick={() => toggleField('symptom_incomplete')} />
-           <ToggleCard label="Tiểu nhỏ giọt" active={formData.symptom_dribbling} onClick={() => toggleField('symptom_dribbling')} />
-           <ToggleCard label="Đau xương" active={formData.symptom_bone_pain} onClick={() => toggleField('symptom_bone_pain')} />
-           <ToggleCard label="Tiểu máu" active={formData.symptom_hematuria} onClick={() => toggleField('symptom_hematuria')} />
+           <ToggleCard label="Tiểu khó / Tia yếu" active={formData.symptom_difficulty} onClick={() => toggleField('symptom_difficulty', 'symptoms')} />
+           <ToggleCard label="Tiểu nhiều lần (Ngày/Đêm)" active={formData.symptom_frequency} onClick={() => toggleField('symptom_frequency', 'symptoms')} />
+           <ToggleCard label="Tiểu gấp / Không nhịn được" active={formData.symptom_urgency} onClick={() => toggleField('symptom_urgency', 'symptoms')} />
+           <ToggleCard label="Tiểu không hết (Tồn lưu)" active={formData.symptom_incomplete} onClick={() => toggleField('symptom_incomplete', 'symptoms')} />
+           <ToggleCard label="Tiểu nhỏ giọt" active={formData.symptom_dribbling} onClick={() => toggleField('symptom_dribbling', 'symptoms')} />
+           <ToggleCard label="Đau xương" active={formData.symptom_bone_pain} onClick={() => toggleField('symptom_bone_pain', 'symptoms')} />
+           <ToggleCard label="Tiểu máu" active={formData.symptom_hematuria} onClick={() => toggleField('symptom_hematuria', 'symptoms')} />
+           <ToggleCard 
+             label="Không cái nào" 
+             sublabel="Hoàn toàn không có triệu chứng đường tiểu nào"
+             active={isNoneSymptoms} 
+             onClick={() => handleSelectNone('symptoms')} 
+             isNone
+           />
         </div>
       </section>
 
@@ -287,21 +429,40 @@ export default function SurveyForm({ patientId, onComplete }: any) {
   );
 }
 
-function ToggleCard({ label, active, onClick, warning }: any) {
+function ToggleCard({ label, sublabel, active, onClick, warning, isNone }: any) {
   return (
     <div 
       onClick={onClick}
-      className={`p-6 rounded-[28px] border-2 cursor-pointer transition-all flex items-center justify-between gap-4 group h-full ${
+      className={`p-5 rounded-[24px] border-2 cursor-pointer transition-all flex items-center justify-between gap-3 group h-full ${
         active 
-          ? (warning ? 'bg-red-50 border-red-500 text-red-700 shadow-lg shadow-red-50' : 'bg-blue-50 border-blue-500 text-blue-700 shadow-lg shadow-blue-50') 
-          : 'bg-white border-slate-100 hover:border-slate-300 shadow-sm'
+          ? (isNone 
+              ? 'bg-emerald-50 border-emerald-500 text-emerald-900 shadow-md shadow-emerald-50 ring-2 ring-emerald-100'
+              : (warning 
+                  ? 'bg-red-50 border-red-500 text-red-700 shadow-lg shadow-red-50' 
+                  : 'bg-blue-50 border-blue-500 text-blue-700 shadow-lg shadow-blue-50')) 
+          : (isNone 
+              ? 'bg-emerald-50/40 border-2 border-dashed border-emerald-300 hover:border-emerald-500 text-emerald-800 hover:bg-emerald-50 shadow-sm'
+              : 'bg-white border-slate-100 hover:border-slate-300 shadow-sm')
       }`}
     >
-       <span className="text-[13px] font-bold leading-tight uppercase tracking-tight">{label}</span>
-       <div className={`w-8 h-8 rounded-lg border-2 flex items-center justify-center transition-all ${
+       <div className="flex flex-col">
+         <span className={`text-[13px] font-black leading-tight uppercase tracking-tight ${isNone && active ? 'text-emerald-900' : ''}`}>
+           {label}
+         </span>
+         {sublabel && (
+           <span className={`text-[11px] font-semibold mt-1 leading-snug ${isNone ? (active ? 'text-emerald-700' : 'text-emerald-600/80') : 'text-slate-400'}`}>
+             {sublabel}
+           </span>
+         )}
+       </div>
+       <div className={`w-8 h-8 rounded-lg border-2 flex items-center justify-center transition-all shrink-0 ${
          active 
-           ? (warning ? 'bg-red-500 border-red-500' : 'bg-blue-500 border-blue-500') 
-           : 'border-slate-100 group-hover:border-slate-200 bg-slate-50'
+           ? (isNone 
+               ? 'bg-emerald-600 border-emerald-600 text-white shadow-sm' 
+               : (warning ? 'bg-red-500 border-red-500 text-white' : 'bg-blue-500 border-blue-500 text-white')) 
+           : (isNone 
+               ? 'border-emerald-200 bg-white group-hover:border-emerald-400' 
+               : 'border-slate-100 group-hover:border-slate-200 bg-slate-50')
        }`}>
           {active && <CheckIcon className="text-white" size={16} />}
        </div>

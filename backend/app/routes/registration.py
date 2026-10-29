@@ -51,7 +51,10 @@ async def register_patient(patient: RegistrationCreate, db: Session = Depends(ge
         if age < 45:
             raise HTTPException(status_code=403, detail="Độ tuổi chưa phù hợp với chương trình (< 45 tuổi).")
         
-        if 45 <= age <= 50 and not has_risk_history:
+        if age >= 70:
+            raise HTTPException(status_code=403, detail="Chương trình tầm soát chỉ áp dụng cho nam giới dưới 70 tuổi.")
+        
+        if 45 <= age < 50 and not has_risk_history:
             raise HTTPException(status_code=403, detail="Thông tin chưa phù hợp (45-50 tuổi cần có yếu tố nguy cơ tiền sử gia đình).")
 
         # 4. Generate Registration Number (YYMMNNNN)
