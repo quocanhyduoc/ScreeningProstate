@@ -46,7 +46,7 @@ export default function QuickHighlights() {
       >
         <HighlightCard tag="Thời gian đăng ký">
           <p className="text-xl sm:text-2xl font-black text-prostate-navy font-display tracking-tight leading-tight mt-1 text-center">
-            Từ 1/11/2026
+            Từ 30/10/2026
           </p>
           <p className="text-[11px] sm:text-xs text-slate-400 font-bold mt-0.5">
             Đến khi đủ số lượng

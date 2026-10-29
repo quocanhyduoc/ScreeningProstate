@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AlertCircle, CheckCircle } from 'lucide-react';
-import { toPng } from 'html-to-image';
+import { downloadOrShareBadge } from '../utils/badgeDownload';
 
 // Step Components
 import Step1Consent from '../components/RegistrationSteps/Step1Consent';
@@ -316,26 +316,10 @@ export default function AppointmentRegistrationPage() {
   const handleDownloadBadge = async () => {
     if (badgeRef.current === null) return;
     try {
-      // 1. Gọi nháp lần đầu để buộc iOS/Safari tải và giải mã ảnh Base64 vào GPU cache
-      await toPng(badgeRef.current, { cacheBust: false });
-      
-      // 2. Chờ 150ms để GPU điện thoại xử lý vẽ ảnh nháp
-      await new Promise((resolve) => setTimeout(resolve, 150));
-      
-      // 3. Gọi lần 2 để xuất ảnh chất lượng Ultra-HD 4x sắc nét hoàn hảo
-      const dataUrl = await toPng(badgeRef.current, { 
-        cacheBust: false, 
-        pixelRatio: 4, 
-        quality: 1.0,
-        style: {
-          transform: 'scale(1)',
-          transformOrigin: 'top left',
-        }
+      await downloadOrShareBadge(badgeRef.current, {
+        fullName: registrationResult?.full_name,
+        code: registrationResult?.registration_number || registrationResult?.cccd,
       });
-      const link = document.createElement('a');
-      link.download = `Badge_Screening_${registrationResult?.cccd}.png`;
-      link.href = dataUrl;
-      link.click();
     } catch (err) {
       console.error('Download failed', err);
     }

@@ -318,12 +318,12 @@ export default function SurveyForm({ patientId, onComplete }: any) {
            <h3 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">IV. Đang sử dụng thuốc</h3>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-           <ToggleCard label="Chất ức chế 5α-reductase (Finasteride, Dutasteride)" active={formData.meds_5alpha_inhibitor} onClick={() => toggleField('meds_5alpha_inhibitor', 'meds')} />
+           <ToggleCard label="Chất ức chế 5α-reductase (Như Avodart?)" active={formData.meds_5alpha_inhibitor} onClick={() => toggleField('meds_5alpha_inhibitor', 'meds')} />
            <ToggleCard label="Estrogen" active={formData.meds_estrogen} onClick={() => toggleField('meds_estrogen', 'meds')} />
            <ToggleCard label="Thuốc progesterone" active={formData.meds_progesterone} onClick={() => toggleField('meds_progesterone', 'meds')} />
            <ToggleCard label="Androgen" active={formData.meds_androgen} onClick={() => toggleField('meds_androgen', 'meds')} />
            <ToggleCard label="Corticoid điều trị toàn thân lâu dài" active={formData.meds_corticoids} onClick={() => toggleField('meds_corticoids', 'meds')} />
-           <ToggleCard label="Dược liệu (Ví dụ: Cây cọ lùn) giảm PSA" active={formData.meds_saw_palmetto} onClick={() => toggleField('meds_saw_palmetto', 'meds')} />
+           <ToggleCard label="Dược liệu: Vương Bảo? / Chiết xuất cây cọ lùn?" active={formData.meds_saw_palmetto} onClick={() => toggleField('meds_saw_palmetto', 'meds')} />
            <div className="md:col-span-2">
              <ToggleCard 
                label="Không cái nào" 
