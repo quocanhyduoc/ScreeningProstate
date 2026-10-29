@@ -1,26 +1,42 @@
 services:
   db:
-    image: postgres:15
+    image: postgres:15-alpine
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${DB_USER:-ProstateHue26}
       POSTGRES_PASSWORD: ${DB_PASSWORD:-ProstateHue2026}
-      POSTGRES_DB: ProstateHue
+      POSTGRES_DB: ${POSTGRES_DB:-ProstateHue}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - private_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-ProstateHue26} -d ${POSTGRES_DB:-ProstateHue}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   backend:
-    build: ./backend
+    build:
+      context: ./backend
     restart: unless-stopped
-    env_file: ./backend/.env
+    environment:
+      - DATABASE_URL=${DATABASE_URL:-postgresql://${DB_USER:-ProstateHue26}:${DB_PASSWORD:-ProstateHue2026}@db:5432/${POSTGRES_DB:-ProstateHue}}
+      - SECRET_KEY=${SECRET_KEY:-4f564b56ceabfd407734fa3272aea0c9c2617f77157ca995d53651f3ce6958fa}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-https://sangloctuyentienliet.com,https://www.sangloctuyentienliet.com,http://103.149.87.0,http://103.149.87.0:3000}
     ports:
       - "8000:8000"
     networks:
       - private_net
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   frontend:
     build:
@@ -32,20 +48,24 @@ services:
       - "3000:3000"
     environment:
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-https://sangloctuyentienliet.com/api}
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
     networks:
       - private_net
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
 
   db-admin:
-    image: adminer
-    restart: always
+    image: adminer:latest
+    restart: unless-stopped
     ports:
       - "127.0.0.1:8080:8080"
     networks:
       - private_net
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 networks:
   private_net:
@@ -53,4 +73,3 @@ networks:
 
 volumes:
   postgres_data:
-

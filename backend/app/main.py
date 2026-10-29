@@ -9,19 +9,36 @@ from .database import engine, get_db, Base
 from .routes import registration, admin, auth as auth_routes, clinical
 from .services.sms import sms_service
 
-# Tables are created via init_db.py during deployment
+# Tables initialization
+@app.on_event("startup")
+def startup_db():
+    try:
+        Base.metadata.create_all(bind=engine)
+        logger.info("Database tables verified/initialized successfully.")
+    except Exception as e:
+        logger.error(f"Error initializing database tables on startup: {e}")
 
 app = FastAPI(title="Prostate Screening API")
 
 # CORS Configuration
-# Chỉ cho phép frontend domain truy cập API
 ALLOWED_ORIGINS = [
     "https://sangloctuyentienliet.com",
+    "http://sangloctuyentienliet.com",
     "https://www.sangloctuyentienliet.com",
+    "http://www.sangloctuyentienliet.com",
+    "http://103.149.87.0",
+    "https://103.149.87.0",
     "http://103.149.87.0:3000",
     "http://localhost:3000",
     "http://127.0.0.1:3000"
 ]
+
+env_origins = os.getenv("ALLOWED_ORIGINS")
+if env_origins:
+    for origin in env_origins.split(","):
+        trimmed = origin.strip()
+        if trimmed and trimmed not in ALLOWED_ORIGINS:
+            ALLOWED_ORIGINS.append(trimmed)
 
 app.add_middleware(
     CORSMiddleware,
