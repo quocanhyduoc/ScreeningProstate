@@ -1,15 +1,25 @@
 import os
+import re
 import random
+import logging
 from datetime import datetime, timedelta
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Request
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+
 from . import models, schemas, auth
 from .database import engine, get_db, Base
 from .routes import registration, admin, auth as auth_routes, clinical
 from .services.sms import sms_service
 
-# Tables initialization
+# Logging setup
+logger = logging.getLogger("api_security")
+logger.setLevel(logging.INFO)
+
+# FastAPI App Instance
+app = FastAPI(title="Prostate Screening API")
+
+# Startup: Auto create database tables safely
 @app.on_event("startup")
 def startup_db():
     try:
@@ -17,8 +27,6 @@ def startup_db():
         logger.info("Database tables verified/initialized successfully.")
     except Exception as e:
         logger.error(f"Error initializing database tables on startup: {e}")
-
-app = FastAPI(title="Prostate Screening API")
 
 # CORS Configuration
 ALLOWED_ORIGINS = [
@@ -48,14 +56,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Security: Middleware để che giấu dữ liệu nhạy cảm (Data Masking) trong Logs
-import re
-from fastapi import Request
-import logging
-
-logger = logging.getLogger("api_security")
-logger.setLevel(logging.INFO)
-
+# Security: Data masking in logs
 async def mask_sensitive_data(body: bytes) -> str:
     body_str = body.decode('utf-8', errors='ignore')
     # Che CCCD (12 số): Giữ 3 số đầu và 3 số cuối
@@ -66,10 +67,8 @@ async def mask_sensitive_data(body: bytes) -> str:
 
 @app.middleware("http")
 async def security_logging_middleware(request: Request, call_next):
-    # Tránh đọc request.body() trực tiếp ở Middleware vì sẽ làm treo (consume) luồng dữ liệu của Pydantic
     if request.method in ["POST", "PUT", "PATCH"]:
         logger.info(f"[{request.method}] {request.url.path} - Processing secure request")
-    
     response = await call_next(request)
     return response
 
@@ -79,7 +78,11 @@ app.include_router(admin.router)
 app.include_router(clinical.router)
 app.include_router(auth_routes.router)
 
-
+# Healthcheck endpoints
 @app.get("/")
 def read_root():
-    return {"message": "Prostate Screening API is running"}
+    return {"message": "Prostate Screening API is running", "status": "healthy"}
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
